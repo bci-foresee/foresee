@@ -4,32 +4,32 @@
 // Internal details; most calling programs do not need this header,
 // unless using verilator public meta comments.
 
-#ifndef VERILATED_VCOUNTER__SYMS_H_
-#define VERILATED_VCOUNTER__SYMS_H_  // guard
+#ifndef VERILATED_VTOP__SYMS_H_
+#define VERILATED_VTOP__SYMS_H_  // guard
 
 #include "verilated.h"
 
 // INCLUDE MODEL CLASS
 
-#include "Vcounter.h"
+#include "Vtop.h"
 
 // INCLUDE MODULE CLASSES
-#include "Vcounter___024root.h"
+#include "Vtop___024root.h"
 
 // SYMS CLASS (contains all model state)
-class alignas(VL_CACHE_LINE_BYTES)Vcounter__Syms final : public VerilatedSyms {
+class alignas(VL_CACHE_LINE_BYTES)Vtop__Syms final : public VerilatedSyms {
   public:
     // INTERNAL STATE
-    Vcounter* const __Vm_modelp;
+    Vtop* const __Vm_modelp;
     VlDeleter __Vm_deleter;
     bool __Vm_didInit = false;
 
     // MODULE INSTANCE STATE
-    Vcounter___024root             TOP;
+    Vtop___024root                 TOP;
 
     // CONSTRUCTORS
-    Vcounter__Syms(VerilatedContext* contextp, const char* namep, Vcounter* modelp);
-    ~Vcounter__Syms();
+    Vtop__Syms(VerilatedContext* contextp, const char* namep, Vtop* modelp);
+    ~Vtop__Syms();
 
     // METHODS
     const char* name() { return TOP.name(); }

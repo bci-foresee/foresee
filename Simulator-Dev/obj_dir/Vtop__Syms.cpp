@@ -1,16 +1,16 @@
 // Verilated -*- C++ -*-
 // DESCRIPTION: Verilator output: Symbol table implementation internals
 
-#include "Vcounter__pch.h"
-#include "Vcounter.h"
-#include "Vcounter___024root.h"
+#include "Vtop__pch.h"
+#include "Vtop.h"
+#include "Vtop___024root.h"
 
 // FUNCTIONS
-Vcounter__Syms::~Vcounter__Syms()
+Vtop__Syms::~Vtop__Syms()
 {
 }
 
-Vcounter__Syms::Vcounter__Syms(VerilatedContext* contextp, const char* namep, Vcounter* modelp)
+Vtop__Syms::Vtop__Syms(VerilatedContext* contextp, const char* namep, Vtop* modelp)
     : VerilatedSyms{contextp}
     // Setup internal state of the Syms class
     , __Vm_modelp{modelp}
@@ -18,7 +18,7 @@ Vcounter__Syms::Vcounter__Syms(VerilatedContext* contextp, const char* namep, Vc
     , TOP{this, namep}
 {
         // Check resources
-        Verilated::stackCheck(11);
+        Verilated::stackCheck(18);
     // Configure time unit / time precision
     _vm_contextp__->timeunit(-12);
     _vm_contextp__->timeprecision(-12);
