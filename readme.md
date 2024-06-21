@@ -39,3 +39,10 @@ cd obj_dir
 make -f Vexample_top.mk
 ./Vexample_top
 ```
+
+Sim-Seizure <----- seizure pipeline example in dev.
+```sh
+verilator -cc ./Verilog-APaths/example_top.v ./Verilog-PEs/spiral-fft.v --exe example_tb.cpp
+cd obj_dir
+
+```
