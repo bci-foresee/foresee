@@ -149,8 +149,6 @@ int main(int argc, char **argv, char **env) {
 
         // Evaluate the model
         pipeline->eval();
-
-        // Print the output
     }
 
     // top->final();
