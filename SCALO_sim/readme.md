@@ -26,6 +26,11 @@ make
 
 ## other useful ideas
 
+clock domain crossings will need to be dealt with
+https://anysilicon.com/clock-domain-crossing-cdc/
+
+- handshake technique?
+
 multi clock gen:
 ```python
 import cocotb
