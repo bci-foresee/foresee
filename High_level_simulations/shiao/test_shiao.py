@@ -57,12 +57,25 @@ def test_fft_1024():
     # calling the c function
     result = pipeline.fft(signal_in, num_points=1024)
 
-    # print for now
-    print(result[0:20])
-    print("\n look here \n")
+    # # print for now
+    # print(result[0:20])
+    # print("\n look here \n")
 
-    # test nothing
-    assert True
+    # further testing code
+    real_out = [result[2*i] for i in range(1024)]
+    imag_out = [result[2*i + 1] for i in range(1024)]
+
+    # get magnitude of output
+    magnitude = np.zeros(1024, dtype=np.double)
+    for i in range(1024):
+        magnitude[i] = np.sqrt(real_out[i]**2 + imag_out[i]**2)
+
+    # "ideal" using np.fft.fft
+    real_signal_in = [signal_in[2*i] for i in range(1024)]
+    ideal_out = np.fft.fft(real_signal_in)
+
+    # test
+    assert np.allclose(magnitude, np.abs(ideal_out)), f"Expected {np.abs(ideal_out)}, but got {magnitude}"
 
 
 # SVM --------------------------------------------------------------------------------------------
@@ -99,4 +112,4 @@ def test_threshold():
     assert result == 1, f"Expected {expected_result}, but got {result}"
 
 
-test_fft_1024()
+# test_fft_1024()
