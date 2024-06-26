@@ -34,25 +34,6 @@ class Pipeline:
 
         self.libc.free(results_ptr)
         return correlations
-        
-    def svm_predict(self, weights, inputs, size):
-        # converting inputs into strongly typed values for the c function
-        self.kernels.svm_predict.argtypes = [
-            ctypes.POINTER(ctypes.c_double), 
-            ctypes.POINTER(ctypes.c_uint16), 
-            ctypes.c_uint16
-        ]
-        self.kernels.svm_predict.restype = ctypes.c_double
-
-        # converting the numpy arrays to ctypes pointers
-        weights_ctypes = weights.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
-        inputs_ctypes = inputs.ctypes.data_as(ctypes.POINTER(ctypes.c_uint16))
-
-        # calling function
-        result = self.kernels.svm_predict(weights_ctypes, inputs_ctypes, size)
-
-        # return
-        return result
 
     def fft(self, signal_in, num_points=1024):
         # written with spiral software in c
@@ -80,6 +61,44 @@ class Pipeline:
         self.libc.free(result_ptr)
 
         return spectrum_out
+
+
+    def bbf(self, signal_in, num_points=1024):
+        # input types
+        self.kernels.butterworth_filter.argtypes = [ctypes.POINTER(ctypes.c_uint16),
+                                                    ctypes.c_uint32]
+        
+        # output types - power of band
+        self.kernels.butterworth_filter.restype = ctypes.POINTER(ctypes.c_float)
+
+        # convert input numpy signal in to ctypes pointer
+        signal_in_ctypes = signal_in.ctypes.data_as(ctypes.POINTER(ctypes.c_uint16))
+
+        # call the function, get result power float
+        result = self.kernels.butterworth_filter(signal_in_ctypes, num_points)
+
+        #return 
+        return result
+
+    
+    def svm_predict(self, weights, inputs, size):
+        # converting inputs into strongly typed values for the c function
+        self.kernels.svm_predict.argtypes = [
+            ctypes.POINTER(ctypes.c_double), 
+            ctypes.POINTER(ctypes.c_uint16), 
+            ctypes.c_uint16
+        ]
+        self.kernels.svm_predict.restype = ctypes.c_double
+
+        # converting the numpy arrays to ctypes pointers
+        weights_ctypes = weights.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        inputs_ctypes = inputs.ctypes.data_as(ctypes.POINTER(ctypes.c_uint16))
+
+        # calling function
+        result = self.kernels.svm_predict(weights_ctypes, inputs_ctypes, size)
+
+        # return
+        return result
 
     def threshold(self, value, low_bound, high_bound):
         

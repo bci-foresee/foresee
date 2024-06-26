@@ -190,7 +190,7 @@ extern "C" {
 
         //#define NZEROS 10
         //#define NPOLES 10
-        static float xv[10+1], yv[10+1];
+        static float xv[10+1] = {0}, yv[10+1] = {0};
 
         // initial test filter values, from the halo github 
         static float filter_vals[] = {-0.0723156691, 0.6368872577, 
