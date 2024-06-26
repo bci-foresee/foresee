@@ -23,10 +23,14 @@ def sample_function(x):
 
 num_samples = 1024
 
-sample_positions = np.linspace(0, 2*np.pi, num_samples)
+# sample_positions = np.linspace(0, 2*np.pi, num_samples) # over 1 second
+sample_positions = np.linspace(0, 10*2*np.pi, num_samples) # over 10 seconds
 samples = sample_function(sample_positions)
 
 spectrum = PE_algorithms.fft(signal_in=samples, num_points=num_samples)
+
+print(len(samples))
+print(len(spectrum))
 
 # plot the results
 plt.figure()
@@ -34,14 +38,14 @@ plt.plot(sample_positions, samples)
 plt.title('Signal in')
 plt.xlabel('time')
 plt.ylabel('amplitude')
-plt.savefig('./plots/fft.png')
+plt.savefig('./plots/fft2.png')
 
 plt.figure()
 plt.plot(np.abs(spectrum))
 plt.title('Spectrum out')
 plt.xlabel('frequency')
 plt.ylabel('magnitude')
-plt.savefig('./plots/spectrum.png')
+plt.savefig('./plots/spectrum2.png')
 
 #print(np.abs(spectrum[0:15]))
 

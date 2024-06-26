@@ -6,6 +6,14 @@ Seizure Detection Pipeline from https://ieeexplore.ieee.org/document/7501827
 g++ -shared -o libkernels.so -fPIC kernels.cpp
 ```
 
+# Tests
+
+Written using pytest. To run, go to `High_level_simulations/shiao` then run
+
+```sh
+pytest -v test_shiao.py
+```
+
 ## FFT
 https://www.spiral.net/doc/usermanual/examples/basic/firstfft.html
 

@@ -36,6 +36,7 @@ class Pipeline:
         return correlations
         
     def svm_predict(self, weights, inputs, size):
+        # converting inputs into strongly typed values for the c function
         self.kernels.svm_predict.argtypes = [
             ctypes.POINTER(ctypes.c_double), 
             ctypes.POINTER(ctypes.c_uint16), 
@@ -47,17 +48,50 @@ class Pipeline:
         weights_ctypes = weights.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         inputs_ctypes = inputs.ctypes.data_as(ctypes.POINTER(ctypes.c_uint16))
 
+        # calling function
         result = self.kernels.svm_predict(weights_ctypes, inputs_ctypes, size)
 
+        # return
         return result
 
-    def fft(self, signal_in, num_points):
-        # implemented using numpy because not written previously for halo
-        spectrum_out = np.fft.fft(signal_in, num_points)
+    def fft(self, signal_in, num_points=1024):
+        # written with spiral software in c
+        #  double* fft_1024(double *X){
+        # // set up Y, 2048 vals, pair of real and complex for each "point"
+        # double* Y = (double*)malloc(2048 * sizeof(double));
+
+        # input type is pointer to double array
+        self.kernels.fft_1024.argtypes = [ctypes.POINTER(ctypes.c_double)]
+        
+        # output type is pointer to double array
+        self.kernels.fft_1024.restype = ctypes.POINTER(ctypes.c_double)
+
+        # convert input numpy signal in to ctypes pointer
+        signal_in_ctypes = signal_in.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+
+        # call the function, get result pointer
+        result_ptr = self.kernels.fft_1024(signal_in_ctypes)
+
+        # convert the result pointer to a numpy array
+        result_spectrum = np.ctypeslib.as_array(result_ptr, shape=(2048,))
+
+        # free the memory
+        spectrum_out = [val for val in result_spectrum]
+        self.libc.free(result_ptr)
+
         return spectrum_out
 
     def threshold(self, value, low_bound, high_bound):
-        if (high_bound >= value >= low_bound):
-            return 1
-        else:
-            return 0
+        
+        # converting inputs into strongly typed values for the c function
+        self.kernels.threshold.argtypes = [
+            ctypes.c_double,
+            ctypes.c_double,
+            ctypes.c_double
+        ]
+        self.kernels.threshold.restype = ctypes.c_bool
+
+        # calling function
+        result = self.kernels.threshold(value, low_bound, high_bound)
+
+        return result
