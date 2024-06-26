@@ -1,1 +1,0 @@
-void            InitSPIRAL_BagList ();

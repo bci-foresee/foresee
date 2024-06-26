@@ -4,6 +4,9 @@ It is here essentially to provide a place to put work such as the FFT in C gener
 
 - FFT: https://www.spiral.net/doc/usermanual/examples/index.html#basic-ffts
 
+Get spiral-software-master from: https://github.com/spiral-software/spiral-software
+and then run
+
 To run sprial cd to spiral-software-master then
 
 ```sh
