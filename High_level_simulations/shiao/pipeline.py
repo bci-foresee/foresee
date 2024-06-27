@@ -63,7 +63,9 @@ class Pipeline:
         return spectrum_out
 
 
-    def bbf(self, signal_in, filter_vals, gain, num_points=1024):
+    def bbf(self, signal_in, filter_vals, gain, num_points=8000):
+        # 400Hz samples, 20s => 8000 points
+
         # input types
         self.kernels.butterworth_filter.argtypes = [ctypes.POINTER(ctypes.c_uint16),
                                                     ctypes.c_uint32,

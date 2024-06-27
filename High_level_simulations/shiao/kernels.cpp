@@ -200,7 +200,7 @@ extern "C" {
         // sending samples in 1 at a time
         // some history is kept in xv, yv for computation
         
-        //printf("filter_vals: %f %f %f %f %f %f %f %f %f %f\n", filter_vals[0], filter_vals[1], filter_vals[2], filter_vals[3], filter_vals[4], filter_vals[5], filter_vals[6], filter_vals[7], filter_vals[8], filter_vals[9]);
+        // printf("filter_vals: %f %f %f %f %f %f %f %f %f %f\n", filter_vals[0], filter_vals[1], filter_vals[2], filter_vals[3], filter_vals[4], filter_vals[5], filter_vals[6], filter_vals[7], filter_vals[8], filter_vals[9]);
 
         float sum = 0;
         for(uint32_t i = 0 ; i < size ; i++){
@@ -209,7 +209,8 @@ extern "C" {
                                     yv,
                                     filter_vals,
                                     gain);
-            // printf("running sum: %f\n", sum); <-- debugging shows how case 0.1-4 blows up to inf
+            // if (i % 100 == 0)
+            //     printf("running sum: %f\n", yv[10]); //<-- debugging shows how case 0.1-4 blows up to inf
             sum += temp * temp;
         }
         return sum;

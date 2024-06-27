@@ -44,11 +44,11 @@ def test_xcorr():
 def test_bbf():
     #dummy signal to sample
     def signal(x):
-        return 200*np.sin(x)
+        return 10*np.sin(x)
     
     #dummy data
     sample_rate = 400 #Hz, how many samples per second
-    num_samples = 1024 # how many samples fed into bbf <- may need to change
+    num_samples = 8000 # how many samples fed into bbf <- may need to change
 
     sample_window = (1/sample_rate) * num_samples # seconds, how much time the samples are taken over around 2.56 seconds
 
