@@ -63,19 +63,27 @@ class Pipeline:
         return spectrum_out
 
 
-    def bbf(self, signal_in, num_points=1024):
+    def bbf(self, signal_in, filter_vals, gain, num_points=1024):
         # input types
         self.kernels.butterworth_filter.argtypes = [ctypes.POINTER(ctypes.c_uint16),
-                                                    ctypes.c_uint32]
+                                                    ctypes.c_uint32,
+                                                    ctypes.POINTER(ctypes.c_double),
+                                                    ctypes.c_double]
         
         # output types - power of band
-        self.kernels.butterworth_filter.restype = ctypes.POINTER(ctypes.c_float)
+        self.kernels.butterworth_filter.restype = ctypes.c_float
 
         # convert input numpy signal in to ctypes pointer
         signal_in_ctypes = signal_in.ctypes.data_as(ctypes.POINTER(ctypes.c_uint16))
 
+        # convert input numpy filter values to ctypes pointer
+        filter_vals_ctypes = filter_vals.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+
         # call the function, get result power float
-        result = self.kernels.butterworth_filter(signal_in_ctypes, num_points)
+        result = self.kernels.butterworth_filter(signal_in_ctypes, 
+                                                 num_points,
+                                                 filter_vals_ctypes,
+                                                 gain)
 
         #return 
         return result

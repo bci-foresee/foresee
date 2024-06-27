@@ -89,7 +89,7 @@ static double fr(int m, int i, double r) {
 
 // helper for bbf --------------------------------------------------------------------
 
-static float filterloop(uint32_t next_input_value, float* xv, float* yv, float* filter_vals, double gain)
+static float filterloop(uint16_t next_input_value, float* xv, float* yv, double* filter_vals, double gain)
 { 
     { 
         xv[0] = xv[1];
@@ -186,29 +186,30 @@ extern "C" {
         * @param size The size of the input sample.
         * @return The filtered value.
     */
-    float butterworth_filter(uint16_t * sample, uint32_t size){
+    float butterworth_filter(uint16_t * sample, uint32_t size, double* filter_vals, double gain){
+
+        //safety checks
+        if (sample == NULL || size == 0) {
+            return 0;
+        }
 
         //#define NZEROS 10
         //#define NPOLES 10
         static float xv[10+1] = {0}, yv[10+1] = {0};
-
-        // initial test filter values, from the halo github 
-        static float filter_vals[] = {-0.0723156691, 0.6368872577, 
-                                      -2.8198218361, 8.0640603736,
-                                      -16.3818055300, 24.6025699180,
-                                      -27.6694600560, 23.0616757780,
-                                      -13.6958889160, 5.2541969233};
-
-        //test initial gain 
-        static double gain[] = {3.049509079e+02};
         
+        // sending samples in 1 at a time
+        // some history is kept in xv, yv for computation
+        
+        //printf("filter_vals: %f %f %f %f %f %f %f %f %f %f\n", filter_vals[0], filter_vals[1], filter_vals[2], filter_vals[3], filter_vals[4], filter_vals[5], filter_vals[6], filter_vals[7], filter_vals[8], filter_vals[9]);
+
         float sum = 0;
         for(uint32_t i = 0 ; i < size ; i++){
             float temp = filterloop(sample[i], 
                                     xv, 
                                     yv,
                                     filter_vals,
-                                    gain[0]);
+                                    gain);
+            // printf("running sum: %f\n", sum); <-- debugging shows how case 0.1-4 blows up to inf
             sum += temp * temp;
         }
         return sum;

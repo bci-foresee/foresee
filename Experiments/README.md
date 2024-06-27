@@ -72,3 +72,5 @@ commands, assuming 400Hz sampling rate:
 ```
 
 generated code is in ./mkfilter-butterworth.c
+
+- issues with sample window size. Look at test_shiao bbf. 400Hz and 1024 samples implies a window size of 2.56s. Paper says window size of 20s. Need to add more samples?
