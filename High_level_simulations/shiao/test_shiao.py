@@ -3,6 +3,7 @@ import ctypes
 import pytest
 import numpy as np
 from pipeline import Pipeline
+from scipy.signal import butter, filtfilt
 
 '''
 To run the tests:
@@ -44,7 +45,8 @@ def test_xcorr():
 def test_bbf():
     #dummy signal to sample
     def signal(x):
-        return 10*np.sin(x)
+        # return np.ones_like(x)
+        return 10*np.sin(x) + 5*np.sin(2*x) + 2*np.sin(3*x) + 1*np.sin(4*x)
     
     #dummy data
     sample_rate = 400 #Hz, how many samples per second
@@ -57,8 +59,26 @@ def test_bbf():
     signal_samples = signal(sample_space)
     signal_samples = np.array(signal_samples, dtype=np.uint16)
 
+    # print("...signal_samples...")
+    # print(len(signal_samples))
+    # print(signal_samples[:10])
+
     # choose gain, filter vals
-    gain, filter_vals = give_me_bbf_values("0.1-4")
+    chosen_bandpass = "30-80"
+    gain, filter_vals = give_me_bbf_values(chosen_bandpass)
+
+    #printing all the inputs that go in
+    print("...inputs...")
+    print("chosen band: ", chosen_bandpass)
+    print("signal_in: ", signal_samples[:10], "...")
+    print("filter_vals[0,1]: ", filter_vals[0:2])
+    print("filter_vals[2,3]: ", filter_vals[2:4])
+    print("filter_vals[4,5]: ", filter_vals[4:6])
+    print("filter_vals[6,7]: ", filter_vals[6:8])
+    print("filter_vals[8,9]: ", filter_vals[8:10])
+    print("gain: ", gain)
+    print("num_points: ", num_samples)
+    print()
 
     # calling the c function, result is power in a certain band (need to implement band part)
     result = pipeline.bbf(signal_in=signal_samples, 
@@ -66,20 +86,50 @@ def test_bbf():
                           gain=gain,
                           num_points=num_samples)
 
-    print(result)
+    #printing the output:
+    print("...output...")
+    print("result: ", result)
+    print()
 
-    assert result == result - 1 + 1 , "Test is failing on purpose right now (I made input big)"
+    print("...test 2 bbf...")
+    out = expected_bbf(signal_samples)
+    print(out)
+    print("30-80: ", out[4])
+
+    assert result == result - 1 + 1 , "Test not implemented"
 
 def give_me_bbf_values(filter_range):
-    if filter_range == "0.1-4":
+    if filter_range == "30-80":
         filter_vals = np.array([
-            -0.8201374968, 8.3635427995,
-            -38.3822761210,  104.3882390000,
-            -186.3227066700, 228.0589411300,
-            -193.8606607400, 113.0053670900,
-            -43.2315892410,  9.8012802461], dtype=np.double)
-        gain =  5.890713166e+08
+             -0.0723156691,  0.6368872577,
+             -2.8198218361,  8.0640603736,
+            -16.3818055300, 24.6025699180,
+            -27.6694600560, 23.0616757780,
+            -13.6958889160,  5.2541969233
+            ], dtype=np.double)
+        gain =  3.049509079e+02
         return (gain, filter_vals)
+    
+def expected_bbf(signal):
+    SAMPLING_FREQ = 400
+    BANDS = [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)]
+
+    result = []
+    for band in BANDS:
+        order = 5
+        low_freq = band[0] / (SAMPLING_FREQ / 2.0) # why is it div by 2?
+        high_freq = band[1] / (SAMPLING_FREQ / 2.0)
+        # low_freq = band[0] / (SAMPLING_FREQ)
+        # high_freq = band[1] / (SAMPLING_FREQ)
+        # print("low_freq: ", low_freq)
+        # print("high_freq: ", high_freq)
+        b, a = butter(order, [low_freq, high_freq], btype="bandpass")
+        # print(b[10])
+        filtered_signal = filtfilt(b, a, signal)
+        # print(len(filtered_signal))
+        power_est = np.dot(filtered_signal, filtered_signal)
+        result.append(power_est)
+    return result
 
 # FFT --------------------------------------------------------------------------------------------
 # now in c!
