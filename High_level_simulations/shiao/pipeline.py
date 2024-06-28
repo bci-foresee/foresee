@@ -35,7 +35,7 @@ class Pipeline:
         self.libc.free(results_ptr)
         return correlations
 
-    def fft(self, signal_in, num_points=1024):
+    def fft(self, signal_in, num_points=8000):
         # written with spiral software in c
         #  double* fft_1024(double *X){
         # // set up Y, 2048 vals, pair of real and complex for each "point"
@@ -43,18 +43,26 @@ class Pipeline:
 
         # input type is pointer to double array
         self.kernels.fft_1024.argtypes = [ctypes.POINTER(ctypes.c_double)]
+        self.kernels.fft_8000.argtypes = [ctypes.POINTER(ctypes.c_double)]
         
         # output type is pointer to double array
         self.kernels.fft_1024.restype = ctypes.POINTER(ctypes.c_double)
+        self.kernels.fft_8000.restype = ctypes.POINTER(ctypes.c_double)
 
         # convert input numpy signal in to ctypes pointer
         signal_in_ctypes = signal_in.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
 
         # call the function, get result pointer
-        result_ptr = self.kernels.fft_1024(signal_in_ctypes)
+        if num_points == 1024:
+            result_ptr = self.kernels.fft_1024(signal_in_ctypes)
+            # convert the result pointer to a numpy array
+            result_spectrum = np.ctypeslib.as_array(result_ptr, shape=(2048,))
 
-        # convert the result pointer to a numpy array
-        result_spectrum = np.ctypeslib.as_array(result_ptr, shape=(2048,))
+        elif num_points == 8000:
+            result_ptr = self.kernels.fft_8000(signal_in_ctypes)
+            # convert the result pointer to a numpy array
+            result_spectrum = np.ctypeslib.as_array(result_ptr, shape=(16000,))
+
 
         # free the memory
         spectrum_out = [val for val in result_spectrum]

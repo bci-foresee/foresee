@@ -132,7 +132,7 @@ def expected_bbf(signal):
     return result
 
 # FFT --------------------------------------------------------------------------------------------
-# now in c!
+
 def test_fft_1024():
     # dummy data
     # 1024 points, so 2048 values (pair of real and complex for each "point")
@@ -144,8 +144,6 @@ def test_fft_1024():
     
     # calling the c function
     result = pipeline.fft(signal_in, num_points=1024)
-
-    
 
     # further testing code
     real_out = [result[2*i] for i in range(1024)]
@@ -163,6 +161,35 @@ def test_fft_1024():
     # test
     assert np.allclose(magnitude, np.abs(ideal_out)), f"Expected {np.abs(ideal_out)}, but got {magnitude}"
 
+
+def test_fft_8000():
+    # dummy data
+    # 8000 points, so 16000 values (pair of real and complex for each "point")
+    num_points = 8000
+    signal_in = np.zeros(num_points*2, dtype=np.double)
+
+    for i in range(num_points):
+        signal_in[2 * i] = 100 # real part of the signal
+        signal_in[2*i + 1] = 0 # imaginary part of the signal
+    
+    # calling the c function
+    result = pipeline.fft(signal_in, num_points=num_points)
+
+    # further testing code
+    real_out = [result[2*i] for i in range(num_points)]
+    imag_out = [result[2*i + 1] for i in range(num_points)]
+
+    # get magnitude of output
+    magnitude = np.zeros(num_points, dtype=np.double)
+    for i in range(num_points):
+        magnitude[i] = np.sqrt(real_out[i]**2 + imag_out[i]**2)
+
+    # "ideal" using np.fft.fft
+    real_signal_in = [signal_in[2*i] for i in range(num_points)]
+    ideal_out = np.fft.fft(real_signal_in)
+
+    # test
+    assert np.allclose(magnitude, np.abs(ideal_out)), f"Expected {np.abs(ideal_out)}, but got {magnitude}"
 
 # SVM --------------------------------------------------------------------------------------------
 def test_svm_predict():
