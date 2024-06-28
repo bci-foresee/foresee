@@ -18,7 +18,29 @@ pytest -v test_shiao.py
 pipeline = Pipeline(kernel_lib='libkernels.so')
 
 # XCORR ------------------------------------------------------------------------------------------
-def test_xcorr():
+def test_xcorr_basic():
+    # dummy data
+    inputs = np.array([
+        [1, 2, 3, 4, 5],
+        [1, 2, 3, 4, 6],
+        [1, 2, 3, 4, 7],
+    ], dtype=np.uint16)
+    num_channels, num_samples = inputs.shape
+
+    # calling the c function
+    result = pipeline.cross_correlation(inputs, num_channels, num_samples)
+
+    # Use numpy's dot product for expected result
+    expected_result = [
+        np.dot(inputs[0], inputs[1]), 
+        np.dot(inputs[0], inputs[2]), 
+        np.dot(inputs[1], inputs[2]), 
+    ]
+
+    # Allow for floating-point precision errors
+    assert np.allclose(result, expected_result), f"Expected {expected_result}, but got {result}"
+
+def test_xcorr_8000():
     # dummy data
     inputs = np.array([
         [1, 2, 3, 4, 5],
