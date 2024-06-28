@@ -46,6 +46,8 @@ def test_seizure_pipeline():
 
     # bbf --------------------------------------------------------------------------------------------
 
+    # note look at fix for setting inf/nan values to 0
+
     bbf_power_features = bbf(sampled_signals=sampled_signals,
                              sample_freq=sample_freq, 
                              berger_bands=berger_bands, 
@@ -55,12 +57,40 @@ def test_seizure_pipeline():
 
     xcorr_features = xcorr(sampled_signals=sampled_signals, 
           num_channels=num_channels, 
-          num_samples=num_samples, 
+          num_samples=num_samples,
           saveGraphs=True)
     
-    print(xcorr_features[0:10])
+    # data manipulation -------------------------------------------------------------------------------
 
-    # xcorr_features = xcorr()
+    fft_power_features_arr = np.array(fft_power_features)
+    bbf_power_features_arr = np.array(bbf_power_features)
+    xcorr_features_arr = np.array(xcorr_features)
+    
+    fft_features_flat = fft_power_features_arr.flatten()
+    bbf_features_flat = bbf_power_features_arr.flatten()
+    xcorr_features_flat = xcorr_features_arr.flatten()
+
+    # 312 features in one array
+    features_arr = np.concatenate((fft_features_flat, bbf_features_flat, xcorr_features_flat))
+    
+    # svm ---------------------------------------------------------------------------------------------
+
+    weights = np.random.rand(312)
+    bias = np.random.rand(1)
+    svm_output = svm(features=features_arr, 
+                     weights=weights, 
+                     bias=bias)
+
+    # thr ---------------------------------------------------------------------------------------------
+    
+    upper_bound = 1
+    lower_bound = 0
+    thr_output = thr(val=svm_output, 
+                     upper_bound=upper_bound, 
+                     lower_bound=lower_bound)
+    
+    print(thr_output)
+    print(svm_output)
 
 # sampling input ieeg signals --------------------------------------------------------------------------
 def sample_signals(num_signals, sample_window, num_samples, saveGraphs=False):
@@ -175,7 +205,11 @@ def bbf(sampled_signals, sample_freq, berger_bands, saveGraphs=False):
         for lowcut, highcut in berger_bands:
             filtered_signal = butter_bandpass_filter(samples, lowcut, highcut, sample_freq, order=5)
             power = np.sum( np.square(filtered_signal) )
+
+            if np.isinf(power) or np.isnan(power): # this is a fix
+                power = 0
             power_bands.append(power)
+
             #print(f"Power in band {lowcut}-{highcut} Hz: {np.mean(power)}")
 
         bbf_power_features.append(power_bands)
@@ -191,12 +225,49 @@ def bbf(sampled_signals, sample_freq, berger_bands, saveGraphs=False):
             plt.ylabel('Power')
             plt.grid()
             plt.savefig('plots/seizure_pipe/bbf_power_in_berger_bands.png')
+    
+    return bbf_power_features
 
 # xcorr --------------------------------------------------------------------------------------------
 def xcorr(sampled_signals, num_channels, num_samples, saveGraphs=False):
+    correlations = []
+
+    # Calculate normalized cross-correlations
+    for i in range(num_channels):
+        for j in range(i + 1, num_channels):
+            corr = np.correlate(sampled_signals[i], sampled_signals[j], mode='valid')[0]
+            norm_corr = corr #/ (num_samples * np.std(sampled_signals[i]) * np.std(sampled_signals[j]))
+            correlations.append(norm_corr)
+
+    # Convert the correlations list into a correlation matrix
+    def create_correlation_matrix(correlations, num_channels):
+        corr_matrix = np.zeros((num_channels, num_channels))
+        idx = 0
+        for i in range(num_channels):
+            for j in range(i + 1, num_channels):
+                corr_matrix[i, j] = correlations[idx]
+                idx += 1
+        corr_matrix += corr_matrix.T  # Make it symmetric
+        return corr_matrix
+    
+    if saveGraphs:
+        # Create the correlation matrix
+        corr_matrix = create_correlation_matrix(correlations, num_channels)
+
+        # Plot the correlation matrix
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(corr_matrix, annot=False, fmt=".2f", cmap="coolwarm", square=True)
+        plt.title('Correlation Matrix')
+        plt.xlabel('Channel')
+        plt.ylabel('Channel')
+        plt.savefig('plots/seizure_pipe/xcorr_corr_matrix.png')
+
+    return correlations
+
+def xcorr_c(sampled_signals, num_channels, num_samples, saveGraphs=False):
 
     # NOTE: normalization would be helpful.
-
+    # seems to do weird things.
     def create_correlation_matrix(feature_vector, num_channels):
         # Initialize an empty correlation matrix
         corr_matrix = np.zeros((num_channels, num_channels))
@@ -233,7 +304,21 @@ def xcorr(sampled_signals, num_channels, num_samples, saveGraphs=False):
     # return
     return xcorr_features
 
+# svm ---------------------------------------------------------------------------------------------
+def svm(features, weights, bias):
+    # dot product of features and weights
+    wx = np.dot(features, weights)
+    # add bias
+    wxb = wx + bias
+    return wxb
    
+# thr ---------------------------------------------------------------------------------------------
+def thr(val, upper_bound, lower_bound):
+    if (val >= lower_bound) and (val <= upper_bound):
+        return 1
+    else:
+        return 0
+    
 test_seizure_pipeline()
 # note normalise all of these algorithms
 # using np.mean seems more reasonable.
