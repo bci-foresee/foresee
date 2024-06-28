@@ -1,5 +1,3 @@
-
-
 # this is for testing the entire seizure pipeline
 
 # import os

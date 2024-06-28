@@ -1,5 +1,4 @@
 # test_dff.py
-
 import math
 
 import cocotb
@@ -96,7 +95,7 @@ async def fft_test(dut):
         cycles_run += 1
         is_data_ready = LogicArray(dut.next_out.value) == LogicArray("1") # checking if data ready, but also able to deal with "X" and "Z" outputs
 
-        debug_print(cycles_run, dut)
+        # debug_print(cycles_run, dut)
 
         await RisingEdge(dut.clk)
 
@@ -113,21 +112,23 @@ async def fft_test(dut):
         await RisingEdge(dut.clk)
         cycles_run += 1
 
-        real_output.append(dut.Y0.value)
-        imag_output.append(dut.Y1.value)
-        real_output.append(dut.Y2.value)
-        imag_output.append(dut.Y3.value)
-        real_output.append(dut.Y4.value)
-        imag_output.append(dut.Y5.value)
-        real_output.append(dut.Y6.value)
-        imag_output.append(dut.Y7.value)
+        real_output.append(dut.Y0.value.integer)
+        imag_output.append(dut.Y1.value.integer)
+        real_output.append(dut.Y2.value.integer)
+        imag_output.append(dut.Y3.value.integer)
+        real_output.append(dut.Y4.value.integer)
+        imag_output.append(dut.Y5.value.integer)
+        real_output.append(dut.Y6.value.integer)
+        imag_output.append(dut.Y7.value.integer)
         #print(f"cycles run: {cycles_run}, dut.next_out.value: {dut.next_out.value}, next: {dut.next.value}")
-        debug_print(cycles_run, dut)
+        # debug_print(cycles_run, dut)
 
     print(len(real_output))
 
     await RisingEdge(dut.clk)
 
     maxRealVal = max(real_output)
+
+    print(maxRealVal)
 
     assert maxRealVal > 0, f"maxRealVal was {maxRealVal} on the {cycles_run}th cycle"
