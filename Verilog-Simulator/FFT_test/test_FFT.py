@@ -1,9 +1,5 @@
 # test_dff.py
-
 import math
-
-import matplotlib.pyplot as plt
-import numpy as np
 
 import cocotb
 from cocotb.clock import Clock
@@ -32,13 +28,6 @@ def setInputs(dut, input_real, input_imag):
 
     # print(dut.X0.value)
 
-def frequency_spectrum_mag(real_output, imag_output):
-    N = len(real_output)
-    mag = []
-    for i in range(N):
-        mag.append( math.sqrt( real_output[i]**2 + imag_output[i]**2 ) )
-    return mag
-
 def debug_print(cycles, dut):
     print(f"cycles run: {cycles}, reset: {dut.reset.value}, dut.next_out.value: {dut.next_out.value}, Y0: {dut.Y0.value}")
 
@@ -63,16 +52,9 @@ async def fft_test(dut):
     dut.next.value = 0 # no new input data coming in, so flag = 0
     is_data_ready = False # flag set by dut.next_out
     cycles_run = 0 # counter for cycles
-
-    input_real = []
-    input_imag = []
-
-    for i in range(1024):
-        input_real.append(100)
-        input_imag.append(0)
-    # input_real = [100, 100, 100, 100]
-    # input_imag = [0, 0, 0, 0]
-    setInputs(dut, input_real[0:4], input_imag[0:4]) # set the input data
+    input_real = [100, 100, 100, 100]
+    input_imag = [0, 0, 0, 0]
+    setInputs(dut, input_real, input_imag) # set the input data
     # await Timer(20, units="ns")
 
     # release the reset
@@ -98,7 +80,7 @@ async def fft_test(dut):
 
     await RisingEdge(dut.clk) # wait for rising edge
 
-    setInputs(dut, input_real[0:4], input_imag[0:4]) # set the input data
+    setInputs(dut, input_real, input_imag) # set the input data
 
     # await RisingEdge(dut.clk) # wait for rising edge
 
@@ -108,8 +90,8 @@ async def fft_test(dut):
 
     # loop to run fft until output is ready
     while not is_data_ready:
-        await FallingEdge(dut.clk) # this was it <----------------- when to latch data
-        setInputs(dut, input_real[0:4], input_imag[0:4])
+        await FallingEdge(dut.clk) # this was it!!!! <----------------- when to latch data
+        setInputs(dut, input_real, input_imag)
         cycles_run += 1
         is_data_ready = LogicArray(dut.next_out.value) == LogicArray("1") # checking if data ready, but also able to deal with "X" and "Z" outputs
 
@@ -130,41 +112,23 @@ async def fft_test(dut):
         await RisingEdge(dut.clk)
         cycles_run += 1
 
-        real_output.append(dut.Y0.value)
-        imag_output.append(dut.Y1.value)
-        real_output.append(dut.Y2.value)
-        imag_output.append(dut.Y3.value)
-        real_output.append(dut.Y4.value)
-        imag_output.append(dut.Y5.value)
-        real_output.append(dut.Y6.value)
-        imag_output.append(dut.Y7.value)
+        real_output.append(dut.Y0.value.integer)
+        imag_output.append(dut.Y1.value.integer)
+        real_output.append(dut.Y2.value.integer)
+        imag_output.append(dut.Y3.value.integer)
+        real_output.append(dut.Y4.value.integer)
+        imag_output.append(dut.Y5.value.integer)
+        real_output.append(dut.Y6.value.integer)
+        imag_output.append(dut.Y7.value.integer)
         #print(f"cycles run: {cycles_run}, dut.next_out.value: {dut.next_out.value}, next: {dut.next.value}")
         # debug_print(cycles_run, dut)
 
+    print(len(real_output))
+
     await RisingEdge(dut.clk)
 
-    # now do plotting:
-
-    print( "Len real_in: " + str( len(input_real) ) )
-    print( "Len real_out: " + str( len(real_output) ) )
-
-    plt.plot(input_real)
-    plt.xlabel('Sample')
-    plt.ylabel('Signal Value')
-    plt.title('Input Signal (real part)')
-    plt.ylim(0, 120)  # Set y-axis limit from 0 to 120
-    plt.savefig('/workspaces/aloha-verilog/SCALO_sim/FFT_test/plots/input_plot.png')
-    plt.close()
-
-    frequency_amplitudes = frequency_spectrum_mag(real_output, imag_output)
-
-    plt.plot(frequency_amplitudes)
-    plt.xlabel('Freq/Sample (check)')
-    plt.ylabel('Amplitude')
-    plt.title('Frequency Spectrum')
-    plt.savefig('/workspaces/aloha-verilog/SCALO_sim/FFT_test/plots/frequency_spectrum.png')
-    plt.close()
-
     maxRealVal = max(real_output)
+
+    print(maxRealVal)
 
     assert maxRealVal > 0, f"maxRealVal was {maxRealVal} on the {cycles_run}th cycle"
