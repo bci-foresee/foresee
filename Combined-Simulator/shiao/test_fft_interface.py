@@ -11,13 +11,14 @@ from cocotb.types import LogicArray
 async def test_fft_verilog(dut):
     # pipe setup -------------------------------------------------------------------------------------
     # Sample information
-    sample_freq = 400 # Hz
     num_channels = 16 # 1 for now, will be 16 in the future.
-    sample_window = 20 # seconds
-
-    # num_samples = sample_freq * sample_window # how many samples in 20 s window at 400hz
-    num_samples = 1024 # 1024 samples for now <--- test val
-
+    # 1024 samples and 400Hz =>
+    num_samples = 1024 # how many samples in window
+    sample_rate = 400 # sample rate in Hz
+    sample_window = num_samples / sample_rate # how long the window is in seconds
+    
+    sample_freq = sample_rate # sample frequency in Hz (how many samples/second)
+    
     nyquist_freq = sample_freq / 2 # Nyquist frequency, max frequency that can be represented in the signal
     
     # berger bands
@@ -164,15 +165,31 @@ async def fft_verilog(dut,
     for i in range(len(real_output)):
         output_spectrum[i] = np.sqrt(np_real_output[i]**2 + np_imag_output[i]**2)
 
+    positive_freqs = output_spectrum[:len(output_spectrum)//2]
+    sample_spacing = 1/sample_freq # how much time between samples
+    freq_bins = np.fft.fftfreq(num_samples, sample_spacing) # provide a frequency for each index of the fft output
+    positive_freq_bins = freq_bins[:num_samples // 2] # only positive frequencies bins
+
     # plotting the output spectrum
     if saveGraphs:
+        # Plotting the magnitude spectrum
         plt.figure(figsize=(12, 6))
-        plt.plot(output_spectrum)
-        plt.title('Output Spectrum')
-        plt.xlabel('Frequency')
+        # x-axis is the frequency bins,
+        plt.plot(positive_freq_bins, np.abs(positive_freqs))  # Plot only positive frequencies
+        plt.axvline(x=nyquist_freq, color='r', linestyle='--', label='Nyquist Frequency')
+        plt.title('Magnitude Spectrum')
+        plt.xlabel('Frequency (Hz)')
         plt.ylabel('Magnitude')
+        plt.legend()
         plt.grid()
-        plt.savefig('plots/seizure_pipe/output_spectrum')
+        plt.savefig('plots/seizure_pipe/fft_magnitude_spectrum.png')
+        # plt.figure(figsize=(12, 6))
+        # plt.plot(output_spectrum)
+        # plt.title('Output Spectrum')
+        # plt.xlabel('Frequency')
+        # plt.ylabel('Magnitude')
+        # plt.grid()
+        # plt.savefig('plots/seizure_pipe/output_spectrum')
 
     return output_spectrum
 

@@ -16,11 +16,14 @@ def test_seizure_pipeline():
 
     # pipe setup -------------------------------------------------------------------------------------
     # Sample information
-    sample_freq = 400 # Hz
     num_channels = 16 # 1 for now, will be 16 in the future.
-    sample_window = 20 # seconds
-
-    num_samples = sample_freq * sample_window # how many samples in 20 s window at 400hz
+    # 1024 samples and 400Hz =>
+    num_samples = 1024 # how many samples in window
+    sample_rate = 400 # sample rate in Hz
+    sample_window = num_samples / sample_rate # how long the window is in seconds
+    
+    sample_freq = sample_rate # sample frequency in Hz (how many samples/second)
+    
     nyquist_freq = sample_freq / 2 # Nyquist frequency, max frequency that can be represented in the signal
     
     # berger bands
