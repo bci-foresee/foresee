@@ -13,7 +13,7 @@ async def test_fft_verilog(dut):
     # Sample information
     num_channels = 16 # 1 for now, will be 16 in the future.
     # 1024 samples and 400Hz =>
-    num_samples = 1024 # how many samples in window
+    num_samples = 8000 # how many samples in window
     sample_rate = 400 # sample rate in Hz
     sample_window = num_samples / sample_rate # how long the window is in seconds
     
@@ -45,6 +45,7 @@ async def test_fft_verilog(dut):
 
     assert 1 == 1
 
+# fft verilog -----------------------------------------------------------------------------------------
 async def fft_verilog(dut,
                       sampled_signals, 
                       num_samples, 
@@ -52,6 +53,14 @@ async def fft_verilog(dut,
                       nyquist_freq, 
                       berger_bands,
                       saveGraphs=False):
+    
+    # zero pad the sampled signals to 8192 samples
+    for i in range(len(sampled_signals)):
+        sampled_signals[i] = np.pad(sampled_signals[i], (0, 8192 - len(sampled_signals[i])), 'constant', constant_values=(0, 0))
+
+    num_samples = 8192
+
+    print(f"sampled signal: {sampled_signals[0][0:10]}")
     
     # helper functions ---------
 
@@ -61,6 +70,9 @@ async def fft_verilog(dut,
     
     def setInputs(dut, input_real, input_imag):
         # 4 concurrent inputs
+
+        # print(f"full val: {input_real[0]}, int val: {int(input_real[0])}") # issues here...
+
         dut.fft_X0.value = int(input_real[0])
         dut.fft_X1.value = int(input_imag[0])
         dut.fft_X2.value = int(input_real[1])
@@ -143,7 +155,7 @@ async def fft_verilog(dut,
     imag_output = []
 
     # read the output, 256 cycles for 1024 values
-    for i in range(256):
+    for i in range(2048):
         await RisingEdge(dut.fft_clk)
         cycles_run += 1
 
@@ -164,8 +176,14 @@ async def fft_verilog(dut,
 
     for i in range(len(real_output)):
         output_spectrum[i] = np.sqrt(np_real_output[i]**2 + np_imag_output[i]**2)
+    
+    # midpoint = len(output_spectrum) // 2
 
-    positive_freqs = output_spectrum[:len(output_spectrum)//2]
+    # reverse upper half
+    # output_spectrum[:midpoint] = output_spectrum[:midpoint][::-1]
+
+    positive_freqs = output_spectrum[len(output_spectrum)//2:][::-1]
+
     sample_spacing = 1/sample_freq # how much time between samples
     freq_bins = np.fft.fftfreq(num_samples, sample_spacing) # provide a frequency for each index of the fft output
     positive_freq_bins = freq_bins[:num_samples // 2] # only positive frequencies bins
@@ -175,7 +193,7 @@ async def fft_verilog(dut,
         # Plotting the magnitude spectrum
         plt.figure(figsize=(12, 6))
         # x-axis is the frequency bins,
-        plt.plot(positive_freq_bins, np.abs(positive_freqs))  # Plot only positive frequencies
+        plt.plot(positive_freq_bins, positive_freqs)  # Plot only positive frequencies
         plt.axvline(x=nyquist_freq, color='r', linestyle='--', label='Nyquist Frequency')
         plt.title('Magnitude Spectrum')
         plt.xlabel('Frequency (Hz)')
@@ -183,13 +201,15 @@ async def fft_verilog(dut,
         plt.legend()
         plt.grid()
         plt.savefig('plots/seizure_pipe/fft_magnitude_spectrum.png')
-        # plt.figure(figsize=(12, 6))
-        # plt.plot(output_spectrum)
-        # plt.title('Output Spectrum')
-        # plt.xlabel('Frequency')
-        # plt.ylabel('Magnitude')
-        # plt.grid()
-        # plt.savefig('plots/seizure_pipe/output_spectrum')
+
+
+        plt.figure(figsize=(12, 6))
+        plt.plot(freq_bins, output_spectrum)
+        plt.title('Output Spectrum')
+        plt.xlabel('Frequency')
+        plt.ylabel('Magnitude')
+        plt.grid()
+        plt.savefig('plots/seizure_pipe/output_spectrum')
 
     return output_spectrum
 
@@ -199,12 +219,14 @@ def sample_signals(num_signals, sample_window, num_samples, saveGraphs=False):
 
     # define a sampled function, and the sample
     def signal1(t):
-        frequencies = [10, 20, 60, 125]
-        amplitudes =  [5,  1,  2,  3]
+        frequencies = [10, 50, 80, 125]
+        amplitudes =  [50,  15,  15,  5]
+        # frequencies = [50, 100]
+        # amplitudes =  [5, 10]
         returnSignal = 0
         for i in range(len(frequencies)):
-            returnSignal += amplitudes[i] * np.sin(2*np.pi*frequencies[i]*t) 
-        return returnSignal
+            returnSignal += amplitudes[i] * np.sin(2*np.pi*frequencies[i]*t)  
+        return (returnSignal)
     
     def randomvals(t):
         return np.ones_like(t)
@@ -223,6 +245,16 @@ def sample_signals(num_signals, sample_window, num_samples, saveGraphs=False):
                 plt.ylabel('Amplitude')
                 plt.grid()
                 plt.savefig('plots/seizure_pipe/sampled_signal.png')
+
+                # also printing int converted graph
+                int_sampled_signal = [int(sampled_signals[0][i]) for i in range(len(sampled_signals[0]))]
+                plt.figure(figsize=(12, 6))
+                plt.plot(x, int_sampled_signal)
+                plt.title('Sampled Signal int conversion')
+                plt.xlabel('Time (s)')
+                plt.ylabel('Amplitude')
+                plt.grid()
+                plt.savefig('plots/seizure_pipe/sampled_signal_int.png')
         else:
             sampled_signals.append(randomvals(x))
 

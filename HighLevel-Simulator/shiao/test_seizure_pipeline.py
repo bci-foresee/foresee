@@ -18,7 +18,7 @@ def test_seizure_pipeline():
     # Sample information
     num_channels = 16 # 1 for now, will be 16 in the future.
     # 1024 samples and 400Hz =>
-    num_samples = 1024 # how many samples in window
+    num_samples = 8000 # how many samples in window
     sample_rate = 400 # sample rate in Hz
     sample_window = num_samples / sample_rate # how long the window is in seconds
     
@@ -100,6 +100,8 @@ def sample_signals(num_signals, sample_window, num_samples, saveGraphs=False):
     def signal1(t):
         frequencies = [10, 20, 60, 125]
         amplitudes =  [5,  1,  2,  3]
+        # frequencies = [50]
+        # amplitudes =  [5]
         returnSignal = 0
         for i in range(len(frequencies)):
             returnSignal += amplitudes[i] * np.sin(2*np.pi*frequencies[i]*t) 
@@ -154,6 +156,15 @@ def fft(sampled_signals, num_samples, sample_freq, nyquist_freq, berger_bands, s
 
         # if the first signal then plot stuff
         if (i == 0) and saveGraphs:
+            #Plotting the output spectrum
+            plt.figure(figsize=(12, 6))
+            plt.plot(freq_bins, np.abs(fft_output))
+            plt.title('Output Spectrum')
+            plt.xlabel('Frequency')
+            plt.ylabel('Magnitude')
+            plt.grid()
+            plt.savefig('plots/seizure_pipe/output_spectrum.png')
+
             # Plotting the magnitude spectrum
             plt.figure(figsize=(12, 6))
             # x-axis is the frequency bins,
