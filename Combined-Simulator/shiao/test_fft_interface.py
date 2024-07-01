@@ -219,10 +219,10 @@ def sample_signals(num_signals, sample_window, num_samples, saveGraphs=False):
 
     # define a sampled function, and the sample
     def signal1(t):
-        frequencies = [10, 50, 80, 125]
-        amplitudes =  [50,  15,  15,  5]
-        # frequencies = [50, 100]
-        # amplitudes =  [5, 10]
+        # frequencies = [10, 50, 80, 125]
+        # amplitudes =  [20,  15,  15,  5]
+        frequencies = [5]
+        amplitudes =  [20]
         returnSignal = 0
         for i in range(len(frequencies)):
             returnSignal += amplitudes[i] * np.sin(2*np.pi*frequencies[i]*t)  
