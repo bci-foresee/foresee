@@ -1,6 +1,0 @@
-<testsuites name="results">
-  <testsuite name="all" package="all">
-    <property name="random_seed" value="1719947082" />
-    <testcase name="test_fft_verilog" classname="pipeline" file="/workspaces/aloha-verilog/Combined-Simulator/shiao/pipeline.py" lineno="14" time="11.618987083435059" sim_time_ns="497184.001" ratio_time="42790.649256235476" />
-  </testsuite>
-</testsuites>

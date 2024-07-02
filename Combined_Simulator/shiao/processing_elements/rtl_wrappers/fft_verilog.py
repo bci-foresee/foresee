@@ -8,12 +8,13 @@ import math
 
 async def fft_verilog(dut,
                       sampled_signals, 
-                      num_samples, 
                       sample_freq, 
-                      nyquist_freq, 
                       berger_bands,
                       saveGraphs=False):
     
+    nyquist_freq = sample_freq / 2 # Nyquist frequency, max frequency that can be represented in the signal
+    num_samples = sampled_signals[0].shape[0]
+
     # zero pad the sampled signals to 8192 samples
     for i in range(len(sampled_signals)):
         sampled_signals[i] = np.pad(sampled_signals[i], (0, 8192 - len(sampled_signals[i])), 'constant', constant_values=(0, 0))
@@ -46,7 +47,7 @@ async def fft_verilog(dut,
     # setup --------------------
 
     # clock
-    fft_clk_freq = 15_700_000 # 15.7 MHz
+    fft_clk_freq = 100_000 # 15.7 MHz
     fft_clk_period = HzToPeriodNs(fft_clk_freq) # period in ns
 
     # starting the clock
@@ -160,7 +161,7 @@ async def fft_verilog(dut,
         plt.ylabel('Magnitude')
         plt.legend()
         plt.grid()
-        plt.savefig('plots/seizure_pipe/fft_magnitude_spectrum.png')
+        plt.savefig('plots/rtl_PEs/fft_magnitude_spectrum.png')
 
 
         plt.figure(figsize=(12, 6))
@@ -169,6 +170,6 @@ async def fft_verilog(dut,
         plt.xlabel('Frequency')
         plt.ylabel('Magnitude')
         plt.grid()
-        plt.savefig('plots/seizure_pipe/output_spectrum')
+        plt.savefig('plots/rtl_PEs/fft_output_spectrum')
 
     return output_spectrum

@@ -2,7 +2,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def xcorr_py(sampled_signals, num_channels, num_samples, saveGraphs=False):
+'''
+##################################
+
+This module takes in a list of sampled signals and calculates the cross-correlation between each pair of signals.
+
+Each xcorr value is then returned (ie 16 signals => 120 xcorr values)
+
+# Inputs
+- sampled_signals [np.array::float]     list of sampled signals
+- num_channels [int]                     number of channels to generate
+- saveGraphs [Bool]                      boolean determining if graphs are generated
+
+# Outputs
+- correlations [np.array::float]         list of cross-correlation values
+- corr_matrix [png]                      plot of the correlation matrix
+
+##################################
+'''
+
+def xcorr_py(sampled_signals, num_channels, saveGraphs=False):
     correlations = []
 
     # Calculate normalized cross-correlations
@@ -33,7 +52,7 @@ def xcorr_py(sampled_signals, num_channels, num_samples, saveGraphs=False):
         plt.title('Correlation Matrix')
         plt.xlabel('Channel')
         plt.ylabel('Channel')
-        plt.savefig('plots/seizure_pipe/xcorr_corr_matrix.png')
+        plt.savefig('plots/python_PEs/xcorr_corr_matrix.png')
 
     return correlations
 

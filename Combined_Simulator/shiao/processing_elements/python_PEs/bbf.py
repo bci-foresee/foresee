@@ -2,6 +2,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import butter, filtfilt
 
+'''
+##################################
+
+This module calculates the power in the Berger bands for each channel of the input signals.
+
+This provides time-domain dependent features for the SVM model.
+
+# Inputs
+- sampled_signals [np.array::float]     list of sampled signals
+- sample_freq [float]                   frequency of the samples taken (Hz)
+- berger_bands [List::Tuple]            list of tuples of the berger bands (Hz)
+- saveGraphs [Bool]                     boolean determining if graphs are generated
+
+# Outputs
+- bbf_power_features [np.array::float]  list of power estimates in the berger bands for each signal
+- power_in_berger_bands [png]           plot of the power in the berger bands
+
+##################################
+'''
+
 def bbf_py(sampled_signals, sample_freq, berger_bands, saveGraphs=False):
 
     def butter_bandpass(lowcut, highcut, fs, order=5):
@@ -47,6 +67,6 @@ def bbf_py(sampled_signals, sample_freq, berger_bands, saveGraphs=False):
             plt.xlabel('Band')
             plt.ylabel('Power')
             plt.grid()
-            plt.savefig('plots/seizure_pipe/bbf_power_in_berger_bands.png')
+            plt.savefig('plots/python_PEs/bbf_power_in_berger_bands.png')
     
     return bbf_power_features

@@ -1,10 +1,38 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def fft_py(sampled_signals, num_samples, sample_freq, nyquist_freq, berger_bands, saveGraphs=False):
+'''
+##################################
+
+This module takes in a sampled signal and performs the dft to provide a frequency domain representation of the signal.
+
+Then the power in the pre defined berger bands is estimated and returned.
+
+# Inputs
+- sampled_signals [np.array::float]     list of sampled signals
+- sample_freq [float]                   frequency of the samples taken (Hz)
+- berger_bands [List::Tuple]            list of tuples of the berger bands (Hz)
+- saveGraphs [Bool]                     boolean determining if graphs are generated
+
+# Outputs
+- fft_power_features [np.array::float]  list of power estimates in the berger bands for each signal
+- output_spectrum [png]                 plot of the output spectrum
+- magnitude_spectrum [png]              plot of the magnitude spectrum
+- power_in_berger_bands [png]           plot of the power in the berger bands
+
+##################################
+'''
+
+def fft_py(sampled_signals, 
+           sample_freq, 
+           berger_bands, 
+           saveGraphs=False):
 
     fft_power_features = []
     i = 0
+
+    nyquist_freq = sample_freq / 2 # Nyquist frequency, max frequency that can be represented in the signal
+    num_samples = sampled_signals[0].shape[0]
 
     for samples in sampled_signals:
         fft_output = np.fft.fft(samples)
@@ -34,7 +62,7 @@ def fft_py(sampled_signals, num_samples, sample_freq, nyquist_freq, berger_bands
             plt.xlabel('Frequency')
             plt.ylabel('Magnitude')
             plt.grid()
-            plt.savefig('plots/seizure_pipe/output_spectrum.png')
+            plt.savefig('plots/python_PEs/output_spectrum.png')
 
             # Plotting the magnitude spectrum
             plt.figure(figsize=(12, 6))
@@ -46,7 +74,7 @@ def fft_py(sampled_signals, num_samples, sample_freq, nyquist_freq, berger_bands
             plt.ylabel('Magnitude')
             plt.legend()
             plt.grid()
-            plt.savefig('plots/seizure_pipe/fft_magnitude_spectrum.png')
+            plt.savefig('plots/python_PEs/fft_magnitude_spectrum.png')
 
             # display power in berger bands
             plt.figure(figsize=(12, 6))
@@ -56,7 +84,7 @@ def fft_py(sampled_signals, num_samples, sample_freq, nyquist_freq, berger_bands
             plt.xlabel('Band')
             plt.ylabel('Power')
             plt.grid()
-            plt.savefig('plots/seizure_pipe/fft_power_in_berger_bands.png')
+            plt.savefig('plots/python_PEs/fft_power_in_berger_bands.png')
         i = i + 1
     
     return fft_power_features

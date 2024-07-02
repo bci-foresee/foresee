@@ -1,18 +1,60 @@
 # HALO/SCALO simulator
 
-**Table of contents**
-- [Overview](#overview)
-- [Python Simulator](#python-simulator)
-- [C Simulator](#c-verilator-simulator)
-
-## Overview
+## Introduction
 This is some software developed to help simulate the HALO/SCALO architecture. 
 
 Why? To allow for modular testing of the architecture which in turn should allow for rapid idea testing and development. 
 
 Furthermore, this should allow for quicker ideation -> simulation -> testing -> tapeout cycles.
 
-The general idea is to have verilog modules created that can be plugged in like lego, and then tested from a high level Python environment that lets you test out many things such as clock speeds, FIFO sizes, etc. Also, the Python environment allows for "ideal" functions to be created to test your verilog, ie I could test my FFT simply by doing an `assert FFT_out == np.FFT(data)` or something similar.
+The general idea is to make it as easy as possible to test different pipelines with minimal effort, in whichever language you want (Verilog, C or Python). This can allow for rapid ideation with Python/C and then a more detailed, hardware accurate simulation with Verilog.
+
+## Table of contents
+- [Introduction](#introduction)
+- [Simulator Overview](#simulator-overview)
+- [Environment Setup](#environment-setup)
+- ... to do
+
+## Simulator Overview
+
+The most up to date version of the Simulator can be seen in [./Combined_Simulator/shiao](./Combined_Simulator/shiao). This is an example pipeline that demonstrates what the simulator does and its structure with the seizure detection pipeline for the SCALO architecture.
+
+This tree below shows the important components of the simulator, although this tree is non-exhaustive. Each file/subdirectory here is related to a section of this document that explains what it does. This document is still a work in progress and will be updated as the simulator is developed.
+
+```
+.
+└── [shiao](./Combined_Simulator/shiao)
+    ├── Makefile
+    ├── pipeline.py
+    ├── plots
+    │   ├── python_PEs
+    │   ├── rtl_PEs
+    │   └── signal_gen
+    ├── processing_elements
+    │   ├── c_PEs
+    │   ├── python_PEs
+    │   ├── rtl_PEs
+    │   ├── rtl_toplevel
+    │   └── rtl_wrappers
+    ├── dev_tests
+    └── signal_gen
+        ├── simple_signal_gen.py
+        └── ...
+```
+
+## Environment Setup
+
+The simulator was developed in a GitHub Codespaces environment, which is a Linux based environment. The device information is shown below.
+
+`Linux codespaces 6.5.0-1022-azure #23~22.04.1-Ubuntu SMP x86_64 x86_64 x86_64 GNU/Linux`
+
+Furthermore, the simulator uses Python 3.10.14 as its interface. There are a few dependencies that need to be installed to run the simulator. The dependencies are in the [environment.yml](./environment.yml) file. You can easily create an identical conda environment by running the following command. This should get you set up.
+
+```sh
+conda env create -f environment.yml
+```
+
+# --- old docs ---
 
 ## Python Simulator
 
