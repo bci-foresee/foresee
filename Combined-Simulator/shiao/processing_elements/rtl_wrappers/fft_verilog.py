@@ -1,51 +1,11 @@
-import math
 import numpy as np
-import matplotlib.pyplot as plt
-
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer
 from cocotb.types import LogicArray
+import matplotlib.pyplot as plt
+import math
 
-@cocotb.test()
-async def test_fft_verilog(dut):
-    # pipe setup -------------------------------------------------------------------------------------
-    # Sample information
-    num_channels = 16 # 1 for now, will be 16 in the future.
-    # 1024 samples and 400Hz =>
-    num_samples = 8000 # how many samples in window
-    sample_rate = 400 # sample rate in Hz
-    sample_window = num_samples / sample_rate # how long the window is in seconds
-    
-    sample_freq = sample_rate # sample frequency in Hz (how many samples/second)
-    
-    nyquist_freq = sample_freq / 2 # Nyquist frequency, max frequency that can be represented in the signal
-    
-    # berger bands
-    berger_bands = [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)]
-    
-    # sample ieeg signals ----------------------------------------------------------------------------
-    
-    sampled_signals = sample_signals(num_signals=num_channels, 
-                                     sample_window=sample_window, 
-                                     num_samples=num_samples,
-                                     saveGraphs=True)
-    
-    # fft verilog -------------------------------------------------------------------------------------
-
-    fft_temp_out = await fft_verilog(dut=dut,
-                                     sampled_signals=sampled_signals, 
-                                     num_samples=num_samples, 
-                                     sample_freq=sample_freq,
-                                     nyquist_freq=nyquist_freq,
-                                     berger_bands=berger_bands,
-                                     saveGraphs=True)
-
-    print(fft_temp_out[0:10])
-
-    assert 1 == 1
-
-# fft verilog -----------------------------------------------------------------------------------------
 async def fft_verilog(dut,
                       sampled_signals, 
                       num_samples, 
@@ -212,53 +172,3 @@ async def fft_verilog(dut,
         plt.savefig('plots/seizure_pipe/output_spectrum')
 
     return output_spectrum
-
-
-# sample signals -------------------------------------------------------------------------------------
-def sample_signals(num_signals, sample_window, num_samples, saveGraphs=False):
-
-    # define a sampled function, and the sample
-    def signal1(t):
-        # frequencies = [10, 50, 80, 125]
-        # amplitudes =  [20,  15,  15,  5]
-        frequencies = [5]
-        amplitudes =  [20]
-        returnSignal = 0
-        for i in range(len(frequencies)):
-            returnSignal += amplitudes[i] * np.sin(2*np.pi*frequencies[i]*t)  
-        return (returnSignal)
-    
-    def randomvals(t):
-        return np.ones_like(t)
-    
-    sampled_signals = []
-    for i in range(num_signals):
-        x = np.linspace(start=0, stop=sample_window, num=num_samples, endpoint=False)
-        if i == 0:
-            sampled_signals.append(signal1(x))
-            # display 1st sampled signal
-            if saveGraphs:
-                plt.figure(figsize=(12, 6))
-                plt.plot(x, sampled_signals[0])
-                plt.title('Sampled Signal')
-                plt.xlabel('Time (s)')
-                plt.ylabel('Amplitude')
-                plt.grid()
-                plt.savefig('plots/seizure_pipe/sampled_signal.png')
-
-                # also printing int converted graph
-                int_sampled_signal = [int(sampled_signals[0][i]) for i in range(len(sampled_signals[0]))]
-                plt.figure(figsize=(12, 6))
-                plt.plot(x, int_sampled_signal)
-                plt.title('Sampled Signal int conversion')
-                plt.xlabel('Time (s)')
-                plt.ylabel('Amplitude')
-                plt.grid()
-                plt.savefig('plots/seizure_pipe/sampled_signal_int.png')
-        else:
-            sampled_signals.append(randomvals(x))
-
-    return sampled_signals
-
-# fft helper stuff -----------------------------------------------------------------------------------
-
