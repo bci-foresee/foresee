@@ -39,7 +39,13 @@ def sample_signals(num_channels,
         returnSignal = 0
         for i in range(len(frequencies)):
             returnSignal += amplitudes[i] * np.sin(2*np.pi*frequencies[i]*t)  
-        return (returnSignal)
+
+        # shiftedReturnSignal = [returnSignal[i] << 10 for i in range(len(returnSignal))]
+        # return (returnSignal * (1 << 10))
+        return returnSignal
+    
+    def constant_signal(t):
+        return np.ones_like(t) * 100
     
     def randomvals(t):
         return np.ones_like(t)
@@ -49,6 +55,8 @@ def sample_signals(num_channels,
         x = np.linspace(start=0, stop=sample_window, num=num_samples, endpoint=False)
         if i == 0:
             sampled_signals.append(signal1(x))
+            # sampled_signals.append(constant_signal(x))
+
             # display 1st sampled signal
             if saveGraphs:
                 plt.figure(figsize=(12, 6))

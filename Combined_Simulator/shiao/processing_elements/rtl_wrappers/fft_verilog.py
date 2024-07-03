@@ -135,8 +135,25 @@ async def fft_verilog(dut,
     np_real_output = np.array(real_output)
     np_imag_output = np.array(imag_output)
 
+    print(np_real_output)
+    num_inf_nan = np.count_nonzero(np.isnan(np_real_output) | np.isinf(np_real_output))
+    print(f"Number of values in np_real_output that are inf or nan: {num_inf_nan}")
+
+    print(np_imag_output)
+    num_inf_nan = np.count_nonzero(np.isnan(np_imag_output) | np.isinf(np_imag_output))
+    print(f"Number of values in np_imag_output that are inf or nan: {num_inf_nan}")
+
+    # replac vals in np_real and np_imag that are above a certain threshold with 0
+    threshold = (2**31) - 1000
+    np_real_output = np.where(np_real_output > threshold, 0, np_real_output)
+    np_imag_output = np.where(np_imag_output > threshold, 0, np_imag_output)
+
     for i in range(len(real_output)):
         output_spectrum[i] = np.sqrt(np_real_output[i]**2 + np_imag_output[i]**2)
+
+    print(output_spectrum)
+    num_inf_nan = np.count_nonzero(np.isnan(output_spectrum) | np.isinf(output_spectrum))
+    print(f"Number of values in output_spectrum that are inf or nan: {num_inf_nan}")
     
     # midpoint = len(output_spectrum) // 2
 
@@ -147,6 +164,7 @@ async def fft_verilog(dut,
 
     sample_spacing = 1/sample_freq # how much time between samples
     freq_bins = np.fft.fftfreq(num_samples, sample_spacing) # provide a frequency for each index of the fft output
+    print(freq_bins)
     positive_freq_bins = freq_bins[:num_samples // 2] # only positive frequencies bins
 
     # plotting the output spectrum

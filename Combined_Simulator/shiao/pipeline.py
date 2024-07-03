@@ -40,8 +40,8 @@ async def test_fft_verilog(dut):
     
     # sample ieeg signals ----------------------------------------------------------------------------
     
-    generated_signal_frequencies = [50, 80, 115]
-    generated_signal_amplitudes =  [15, 15, 28]
+    generated_signal_frequencies = [50, 80, 112, 160]
+    generated_signal_amplitudes =  [15, 15, 12, 28]
 
     sampled_signals = sample_signals(num_channels=num_channels, 
                                      sample_window=sample_window, 
