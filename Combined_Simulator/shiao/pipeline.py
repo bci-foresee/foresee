@@ -40,8 +40,13 @@ async def test_fft_verilog(dut):
     
     # sample ieeg signals ----------------------------------------------------------------------------
     
-    generated_signal_frequencies = [50, 80, 112, 160]
-    generated_signal_amplitudes =  [15, 15, 12, 28]
+    # to show bbf alg issues
+    # generated_signal_frequencies = [2, 25, 70, 112, 115]    
+    # generated_signal_amplitudes =  [15, 15, 12, 28, 13]
+
+    # good demonstration of fft verilog signal and diff to ground truth.
+    generated_signal_frequencies = [25, 70, 112, 115, 180]
+    generated_signal_amplitudes =  [15, 12, 28, 13, 17]
 
     sampled_signals = sample_signals(num_channels=num_channels, 
                                      sample_window=sample_window, 
@@ -58,11 +63,14 @@ async def test_fft_verilog(dut):
                               saveGraphs=True)
     
     # spiral fft
-    fft_temp_out = await fft_verilog(dut=dut,
+    fft_power_features_v = await fft_verilog(dut=dut,
+                                     fft_clk_freq=15_700_000, # simulation clock frequency
                                     sampled_signals=sampled_signals, 
                                     sample_freq=sample_freq,
                                     berger_bands=berger_bands,
                                     saveGraphs=True)
+    
+    # make a feature gen for fft_verilog.
 
     # bbf --------------------------------------------------------------------------------------------
 

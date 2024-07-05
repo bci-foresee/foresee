@@ -47,9 +47,19 @@ def bbf_py(sampled_signals, sample_freq, berger_bands, saveGraphs=False):
     
         for lowcut, highcut in berger_bands:
             filtered_signal = butter_bandpass_filter(samples, lowcut, highcut, sample_freq, order=5)
+
+            # normalize the filtered signal
+            # filtered_signal = filtered_signal * 0.25
+
             power = np.sum( np.square(filtered_signal) )
 
-            if np.isinf(power) or np.isnan(power): # this is a fix
+            if np.isinf(power) or np.isnan(power): # idk why this happens yet
+                num_inf_nan = np.count_nonzero(np.isnan(power) | np.isinf(power))
+                print(f"filter band: {lowcut}-{highcut} Hz")
+                print(f"Number of values in power that are inf or nan: {num_inf_nan}, power: {power}")
+                print(f"filtered_signal: {filtered_signal}")
+
+            if np.isinf(power) or np.isnan(power): # this is a fix idk why this happens
                 power = 0
             power_bands.append(power)
 

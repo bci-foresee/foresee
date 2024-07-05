@@ -1,4 +1,4 @@
-name: verilog_env
+name: scalo_sim
 channels:
   - defaults
 dependencies:

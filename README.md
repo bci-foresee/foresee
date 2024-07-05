@@ -48,10 +48,33 @@ The simulator was developed in a GitHub Codespaces environment, which is a Linux
 
 `Linux codespaces 6.5.0-1022-azure #23~22.04.1-Ubuntu SMP x86_64 x86_64 x86_64 GNU/Linux`
 
-Furthermore, the simulator uses Python 3.10.14 as its interface. There are a few dependencies that need to be installed to run the simulator. The dependencies are in the [environment.yml](./environment.yml) file. You can easily create an identical conda environment by running the following command. This should get you set up.
+Furthermore, the simulator uses Python 3.10.14 as its interface. There are a few dependencies that need to be installed to run the simulator. The dependencies are in the [environment.yml](./environment.yml) file. You can easily create and activate an identical conda environment by running the following command. This should get you set up.
 
 ```sh
 conda env create -f environment.yml
+conda activate scalo_sim
+```
+
+Then you can run the example shiao pipeline by first going to the [shiao](./Combined_Simulator/shiao) directory and running the following command.
+
+```sh
+make
+```
+
+### Makefile
+
+The makefile should include the following components. It's used by cocotb to define the simulation environment.
+
+```makefile
+TOPLEVEL_LANG = verilog
+```
+
+```makefile
+VERILOG_SOURCES = $(shell pwd)/processing_elements/rtl_toplevel/seizure_pipe.v
+VERILOG_SOURCES += $(shell pwd)/processing_elements/rtl_PEs/spiral_fft_8192.v
+TOPLEVEL = seizure_pipe
+MODULE = pipeline
+include $(shell cocotb-config --makefiles)/Makefile.sim
 ```
 
 # --- old docs ---
