@@ -1,0 +1,3 @@
+[submodule "datasets/ieeg/ieegpy"]
+	path = datasets/ieeg/ieegpy
+	url = git@github.com:ieeg-portal/ieegpy.git

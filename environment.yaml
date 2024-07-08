@@ -28,26 +28,34 @@ dependencies:
   - xz=5.4.6=h5eee18b_1
   - zlib=1.2.11=h166bdaf_1014
   - pip:
+      - cachetools==5.3.3
+      - certifi==2024.7.4
+      - charset-normalizer==3.3.2
       - cocotb==1.8.1
       - contourpy==1.2.1
       - cycler==0.12.1
+      - deprecation==2.1.0
       - exceptiongroup==1.2.1
       - find-libpython==0.4.0
       - fonttools==4.53.1
+      - idna==3.7
       - iniconfig==2.0.0
       - kiwisolver==1.4.5
       - matplotlib==3.9.1
       - numpy==2.0.0
       - packaging==24.1
       - pandas==2.2.2
+      - pennprov==2.2.4
       - pillow==10.4.0
       - pluggy==1.5.0
       - pyparsing==3.1.2
       - pytest==8.2.2
       - python-dateutil==2.9.0.post0
       - pytz==2024.1
+      - requests==2.32.3
       - scipy==1.14.0
       - seaborn==0.13.2
       - six==1.16.0
       - tomli==2.0.1
       - tzdata==2024.1
+      - urllib3==2.2.2
