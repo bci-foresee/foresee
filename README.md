@@ -65,7 +65,7 @@ make
 
 The makefile should include the following components. It's used by cocotb to define the simulation environment.
 
-*unfinished*
+*unfinished section*
 
 ```makefile
 TOPLEVEL_LANG = verilog
