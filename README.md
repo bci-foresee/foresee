@@ -51,7 +51,7 @@ The simulator was developed in a GitHub Codespaces environment, which is a Linux
 Furthermore, the simulator uses Python 3.10.14 as its interface. There are a few dependencies that need to be installed to run the simulator. The dependencies are in the [environment.yml](./environment.yml) file. You can easily create and activate an identical conda environment by running the following command. This should get you set up.
 
 ```sh
-conda env create -f environment.yml
+conda env create -f environment.yaml
 conda activate scalo_sim
 ```
 
@@ -60,6 +60,8 @@ Then you can run the example shiao pipeline by first going to the [shiao](./Comb
 ```sh
 make
 ```
+
+*note: to remove a conda environment, use `conda env remove --name your_env_name`*
 
 ### Makefile
 
