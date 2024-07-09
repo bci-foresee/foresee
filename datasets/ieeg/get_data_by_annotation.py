@@ -1,8 +1,8 @@
 import getpass
 import argparse
 
-from ieeg.auth import Session
-from ieeg.processing import ProcessSlidingWindowPerChannel, ProcessSlidingWindowAcrossChannels
+from ieegpy.ieeg.auth import Session
+from ieegpy.ieeg.processing import ProcessSlidingWindowPerChannel, ProcessSlidingWindowAcrossChannels
 
 
 def print_montages(dataset):
@@ -65,6 +65,10 @@ def main():
                     start_time = a.start_time_offset_usec
                     end_time = a.end_time_offset_usec
                     raw_data = dataset.get_data(start_time, end_time - start_time, channels)
+        
+        print(raw_data.shape)
+        print(raw_data[0].shape)
+        print(raw_data[:][0])
 
         session.close_dataset(dataset_name)
 

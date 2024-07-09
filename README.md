@@ -63,11 +63,29 @@ make
 
 *note: to remove a conda environment, use `conda env remove --name your_env_name`*
 
+
+*unfinished section*
+
+### SSH getting resources:
+
+```sh
+# getting an interactive session
+srun --ntasks=1 --cpus-per-task=4 --mem=64GB --time=04:00:00 --partition=general --pty bash
+
+# figuring out host of resources
+hostname
+
+# ssh to hostname to get those resources ie r911u01n02.grace.ycrc.yale.edu
+ssh [hostname]
+
+# exit when done
+exit
+```
+
 ### Makefile
 
 The makefile should include the following components. It's used by cocotb to define the simulation environment.
 
-*unfinished section*
 
 ```makefile
 TOPLEVEL_LANG = verilog
@@ -76,6 +94,12 @@ VERILOG_SOURCES += $(shell pwd)/processing_elements/rtl_PEs/spiral_fft_8192.v
 TOPLEVEL = seizure_pipe
 MODULE = pipeline
 include $(shell cocotb-config --makefiles)/Makefile.sim
+```
+
+pulling from git:
+```sh
+git pull
+git submodule update --init --recursive
 ```
 
 # --- old docs ---
