@@ -66,11 +66,11 @@ make
 
 *unfinished section*
 
-### SSH getting resources:
+### SSH grace getting resources:
 
 ```sh
 # getting an interactive session
-srun --ntasks=1 --cpus-per-task=4 --mem=64GB --time=04:00:00 --partition=general --pty bash
+srun --ntasks=1 --cpus-per-task=4 --mem=64GB --time=01:00:00 --partition=scavenge --pty bash
 
 # figuring out host of resources
 hostname

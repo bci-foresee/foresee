@@ -2,8 +2,8 @@ from scipy.io import loadmat
 
 # Load the .mat info file
 
-info_file = '../data/ID01_info.mat'
-patient_file = '../data/ID01_1h.mat'
+info_file = '../data_info/ID01_info.mat'
+patient_file = '../data/ID01_2h.mat'
 
 data = loadmat(patient_file)
 
@@ -22,3 +22,29 @@ for key in data:
             print("Shape: N/A")
         print(f"Contents: {data[key]}")
         print("---------------------------------")
+
+
+'''
+---------------------------------
+Key: seizure_end
+Type: <class 'numpy.ndarray'>
+Shape: (2, 1)
+Contents: [[ 432976.20269531]
+ [1030274.18042969]]
+---------------------------------
+
+---------------------------------
+Key: fs
+Type: <class 'numpy.ndarray'>
+Shape: (1, 1)
+Contents: [[512]]
+---------------------------------
+
+---------------------------------
+Key: seizure_begin
+Type: <class 'numpy.ndarray'>
+Shape: (2, 1)
+Contents: [[ 432362.43824219]
+ [1029684.37003906]]
+---------------------------------
+'''

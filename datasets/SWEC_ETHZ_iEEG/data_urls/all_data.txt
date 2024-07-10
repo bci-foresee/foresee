@@ -292,7 +292,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID01/ID01_291h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID01/ID01_292h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID01/ID01_293h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID01/ID01_294h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID01/ID01_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID02/ID02_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID02/ID02_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID02/ID02_3h.mat
@@ -529,7 +528,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID02/ID02_233h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID02/ID02_234h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID02/ID02_235h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID02/ID02_236h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID02/ID02_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID03/ID03_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID03/ID03_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID03/ID03_3h.mat
@@ -689,7 +687,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID03/ID03_156h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID03/ID03_157h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID03/ID03_158h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID03/ID03_159h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID03/ID03_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID04/ID04_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID04/ID04_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID04/ID04_3h.mat
@@ -731,7 +728,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID04/ID04_38h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID04/ID04_39h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID04/ID04_40h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID04/ID04_41h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID04/ID04_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID05/ID05_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID05/ID05_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID05/ID05_3h.mat
@@ -842,7 +838,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID05/ID05_107h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID05/ID05_108h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID05/ID05_109h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID05/ID05_110h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID05/ID05_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID06/ID06_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID06/ID06_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID06/ID06_3h.mat
@@ -989,7 +984,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID06/ID06_143h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID06/ID06_144h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID06/ID06_145h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID06/ID06_146h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID06/ID06_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID07/ID07_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID07/ID07_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID07/ID07_3h.mat
@@ -1059,7 +1053,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID07/ID07_66h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID07/ID07_67h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID07/ID07_68h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID07/ID07_69h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID07/ID07_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID08/ID08_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID08/ID08_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID08/ID08_3h.mat
@@ -1204,7 +1197,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID08/ID08_141h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID08/ID08_142h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID08/ID08_143h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID08/ID08_144h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID08/ID08_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID09/ID09_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID09/ID09_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID09/ID09_3h.mat
@@ -1246,7 +1238,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID09/ID09_38h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID09/ID09_39h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID09/ID09_40h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID09/ID09_41h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID09/ID09_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID10/ID10_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID10/ID10_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID10/ID10_3h.mat
@@ -1290,7 +1281,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID10/ID10_40h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID10/ID10_41h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID10/ID10_42h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID10/ID10_43h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID10/ID10_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID11/ID11_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID11/ID11_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID11/ID11_3h.mat
@@ -1504,7 +1494,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID11/ID11_210h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID11/ID11_211h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID11/ID11_212h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID11/ID11_213h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID11/ID11_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID12/ID12_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID12/ID12_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID12/ID12_3h.mat
@@ -1697,7 +1686,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID12/ID12_189h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID12/ID12_190h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID12/ID12_191h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID12/ID12_192h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID12/ID12_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID13/ID13_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID13/ID13_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID13/ID13_3h.mat
@@ -1802,7 +1790,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID13/ID13_101h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID13/ID13_102h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID13/ID13_103h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID13/ID13_104h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID13/ID13_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID14/ID14_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID14/ID14_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID14/ID14_3h.mat
@@ -1965,7 +1952,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID14/ID14_159h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID14/ID14_160h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID14/ID14_161h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID14/ID14_162h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID14/ID14_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID15/ID15_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID15/ID15_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID15/ID15_3h.mat
@@ -2162,7 +2148,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID15/ID15_193h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID15/ID15_194h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID15/ID15_195h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID15/ID15_196h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID15/ID15_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID16/ID16_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID16/ID16_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID16/ID16_3h.mat
@@ -2341,7 +2326,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID16/ID16_175h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID16/ID16_176h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID16/ID16_177h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID16/ID16_178h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID16/ID16_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID17/ID17_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID17/ID17_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID17/ID17_3h.mat
@@ -2472,7 +2456,6 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID17/ID17_127h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID17/ID17_128h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID17/ID17_129h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID17/ID17_130h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID17/ID17_info.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID18/ID18_1h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID18/ID18_2h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID18/ID18_3h.mat
@@ -2679,4 +2662,3 @@ http://ieeg-swez.ethz.ch/long-term_dataset/ID18/ID18_203h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID18/ID18_204h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID18/ID18_205h.mat
 http://ieeg-swez.ethz.ch/long-term_dataset/ID18/ID18_206h.mat
-http://ieeg-swez.ethz.ch/long-term_dataset/ID18/ID18_info.mat
