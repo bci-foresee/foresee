@@ -152,6 +152,15 @@ def splice_nonseizure_data(patient_id, patient_dict, samples_to_generate=5):
 
         print(spliced_data.shape)
 
+        # labels of all 0s
+        label_size = len(spliced_data[0])
+
+        label_arr = np.zeros(label_size)
+        print(label_arr.shape)
+
+        #save it
+        np.save('./test_save_data/ID'+patient_id+'_'+str(i)+'_seizure_label.npy',label_arr)
+
         # save the array   
         np.save('./test_save_data/ID'+patient_id+'_'+str(i)+'_nonseizure.npy',spliced_data)
         

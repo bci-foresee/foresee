@@ -5,6 +5,8 @@ import numpy as np
 directory = './test_save_data'
 
 # Iterate over all files in the directory
+# "loading in the arrays
+
 for filename in os.listdir(directory):
     if filename.endswith('.npy'):
         file_path = os.path.join(directory, filename)
@@ -17,5 +19,6 @@ for filename in os.listdir(directory):
         # print(loaded_array)
         print("Shape of the loaded array:", loaded_array.shape)
 
-# Optionally convert the list of arrays to a NumPy array (if they have the same shape)
-# combined_array = np.array(arrays)
+print ("\n\n")
+
+# 
