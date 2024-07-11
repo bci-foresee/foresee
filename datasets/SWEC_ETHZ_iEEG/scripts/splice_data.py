@@ -3,7 +3,26 @@ from scipy.io import loadmat
 
 # Load the .mat info file
 
-def splice_data(start_file, end_file, start_idx, end_idx):
+def splice_data(patient_id, patient_dict):
+
+    for i in range(len(patient_dict[patient_id].seizure_start_files)):
+
+        start_file=patient_dict[patient_id].seizure_start_files[i]
+        end_file=patient_dict[patient_id].seizure_end_files[i]
+        start_idx=patient_dict[patient_id].seizure_start_indicies[i]
+        end_idx=patient_dict[patient_id].seizure_end_indicies[i]
+
+        save_seizure_splice(start_file=start_file, 
+                            end_file=end_file, 
+                            start_idx=start_idx, 
+                            end_idx=end_idx, 
+                            i=i, 
+                            patient_id=patient_id)
+
+        
+
+
+def save_seizure_splice(start_file, end_file, start_idx, end_idx, i, patient_id):
     if start_file != end_file:
         print("---------start/end file mismatch. Look at splice_data.py---------")
     else:
@@ -18,23 +37,4 @@ def splice_data(start_file, end_file, start_idx, end_idx):
         print((end_idx-start_idx)/512)
 
         # save the array
-        np.save('./test_save_data/test_save.npy',spliced_data)
-        
-        
-# # Print the keys in the dictionary
-# print(data.keys())
-
-# # Inspect the variables
-# for key in data:
-#     if not key.startswith('__'):  # Skip internal metadata keys
-#         print("\n---------------------------------")
-#         print(f"Key: {key}")
-#         print(f"Type: {type(data[key])}")
-#         if hasattr(data[key], 'shape'):
-#             print(f"Shape: {data[key].shape}")
-#         else:
-#             print("Shape: N/A")
-#         print(f"Contents: {data[key]}")
-#         print("---------------------------------")
-
-
+        np.save('./test_save_data/ID'+patient_id+'_'+str(i)+'_seizure.npy',spliced_data)
