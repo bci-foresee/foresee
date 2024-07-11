@@ -7,5 +7,5 @@
 **/.vscode/
 **/data/
 **/data/*
-activate_conda.sh
 **/test_save_data/
+**/.ipynb_checkpoints/

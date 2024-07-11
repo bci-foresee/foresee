@@ -2,23 +2,25 @@ from scipy.io import loadmat
 import numpy as np
 
 class patient_data_info:
-    def __init__(self, sample_rate, seizure_begin, seizure_end):
+    def __init__(self, sample_rate, seizure_begin, seizure_end, offset_beg, offset_end):
         self.sample_rate = sample_rate
         self.seizure_begin = seizure_begin
         self.seizure_end = seizure_end
-        self.gen_indices()
+        self.gen_indices(offset_beg=offset_beg,
+                         offset_end=offset_end)
     
     def gen_indices(self, file_idx_len=1843200, offset_beg = 0, offset_end = 0):
         
         sample_rate = 512
-        offset_beg = -180 * 512 #120s * 512Hz
-        offset_end =  180 * 512  #120s * 512Hz
+        # offset_beg = -180 * sample_rate #120s * 512Hz
+        # offset_end =  180 * sample_rate  #120s * 512Hz
 
         # within which file the seizure starts
         self.seizure_start_files = np.zeros_like(self.seizure_begin)
 
         # which index the seizure starts at within that file
         self.seizure_start_indicies = np.zeros_like(self.seizure_start_files)
+        self.label_start = np.zeros_like(self.seizure_start_files)
 
         # getting seizure start file info
         for i in range(len(self.seizure_begin)):
@@ -35,15 +37,18 @@ class patient_data_info:
             # storing the start file nums and indicies
             self.seizure_start_files[i] = start_file_num # 1 indexed
             self.seizure_start_indicies[i] = file_start_idx
+            
+            
 
         # same thing but for seizure end
         # so getting seizure end file and the index within that file that the seizure resides in
         
         self.seizure_end_files = np.zeros_like(self.seizure_begin)
         self.seizure_end_indicies = np.zeros_like(self.seizure_end_files)
+        self.label_end = np.zeros_like(self.seizure_start_files)
 
         for i in range(len(self.seizure_begin)):
-            overall_end_idx = np.ceil(self.seizure_end[i] * self.sample_rate[0][0]) - offset_beg
+            overall_end_idx = np.ceil(self.seizure_end[i] * self.sample_rate[0][0]) + offset_end
             #print(self.seizure_begin[i], self.sample_rate[0][0], self.seizure_begin[i] * self.sample_rate[0][0])
 
             end_file_num = overall_end_idx // file_idx_len
@@ -53,7 +58,7 @@ class patient_data_info:
             self.seizure_end_files[i] = end_file_num
             self.seizure_end_indicies[i] = file_end_idx
 
-def create_seizure_indices():
+def create_seizure_indices(offset_beg=0, offset_end=0):
     patient_dict = {}
 
     # Load the .mat info file
@@ -65,7 +70,11 @@ def create_seizure_indices():
         data = loadmat(info_file)
         #print(data['fs'])
 
-        patient_dict[patient_num] = patient_data_info(data['fs'], data['seizure_begin'], data['seizure_end'])
+        patient_dict[patient_num] = patient_data_info(data['fs'], 
+                                                      data['seizure_begin'], 
+                                                      data['seizure_end'],
+                                                      offset_beg,
+                                                      offset_end)
 
     return patient_dict
 

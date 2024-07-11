@@ -4,9 +4,6 @@ import numpy as np
 # Directory containing the .npy files
 directory = './test_save_data'
 
-# List to store the loaded arrays
-# arrays = []
-
 # Iterate over all files in the directory
 for filename in os.listdir(directory):
     if filename.endswith('.npy'):
@@ -16,8 +13,8 @@ for filename in os.listdir(directory):
         # Append the loaded array to the list
         # arrays.append(loaded_array)
         # Print the array and its shape
-        print(f"Loaded array from {filename}:")
-        print(loaded_array)
+        print(f"\n\nLoaded array from {filename}:")
+        # print(loaded_array)
         print("Shape of the loaded array:", loaded_array.shape)
 
 # Optionally convert the list of arrays to a NumPy array (if they have the same shape)
