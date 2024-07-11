@@ -10,6 +10,10 @@ class patient_data_info:
     
     def gen_indices(self, file_idx_len=1843200, offset_beg = 0, offset_end = 0):
         
+        sample_rate = 512
+        offset_beg = -180 * 512 #120s * 512Hz
+        offset_end =  180 * 512  #120s * 512Hz
+
         # within which file the seizure starts
         self.seizure_start_files = np.zeros_like(self.seizure_begin)
 
@@ -19,7 +23,7 @@ class patient_data_info:
         # getting seizure start file info
         for i in range(len(self.seizure_begin)):
             # getting index of data where the seizure starts (- an offset)
-            overall_start_idx = np.floor(self.seizure_begin[i] * self.sample_rate[0][0]) - offset_beg
+            overall_start_idx = np.floor(self.seizure_begin[i] * self.sample_rate[0][0]) + offset_beg
             #print(self.seizure_begin[i], self.sample_rate[0][0], self.seizure_begin[i] * self.sample_rate[0][0])
 
             # getting which matlab file the start of the seizure will be found in
