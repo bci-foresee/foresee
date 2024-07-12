@@ -20,36 +20,63 @@ ieeg_signals = []
 ieeg_signals_labels = []
 
 # Load each file
-prev_file_type = ""
+prev_file_sign = ""
+prev_label_data = None
+
 for file in files:
     file_path = os.path.join(directory, file)
 
     
     file_parts = file.split('_')
-    current_file_type = file_parts[2]
-    print(file, current_file_type)
-    
+    current_file_sign = file_parts[2] # whether it is negative or positive labelled
+    current_file_type = file_parts[3] # whether it is a signal or label
+
     data = np.load(file_path)
 
     
-    # data_list.append(data)
-    print(f"Loaded {file}")
-    print(f"shape {data.shape}")
+    if current_file_type == "signals.npy":
+        # print("hmmsmdsmda")
+        if current_file_sign == prev_file_sign:
+            print("\nadding data: ")
+            print(file)
+
+            # add every array item individually
+            for i in range(len(data)):
+                ieeg_signals.append(data[i].tolist())
+                ieeg_signals_labels.append(prev_label_data[i].tolist())
+
+
+    elif current_file_type == "labels.npy":
+        prev_label_data = data
+
+    prev_file_sign = current_file_sign
+
+# ieeg_signals = np.array(ieeg_signals).astype(np.float32)
+# ieeg_signals_labels = np.array(ieeg_signals_labels).astype(np.int64)
+print("shape of (ieeg_signals), (ieeg_signals_labels):")
+print(len(ieeg_signals), len(ieeg_signals[0]), len(ieeg_signals_labels), "\n")
 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-
 # Generate synthetic data
 # Assuming each feature array has 96+96+120 = 312 features
-n_samples = 1000
-n_features = 312
-n_classes = 2
+n_samples = len(ieeg_signals)
+n_features = 10240
+n_classes = 1
 
 # Create random data and labels
-X = torch.randn(n_samples, n_features)
-y = torch.randint(0, n_classes, (n_samples,))
 
+# X = torch.randn(n_samples, n_features)
+X = torch.tensor(ieeg_signals)
+# y = torch.randint(0, n_classes, (n_samples,))
+y = torch.tensor(ieeg_signals_labels)
+
+# X = ieeg_signals
+# y = ieeg_signals_labels
+
+# print(ieeg_signals.shape)
 print(X.shape)
+# print(ieeg_signals_labels.shape)
 print(y.shape)
 
 # Convert labels to {-1, 1}
