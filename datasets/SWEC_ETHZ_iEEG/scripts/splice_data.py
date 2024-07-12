@@ -85,25 +85,30 @@ def save_seizure_splice(start_file, end_file, start_idx, end_idx, i, patient_id,
     for start_index in range(0, len(spliced_data[0]) - slice_size + 1, step_size):
         end_index = start_index + slice_size
 
-        # one 20s slice of data
-        slice = spliced_data[0][start_index:end_index]
+        # one 20s slice of data, all 16 channel
+        slice = spliced_data[:, start_index:end_index]
+        
+        print("shape", start_index)
+        print(slice.shape)
 
         # is it a seizure or not
         counts = np.bincount(label_arr[start_index:end_index]) # how many ones or zeros
         most_common_value = np.argmax(counts) # take most common occurence as an indicator of seizure or not
         
-        #print(slice.shape)
+        # print(type(slice))
         slices.append(slice)
         slices_labels.append(most_common_value)
+
     
     # Convert the list of slices to a numpy array
     slices_array = np.array(slices)
     slices_labels_array = np.array(slices_labels)
 
-    print("slices shape:")
+    print("slices shape seizure (num_items, channels, signals):")
     print(slices_array.shape)
-    print(slices_array[0].shape)
+    # print(slices_array[0].shape)
     print(slices_labels_array.shape)
+
 
     #save labels
     # format:
@@ -155,7 +160,7 @@ def splice_nonseizure_data(patient_id, patient_dict, samples_to_generate=5):
     #finding intersection of files to sample from non-seizure files
 
     sampleable_files = np.array([x for x in numbers if x not in omit_files])
-    print(sampleable_files)
+    # print(sampleable_files)
 
 
     sample_length = 600 #seconds
@@ -200,7 +205,7 @@ def splice_nonseizure_data(patient_id, patient_dict, samples_to_generate=5):
             end_index = start_index + slice_size
     
             # one 20s slice of data
-            slice = spliced_data[0][start_index:end_index]
+            slice = spliced_data[:,start_index:end_index]
     
             # is it a seizure or not
             counts = np.bincount(label_arr[start_index:end_index]) # how many ones or zeros

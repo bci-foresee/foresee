@@ -5,6 +5,14 @@ import torch.optim as optim
 import os
 import numpy as np
 
+from python_PEs.fft import fft_py
+from python_PEs.xcorr import xcorr_py
+from python_PEs.bbf import bbf_py
+from python_PEs.svm import svm_py
+from python_PEs.thr import thr_py
+
+berger_bands = [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)]
+
 # ------------- loading in data -----------------
 
 # Directory containing the .npy files
@@ -53,27 +61,43 @@ for file in files:
 
 # ieeg_signals = np.array(ieeg_signals).astype(np.float32)
 # ieeg_signals_labels = np.array(ieeg_signals_labels).astype(np.int64)
-print("shape of (ieeg_signals), (ieeg_signals_labels):")
-print(len(ieeg_signals), len(ieeg_signals[0]), len(ieeg_signals_labels), "\n")
+print()
+print("shape of (ieeg_signals: items, channels, signals), (ieeg_signals_labels):")
+print(len(ieeg_signals), len(ieeg_signals[0]), len(ieeg_signals[0][0]), len(ieeg_signals_labels), "\n")
 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+#--------------------- training --------------------
 
 # Generate synthetic data
 # Assuming each feature array has 96+96+120 = 312 features
 n_samples = len(ieeg_signals)
-n_features = 10240
+n_features = 96
 n_classes = 1
 
 # Create random data and labels
 
 # X = torch.randn(n_samples, n_features)
-X = torch.tensor(ieeg_signals)
 # y = torch.randint(0, n_classes, (n_samples,))
+
+x_tensor_list = []
+
+for i in range(len(ieeg_signals)):
+
+    # pre computing features for faster training
+    fft_power_features = fft_py(sampled_signals=ieeg_signals[i], 
+                                  sample_freq=512,
+                                  berger_bands=berger_bands,
+                                  saveGraphs=False)
+
+    fft_power_features = np.array(fft_power_features).flatten()
+    
+    x_tensor_list.append(torch.tensor(fft_power_features))
+
+X = torch.stack(x_tensor_list)
 y = torch.tensor(ieeg_signals_labels)
 
-# X = ieeg_signals
-# y = ieeg_signals_labels
-
+print("\nSize of tensors:")
 # print(ieeg_signals.shape)
 print(X.shape)
 # print(ieeg_signals_labels.shape)
