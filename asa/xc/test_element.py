@@ -3,7 +3,7 @@ import math
 import pytest
 import numpy as np
 
-from asa.xc.element import XC
+from asa import XC
 
 
 def test_xc_basic():

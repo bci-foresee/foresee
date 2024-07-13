@@ -1,6 +1,5 @@
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 from asa.components import ProcessingElement
 
@@ -12,8 +11,10 @@ class FFT(ProcessingElement):
     """
     name = "FFT"
 
-    def __init__(self, points: list[float]):
-        super().__init__(self.name)
+    def __init__(self, points: int, clk: int = 0):
+        super().__init__(self.name, clk)
 
         self.points = points
 
+    def __repr__(self) -> str:
+        return f"{self.name}_{self.points}"

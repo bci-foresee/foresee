@@ -12,9 +12,8 @@ class XC(ProcessingElement):
     """
     name = "XC"
 
-    def __init__(self):
-        super().__init__(self.name)
-
+    def __init__(self, clk: int = 0):
+        super().__init__(self.name, clk)
 
     def run(self, signal_a: NDArray[np.int16], signal_b: NDArray[np.int16]) -> float:
         assert len(signal_a) == len(signal_b)
@@ -23,3 +22,6 @@ class XC(ProcessingElement):
         for i in range(len(signal_a)):
            acc += signal_a[i] * signal_b[i] 
         return acc
+
+    def __repr__(self) -> str:
+        return f"{self.name}"
