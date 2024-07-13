@@ -1,13 +1,12 @@
-# HALO/SCALO simulator
+# ALOHA
+This is a development platform for designing, testing, and validating chips for neural interfaces.
+It is heavily inspired by the HALO/SCALO design methodology which, at its core, provides a modular accelerator framework.
 
-## Introduction
-This is some software developed to help simulate the HALO/SCALO architecture. 
+The general idea is to make it as easy as possible to test different pipelines with minimal effort, in whichever language you want (Verilog, C or Python). This can allow for rapid ideation with Python/C and then a more detailed, hardware accurate simulation with Verilog. The Verilog simulator is built with [cocotb](https://www.cocotb.org).
 
-Why? To allow for modular testing of the architecture which in turn should allow for rapid idea testing and development. 
-
-Furthermore, this should allow for quicker ideation -> simulation -> testing -> tapeout cycles.
-
-The general idea is to make it as easy as possible to test different pipelines with minimal effort, in whichever language you want (Verilog, C or Python). This can allow for rapid ideation with Python/C and then a more detailed, hardware accurate simulation with Verilog.
+## TODOs
+- Add `pydoc`
+- Add automatic formatting of Python style
 
 ## Table of contents
 - [Introduction](#introduction)
@@ -95,53 +94,3 @@ TOPLEVEL = seizure_pipe
 MODULE = pipeline
 include $(shell cocotb-config --makefiles)/Makefile.sim
 ```
-
-pulling from git:
-```sh
-git pull
-git submodule update --init --recursive
-```
-
-# --- old docs ---
-
-## Python Simulator
-
-The Python simulation is made because the [C/Verilator simulator](#c-verilator-simulator) is too low level to allow for rapid development and Python has many more useful tools at its disposal.
-
-The simulator is build with [cocotb](https://www.cocotb.org), and the development has mostly been done in a GitHub Codespaces environment (which is Linux based). In theory this should work with any x86 system.
-
-An example showing the FFT module being tested is in [test_FFT.py](./SCALO_sim/FFT_test/test_FFT.py). 
-
-The rest is currently under development.
-
-## C (Verilator) Simulator
-
-If additional control is needed, you can code up testbenches using Verilator and C. An example of this is within the [Verilator-C-Simulator](./Verilator-C-Simulator) folder.
-
-To use this, you need to create a top level module like [example_top.v](./Verilator-C-Simulator/Verilog-APaths/example_top.v) and then create a testbench in C like [example_tb.cpp](./Verilator-C-Simulator/example_tb.cpp). The example shows how to test the FFT (although there is no post processing analysis there, it should be easy to add).
-
-Then to run the simulation you can run the following in the terminal. 
-
-*Make sure to have verilator installed, this was tested on an apple silicon mac, and github codespaces (which is a Linux environment).*
-
-```sh
-#inside Verilator-C-Simulator
-
-#compilation of the verilog
-verilator -cc ./Verilog-APaths/example_top.v ./Verilog-PEs/spiral-fft.v --exe example_tb.cpp
-
-#go to verilated files directory
-cd obj_dir
-
-#make the verilated files, only need to redo this if changing just the testbench (example_tb.cpp)
-make -f Vexample_top.mk
-
-#run the simulation
-./Vexample_top
-
-```
-
-# Notes
-
-- make sure to add dependencies in some way
-    - they are in codespaces, conda environment verilog_env
