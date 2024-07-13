@@ -1,16 +1,19 @@
-"""
-This module takes in a sampled signal and performs the DFT using the FFT 
-algorithm to provide a frequency domain representation of the signal.
-"""
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from component import ProcessingElement
+from asa.components import ProcessingElement
 
 
 class FFT(ProcessingElement):
-    def __init__(self, name: str, points: list[float]):
-        super().__init__(name)
+    """
+    Performs the Discrete Fourier Transform (DFT) using the Fast Fourier 
+    Transform (FFT) algorithm.
+    """
+    name = "FFT"
+
+    def __init__(self, points: list[float]):
+        super().__init__(self.name)
+
         self.points = points
 
