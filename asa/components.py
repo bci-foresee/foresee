@@ -3,7 +3,7 @@ This file defines the base class for all hardware components
 """
 
 class ProcessingElement:
-    def __init__(self, name: str, clk: int = 0):
+    def __init__(self, name: str, clk: int = 0) -> None:
         self.name = name
 
         self.clk = clk

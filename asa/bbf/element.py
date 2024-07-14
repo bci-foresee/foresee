@@ -11,8 +11,11 @@ class BBF(ProcessingElement):
     """
     name = "BBF"
 
-    def __init__(self, clk: int = 0):
+    def __init__(self, clk: int = 0) -> None:
         super().__init__(self.name, clk)
 
     def run(self):
         pass
+
+    def __repr__(self) -> str:
+        return f"{self.name}"

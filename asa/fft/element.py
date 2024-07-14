@@ -11,7 +11,7 @@ class FFT(ProcessingElement):
     """
     name = "FFT"
 
-    def __init__(self, points: int, clk: int = 0):
+    def __init__(self, points: int, clk: int = 0) -> None:
         super().__init__(self.name, clk)
 
         self.points = points

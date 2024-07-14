@@ -6,6 +6,7 @@ The general idea is to make it as easy as possible to test different pipelines w
 
 ## TODOs
 - Add `pydoc`
+- Enforce `mypy`
 - Add automatic formatting of Python style
 
 ## Table of contents

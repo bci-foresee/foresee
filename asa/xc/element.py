@@ -12,7 +12,7 @@ class XC(ProcessingElement):
     """
     name = "XC"
 
-    def __init__(self, clk: int = 0):
+    def __init__(self, clk: int = 0) -> None:
         super().__init__(self.name, clk)
 
     def run(self, signal_a: NDArray[np.int16], signal_b: NDArray[np.int16]) -> float:

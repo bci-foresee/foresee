@@ -4,7 +4,7 @@ from asa.components import ProcessingElement
 
 
 class Pipeline:
-    def __init__(self):
+    def __init__(self) -> None:
         self.elements: list[ProcessingElement] = []
 
     def add_elements(self, nodes: list[ProcessingElement]) -> None:

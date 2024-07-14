@@ -11,7 +11,7 @@ class SVM(ProcessingElement):
     """
     name = "SVM"
 
-    def __init__(self, weights: NDArray[np.float32], clk: int = 0):
+    def __init__(self, weights: NDArray[np.float32], clk: int = 0) -> None:
         super().__init__(self.name, clk)
 
         self.weights: NDArray[np.int32] = weights

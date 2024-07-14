@@ -11,8 +11,11 @@ class PWXC(ProcessingElement):
     """
     name = "PWXC"
 
-    def __init__(self, clk: int = 0):
+    def __init__(self, clk: int = 0) -> None:
         super().__init__(self.name, clk)
 
-    def run(self):
+    def run(self) -> None:
         pass
+
+    def __repr__(self) -> str:
+        return f"{self.name}"
