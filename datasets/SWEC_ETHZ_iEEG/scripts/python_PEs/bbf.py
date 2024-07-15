@@ -51,13 +51,14 @@ def bbf_py(sampled_signals, sample_freq, berger_bands, saveGraphs=False):
             # normalize the filtered signal
             # filtered_signal = filtered_signal * 0.25
 
+            # print(f"filtered signal: {filtered_signal.shape}")
             power = np.sum( np.square(filtered_signal) )
 
             if np.isinf(power) or np.isnan(power): # idk why this happens yet
                 num_inf_nan = np.count_nonzero(np.isnan(power) | np.isinf(power))
-                print(f"filter band: {lowcut}-{highcut} Hz")
-                print(f"Number of values in power that are inf or nan: {num_inf_nan}, power: {power}")
-                print(f"filtered_signal: {filtered_signal}")
+                # print(f"filter band: {lowcut}-{highcut} Hz")
+                # print(f"Number of values in power that are inf or nan: {num_inf_nan}, power: {power}")
+                # print(f"filtered_signal: {filtered_signal}")
 
             if np.isinf(power) or np.isnan(power): # this is a fix idk why this happens
                 power = 0
@@ -65,6 +66,7 @@ def bbf_py(sampled_signals, sample_freq, berger_bands, saveGraphs=False):
 
             #print(f"Power in band {lowcut}-{highcut} Hz: {np.mean(power)}")
 
+        
         bbf_power_features.append(power_bands)
     
         if (i == 0) and saveGraphs:
