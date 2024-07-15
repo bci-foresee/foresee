@@ -104,6 +104,7 @@ async def test_fft_verilog(dut):
 
     weights = np.random.rand(312)
     bias = np.random.rand(1)
+    print(weights.shape,bias.shape)
     svm_output = svm_py(features=features_arr, 
                      weights=weights, 
                      bias=bias)
@@ -119,7 +120,7 @@ async def test_fft_verilog(dut):
     print(thr_output)
     print(svm_output)
 
-    assert 1 == 1
+    assert thr_output == 0
     # assert 2 == 2
 
 

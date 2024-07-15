@@ -18,13 +18,12 @@ This module loads in 20s snippets of signals
 ##################################
 '''
 
-def load_ETH_signal(filename,
+def load_ETH_signal(directory="./test_data",
                     saveGraphs=False):
 
     # ------------- loading in data -----------------
 
     # Directory containing the .npy files
-    directory = filename
     
     # List all files in the directory
     files = [f for f in os.listdir(directory) if f.endswith('.npy')]
@@ -63,7 +62,7 @@ def load_ETH_signal(filename,
         random_index = np.random.randint(0, len(data)) # random index within ieeg signal
 
         # if positive label then assign pos_example
-        if data_labels[random_index] == 1:
+        if data_labels[random_index] == 0:
             pos_example = data[random_index]
             flag = True
         

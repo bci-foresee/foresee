@@ -9,3 +9,5 @@
 **/data/*
 **/test_save_data/
 **/.ipynb_checkpoints/
+*.xml
+*.npy

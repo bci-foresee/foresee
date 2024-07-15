@@ -5,6 +5,7 @@ import math
 
 import os
 import torch
+import torch.nn as nn
 
 import cocotb
 from cocotb.clock import Clock
@@ -44,7 +45,7 @@ async def test_fft_verilog(dut):
     generated_signal_frequencies = [25, 70, 112, 115, 180]
     generated_signal_amplitudes =  [15, 12, 28, 13, 17]
 
-    sampled_signals = load_ETH_signal(filename="./test_data",
+    sampled_signals = load_ETH_signal(directory="./test_data",
                                      saveGraphs=True)
 
     # fft --------------------------------------------------------------------------------------------
@@ -85,10 +86,35 @@ async def test_fft_verilog(dut):
     
     # svm ---------------------------------------------------------------------------------------------
 
-    weights_tensor = torch.load("./processing_elements/python_PEs/SVM_trained_weights/svm_model_weights.pth")
-    weights = weights_tensor.numpy()
-    
-    bias = 0
+    class SVM(nn.Module):
+        def __init__(self, n_features):
+            super(SVM, self).__init__()
+            self.linear = nn.Linear(n_features, 1)
+        
+        def forward(self, x):
+            return self.linear(x)
+
+    # Instantiate the model
+    model = SVM(n_features=312)
+
+    # Load the model weights
+    model.load_state_dict(torch.load("./processing_elements/python_PEs/SVM_trained_weights/svm_model_weights.pth"))
+
+    # Access the weights and biases of the linear layer
+    linear_weight = model.linear.weight.data
+    linear_bias = model.linear.bias.data
+
+    # Convert the weights and biases to NumPy arrays
+    linear_weight_np = linear_weight.cpu().numpy()
+    linear_bias_np = linear_bias.cpu().numpy()
+    # linear_weight = model.linear.weight.data
+   
+
+    weights = np.squeeze(linear_weight_np)
+    bias = np.squeeze(linear_bias_np)
+
+    print(weights.shape, bias.shape)
+
     svm_output = svm_py(features=features_arr, 
                      weights=weights, 
                      bias=bias)

@@ -55,9 +55,9 @@ def bbf_py(sampled_signals, sample_freq, berger_bands, saveGraphs=False):
 
             if np.isinf(power) or np.isnan(power): # idk why this happens yet
                 num_inf_nan = np.count_nonzero(np.isnan(power) | np.isinf(power))
-                print(f"filter band: {lowcut}-{highcut} Hz")
-                print(f"Number of values in power that are inf or nan: {num_inf_nan}, power: {power}")
-                print(f"filtered_signal: {filtered_signal}")
+                # print(f"filter band: {lowcut}-{highcut} Hz")
+                # print(f"Number of values in power that are inf or nan: {num_inf_nan}, power: {power}")
+                # print(f"filtered_signal: {filtered_signal}")
 
             if np.isinf(power) or np.isnan(power): # this is a fix idk why this happens
                 power = 0
