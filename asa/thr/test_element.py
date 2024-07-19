@@ -1,7 +1,6 @@
 
 from asa import THR
 
-
 def test_thr_basic() -> None:
     lower_bound = 2
     upper_bound = 6

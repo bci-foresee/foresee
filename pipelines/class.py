@@ -19,6 +19,8 @@ class Pipeline:
         from_node.add_input(to_node)
         to_node.add_output(from_node)
 
+        # also need to update the inputs/outputs of output/input nodes. (4 total additions)
+
         if self.detect_cycle(from_node):
             raise ValueError("cycle!")
 
@@ -37,3 +39,5 @@ class Pipeline:
         visited.remove(node)
         return False
 
+    def run(self, window) -> None:
+        pass
