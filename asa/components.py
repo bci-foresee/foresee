@@ -2,12 +2,9 @@
 This file defines the base class for all hardware components
 """
 
-# from pipelines.components import Pipeline
-
 class ProcessingElement:
     def __init__(self, 
                 name: str,
-                #pipeline: Pipeline, # possible in future
                 clk: int = 0,
                 save_vizualisation: bool = False) -> None:
 
@@ -24,9 +21,7 @@ class ProcessingElement:
         self.inputs = []
         self.outputs = []
 
-        # define parent pipeline.
-        # needed to get information like sampling rate
-        # self.pipeline = pipeline
+        # define parent window.
     
     # add inputs to the processing element
     def add_input(self, node: 'ProcessingElement') -> None:

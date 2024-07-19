@@ -16,13 +16,13 @@ class Pipeline:
         if to_node not in self.elements:
             raise ValueError("node not added to graph")
 
-        from_node.add_input(to_node)
-        to_node.add_output(from_node)
+        from_node.add_output(to_node)
+        to_node.add_input(from_node)
 
         # also need to update the inputs/outputs of output/input nodes. (4 total additions)
 
-        if self.detect_cycle(from_node):
-            raise ValueError("cycle!")
+        # if self.detect_cycle(from_node):
+        #     raise ValueError("cycle!")
 
     def detect_cycle(self, node: ProcessingElement, visited: set[ProcessingElement] | None = None) -> bool:
         if visited is None:

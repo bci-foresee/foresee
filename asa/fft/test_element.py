@@ -42,10 +42,6 @@ def test_fft_basic() -> None:
     '''IMPLEMENT TEST CASE'''
     assert 1 == 1
 
-
-import numpy as np
-import matplotlib.pyplot as plt
-
 # for testing purposes
 # generates some sample signals
 def sample_signals(num_channels, 

@@ -19,7 +19,7 @@ class FFT(ProcessingElement):
     def __init__(self, points: int, sample_freq: float, berger_bands: List[Tuple[float, float]],
                  clk: int = 0, save_vizualisation: bool = False) -> None:
 
-        super().__init__(name = self.name, 
+        super().__init__(name = self.name,
                          clk = clk,
                          save_vizualisation = save_vizualisation)
         
