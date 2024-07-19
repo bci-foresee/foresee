@@ -5,20 +5,20 @@ from asa import LOADER
 
 def test_loader_basic() -> None:
 
-    loader = LOADER()
-
     signal_in = np.array([
-        [1, 2, 3, 4, 5],
-        [1, 2, 3, 4, 6],
+        [1, 2, 3, 2, 1],
+        [10, 5, -1, 4, 6],
     ], dtype=np.int16)
 
+    loader = LOADER(input=signal_in,
+        save_vizualisation=True)
 
     expected_result = np.array([
-        [1, 2, 3, 4, 5],
-        [1, 2, 3, 4, 6],
+        [1, 2, 3, 2, 1],
+        [10, 5, -1, 4, 6],
     ], dtype=np.int16)
 
-    result = loader.run(input=signal_in)
+    result = loader.run()
 
     print(result)
 
