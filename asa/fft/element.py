@@ -32,7 +32,7 @@ class FFT(ProcessingElement):
         self.sample_freq = window.fs
         self.berger_bands = berger_bands
     
-    def run(self):
+    def run(self) -> NDArray[np.float32]:
         # load input data
         input_data = self.load_inputs()
         # validate dimensions
@@ -84,8 +84,9 @@ class FFT(ProcessingElement):
             fft_power_features.append(fft_power)
 
         # also save for vizualisation
+        fft_power_features = np.array(fft_power_features)
         self.fft_power_features = fft_power_features
-        self.fft_outputs = fft_outputs
+        self.fft_outputs = np.array(fft_outputs)
 
         return fft_power_features
     

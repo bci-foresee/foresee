@@ -46,6 +46,10 @@ class ProcessingElement:
     def load_inputs(self):
         raise NotImplementedError("run method not implemented")
     
+    # necessary method to validate the dimensions of the input data
+    def dimension_validate(self):
+        raise NotImplementedError("run method not implemented")
+    
     # necessary method to calculate processing element's computation
     def compute(self):
         raise NotImplementedError("run method not implemented")
@@ -54,3 +58,6 @@ class ProcessingElement:
     def vizualise(self):
         raise NotImplementedError("run method not implemented")
 
+    # return way to identify the processing element
+    def __repr__(self) -> str:
+        return f"{self.name}"
