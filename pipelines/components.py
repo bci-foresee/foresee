@@ -2,10 +2,12 @@
 
 from asa.components import ProcessingElement
 
+from signals.components import Window
 
 class Pipeline:
-    def __init__(self) -> None:
+    def __init__(self, input_window: Window) -> None:
         self.elements: list[ProcessingElement] = []
+        self.input_window = input_window
 
     def add_elements(self, nodes: list[ProcessingElement]) -> None:
         self.elements += nodes
@@ -19,7 +21,6 @@ class Pipeline:
         from_node.add_output(to_node)
         to_node.add_input(from_node)
 
-        # also need to update the inputs/outputs of output/input nodes. (4 total additions)
 
         # if self.detect_cycle(from_node):
         #     raise ValueError("cycle!")
