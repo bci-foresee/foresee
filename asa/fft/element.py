@@ -6,7 +6,11 @@ import os
 
 import matplotlib.pyplot as plt
 
-from asa.components import ProcessingElement
+from asa.parent import ProcessingElement
+
+from signals.parent import Window
+
+from typing import List, Tuple
 
 
 class FFT(ProcessingElement):
@@ -16,15 +20,16 @@ class FFT(ProcessingElement):
     """
     name = "FFT"
 
-    def __init__(self, points: int, sample_freq: float, berger_bands: List[Tuple[float, float]],
-                 clk: int = 0, save_vizualisation: bool = False) -> None:
+    def __init__(self, window: Window, berger_bands: List[Tuple[int, int]],
+                 clk: int = 0, save_vizualisation: bool = False,
+                 ) -> None:
 
         super().__init__(name = self.name,
                          clk = clk,
                          save_vizualisation = save_vizualisation)
         
-        self.points = points
-        self.sample_freq = sample_freq
+        self.points = window.n_samples
+        self.sample_freq = window.fs
         self.berger_bands = berger_bands
     
     def run(self):

@@ -2,7 +2,7 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from asa.components import ProcessingElement
+from asa.parent import ProcessingElement
 
 
 class BBF(ProcessingElement):

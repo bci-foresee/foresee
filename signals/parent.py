@@ -8,12 +8,10 @@ class Window:
     def __init__(self,
                  fs: int,
                  channels: int,
-                 samples: int,
-                 berger_bands: List[Tuple[int, int]]) -> None:
+                 samples: int) -> None:
         self.fs = fs
         self.n_channels = channels
         self.n_samples = samples
-        self.berger_bands = berger_bands
         self.sample_time = self.n_samples / self.fs # how long the signal sampled is
 
     # set the input signal to some value

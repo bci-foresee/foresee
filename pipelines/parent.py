@@ -1,8 +1,8 @@
 
 
-from asa.components import ProcessingElement
+from asa.parent import ProcessingElement
 
-from signals.components import Window
+from signals.parent import Window
 
 class Pipeline:
     def __init__(self, input_window: Window) -> None:

@@ -1,1 +1,1 @@
-from .test.pipeline import Sandbox_Pipe
+from .sandbox.pipeline import Sandbox_Pipe

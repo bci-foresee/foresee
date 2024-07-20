@@ -1,5 +1,5 @@
 
-from asa.components import ProcessingElement
+from asa.parent import ProcessingElement
 
 
 class THR(ProcessingElement):
