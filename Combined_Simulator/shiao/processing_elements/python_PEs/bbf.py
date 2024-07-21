@@ -69,8 +69,6 @@ def bbf_py(sampled_signals, sample_freq, berger_bands, saveGraphs=False):
     
         if (i == 0) and saveGraphs:
             # display power in berger bands
-            print(f" final sig in bbf: {samples[0:10]}")
-            print(f" final power_bands: {power_bands}")
             
             plt.figure(figsize=(12, 6))
             plt.bar(range(len(berger_bands)), power_bands)

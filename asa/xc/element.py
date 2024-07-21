@@ -2,7 +2,7 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from asa.parent import ProcessingElement
+from asa.components import ProcessingElement
 
 
 class XC(ProcessingElement):
@@ -18,11 +18,9 @@ class XC(ProcessingElement):
     def run(self, signal_a: NDArray[np.int16], signal_b: NDArray[np.int16]) -> float:
         assert len(signal_a) == len(signal_b)
 
-        acc: float = 0 # this typing doesnt actually work.
+        acc: float = 0
         for i in range(len(signal_a)):
            acc += signal_a[i] * signal_b[i] 
-
-        #print(type(acc)) # comment when done
         return acc
 
     def __repr__(self) -> str:

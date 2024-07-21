@@ -45,11 +45,8 @@ async def test_fft_verilog(dut):
     # generated_signal_amplitudes =  [15, 15, 12, 28, 13]
 
     # good demonstration of fft verilog signal and diff to ground truth.
-    # generated_signal_frequencies = [25, 70, 112, 115, 180]
-    # generated_signal_amplitudes =  [15, 12, 28, 13, 17]
-
-    generated_signal_frequencies = [10, 20, 40]
-    generated_signal_amplitudes =  [20, 15, 10]
+    generated_signal_frequencies = [25, 70, 112, 115, 180]
+    generated_signal_amplitudes =  [15, 12, 28, 13, 17]
 
     sampled_signals = sample_signals(num_channels=num_channels, 
                                      sample_window=sample_window, 
