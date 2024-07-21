@@ -1,7 +1,6 @@
 # ALOHA
 
-![Test Suite 1](https://github.com/your-username/your-repository/actions/workflows/test-suite.yml/badge.svg?event=push&job=fft_test)
-![Test Suite 2](https://github.com/your-username/your-repository/actions/workflows/test-suite.yml/badge.svg?event=push&job=bbf_test)
+![FFT PE](https://github.com/your-username/your-repository/actions/workflows/test-suite.yml/badge.svg)
 
 
 This is a development platform for designing, testing, and validating chips for neural interfaces.
