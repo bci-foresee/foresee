@@ -3,7 +3,7 @@
  */
 
 #include <stdint.h>
-#include <include/omega64.h>
+// #include <include/omega64.h>
 static double D10[40];
 static double D5[160];
 static double D6[3200];
