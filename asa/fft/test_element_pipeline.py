@@ -31,7 +31,7 @@ class FFT_Pipe(Pipeline):
     
 
 # run the pipeline to test the element
-def test_fft_basic() -> None:
+def test_fft_pipeline() -> None:
 
     # input signal window
     input_window = Window(fs=400, 

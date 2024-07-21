@@ -1,6 +1,8 @@
 # ALOHA
 
-![FFT PE](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/fft-pe-test.yml/badge.svg)
+![Test Suite 1](https://github.com/your-username/your-repository/actions/workflows/test-suite.yml/badge.svg?event=push&job=fft_test)
+![Test Suite 2](https://github.com/your-username/your-repository/actions/workflows/test-suite.yml/badge.svg?event=push&job=bbf_test)
+
 
 This is a development platform for designing, testing, and validating chips for neural interfaces.
 It is heavily inspired by the HALO/SCALO design methodology which, at its core, provides a modular accelerator framework.
