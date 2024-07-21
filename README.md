@@ -1,6 +1,6 @@
 # ALOHA
 
-![FFT PE](https://github.com/your-username/your-repository/actions/workflows/test-suite.yml/badge.svg)
+![PE Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/test-suite.yml/badge.svg)
 
 
 This is a development platform for designing, testing, and validating chips for neural interfaces.

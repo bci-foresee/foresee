@@ -1,4 +1,4 @@
-name: FFT PE
+name: PE tests
 
 on: [push, pull_request]
 
@@ -37,5 +37,15 @@ jobs:
         source $HOME/miniconda/bin/activate
         conda activate scalo_sim
         conda list  # List installed packages to confirm numpy is installed
-        cd ./asa/fft/
+        cd ./asa/loader
+        pytest
+        cd ../fft/
+        pytest
+        cd ../bbf
+        pytest
+        cd ../pwxc
+        pytest
+        cd ../svm
+        pytest
+        cd ../thr
         pytest
