@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 
 from asa.parent import ProcessingElement
 
-from signals.parent import Window
-
 from typing import List, Tuple
 
 
