@@ -1,11 +1,13 @@
 
 
-from asa.components import ProcessingElement
+from asa.parent import ProcessingElement
 
+from signals.parent import Window
 
 class Pipeline:
-    def __init__(self) -> None:
+    def __init__(self, input_window: Window) -> None:
         self.elements: list[ProcessingElement] = []
+        self.input_window = input_window
 
     def add_elements(self, nodes: list[ProcessingElement]) -> None:
         self.elements += nodes
@@ -16,11 +18,12 @@ class Pipeline:
         if to_node not in self.elements:
             raise ValueError("node not added to graph")
 
-        from_node.add_input(to_node)
-        to_node.add_output(from_node)
+        from_node.add_output(to_node)
+        to_node.add_input(from_node)
 
-        if self.detect_cycle(from_node):
-            raise ValueError("cycle!")
+
+        # if self.detect_cycle(from_node):
+        #     raise ValueError("cycle!")
 
     def detect_cycle(self, node: ProcessingElement, visited: set[ProcessingElement] | None = None) -> bool:
         if visited is None:
@@ -37,3 +40,5 @@ class Pipeline:
         visited.remove(node)
         return False
 
+    def run(self, window) -> None:
+        pass
