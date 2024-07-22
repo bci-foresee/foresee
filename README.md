@@ -1,4 +1,10 @@
 # ALOHA
+
+![PE Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/test-suite.yml/badge.svg)
+
+![Shiao Pipeline](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/pipeline-suite.yml/badge.svg)
+
+
 This is a development platform for designing, testing, and validating chips for neural interfaces.
 It is heavily inspired by the HALO/SCALO design methodology which, at its core, provides a modular accelerator framework.
 
