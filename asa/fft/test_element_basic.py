@@ -9,20 +9,21 @@ from asa.utils import INPUT_PE, generate_signal
 def test_fft_basic() -> None:
 
     # input signal window
-    input_window = Window(fs=400, 
-                          channels=2, 
-                          samples=8000)
+    input_fs = 400
+    input_channels = 2
+    input_samples = 8000
     
     input_signal = generate_signal(frequencies=[10, 20, 40],
                                    amplitudes=[20, 15, 10],
-                                   fs=400,
-                                   n_channels=2,
-                                   n_samples=8000)
+                                   fs=input_fs,
+                                   n_channels=input_channels,
+                                   n_samples=input_samples)
 
     input_pe = INPUT_PE(input=input_signal,
                         clk=0)
     
-    fft_pe = FFT(window=input_window,
+    fft_pe = FFT(n_samples=input_samples,
+                 fs=input_fs,
                  berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
                  clk=1,
                  save_vizualisation=True)

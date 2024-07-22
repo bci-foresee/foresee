@@ -11,7 +11,7 @@ class THR(ProcessingElement):
     """
     name = "THR"
 
-    def __init__(self, window: Window, lower_bound: float, upper_bound: float, 
+    def __init__(self, lower_bound: float, upper_bound: float, 
                  clk: int = 0, save_vizualisation: bool = False) -> None:
         
         super().__init__(name=self.name, 

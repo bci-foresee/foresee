@@ -15,7 +15,7 @@ class PWXC_Pipe(Pipeline):
         self.loader = LOADER(input=input_window.load_signal(),
                       save_vizualisation=True)
         
-        self.pwxc = PWXC(window=input_window,
+        self.pwxc = PWXC(n_channels=input_window.n_channels,
                          save_vizualisation=True)
        
         # add PEs to list of elements

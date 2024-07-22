@@ -17,7 +17,8 @@ class SVM_Pipe(Pipeline):
         self.loader = LOADER(input=input_window.load_signal(),
                       save_vizualisation=True)
         
-        self.fft = FFT(window=input_window,
+        self.fft = FFT(n_samples=input_window.n_samples,
+                       fs=input_window.fs,
                        berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
                        save_vizualisation=True)
         
@@ -28,8 +29,7 @@ class SVM_Pipe(Pipeline):
 
         # setup loading in weights
 
-        self.svm = SVM(window=input_window,
-                       weights=random_weights,
+        self.svm = SVM(weights=random_weights,
                        save_vizualisation=False)
        
         # add PEs to list of elements

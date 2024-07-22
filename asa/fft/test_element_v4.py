@@ -20,7 +20,8 @@ def test_fft_v4() -> None:
                                    n_samples=8000)
     
     # create the PE you want to test
-    fft_pe = FFT(window=input_window,
+    fft_pe = FFT(n_samples=8000,
+                 fs=400,
                  berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
                  clk=1,
                  save_vizualisation=True)

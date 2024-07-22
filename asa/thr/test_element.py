@@ -17,9 +17,12 @@ class THR_Pipe(Pipeline):
         self.loader = LOADER(input=input_window.load_signal(),
                       save_vizualisation=True)
         
-        self.fft = FFT(window=input_window,
+        self.fft = FFT(n_samples=input_window.n_samples,
+                       fs=input_window.fs,
+                       clk=1,
                        berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
                        save_vizualisation=True)
+
         
         # loading random weights, size= berger bands * channels
         
@@ -27,14 +30,12 @@ class THR_Pipe(Pipeline):
         zero_weights = np.zeros(len(self.fft.berger_bands) * input_window.n_channels)
         one_weights = np.ones(len(self.fft.berger_bands) * input_window.n_channels)
 
-        self.svm = SVM(window=input_window,
-                       weights=zero_weights,
+        self.svm = SVM(weights=zero_weights,
                        save_vizualisation=False)
         
-        self.thr = THR(window=input_window,
-                          lower_bound=0,
-                          upper_bound=1,
-                          save_vizualisation=False)
+        self.thr = THR(lower_bound=0,
+                       upper_bound=1,
+                       save_vizualisation=False)
        
         # add PEs to list of elements
         self.add_elements([self.loader, self.fft, self.svm, self.thr])

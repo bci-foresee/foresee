@@ -2,7 +2,6 @@
 import numpy as np
 from numpy.typing import NDArray
 from asa.parent import ProcessingElement
-from signals.parent import Window
 from typing import List, Tuple
 from scipy.signal import butter, filtfilt
 import os
@@ -15,13 +14,15 @@ class BBF(ProcessingElement):
     """
     name = "BBF"
 
-    def __init__(self, window: Window, berger_bands: List[Tuple[int, int]],
+    def __init__(self, 
+                 fs: int,
+                 berger_bands: List[Tuple[int, int]],
                  clk: int = 0, save_vizualisation: bool = False) -> None:
         super().__init__(name = self.name,
                          clk = clk,
                          save_vizualisation = save_vizualisation)
         
-        self.sample_freq = window.fs
+        self.sample_freq = fs
         self.berger_bands = berger_bands
 
     # necessary method to run the processing element

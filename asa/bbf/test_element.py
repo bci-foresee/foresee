@@ -15,7 +15,7 @@ class BBF_Pipe(Pipeline):
         self.loader = LOADER(input=input_window.load_signal(),
                       save_vizualisation=True)
         
-        self.bbf = BBF(window=input_window,
+        self.bbf = BBF(fs=input_window.fs,
                        berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
                        save_vizualisation=True)
        

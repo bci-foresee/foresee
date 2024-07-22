@@ -3,7 +3,6 @@ import numpy as np
 from numpy.typing import NDArray
 
 from asa.parent import ProcessingElement
-from signals.parent import Window
 
 
 class SVM(ProcessingElement):
@@ -12,13 +11,12 @@ class SVM(ProcessingElement):
     """
     name = "SVM"
 
-    def __init__(self, window: Window, weights: NDArray[np.float32], 
+    def __init__(self, weights: NDArray[np.float32], 
                  clk: int = 0, save_vizualisation: bool = False) -> None:
         super().__init__(name=self.name, 
                          clk=clk,
                          save_vizualisation=save_vizualisation)
 
-        # no use of window atm
         self.weights: NDArray[np.int32] = weights
 
 

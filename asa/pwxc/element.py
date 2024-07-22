@@ -3,7 +3,6 @@ import numpy as np
 from numpy.typing import NDArray
 
 from asa.parent import ProcessingElement
-from signals.parent import Window
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -15,13 +14,13 @@ class PWXC(ProcessingElement):
     """
     name = "PWXC"
 
-    def __init__(self, window: Window,
+    def __init__(self, n_channels: int,
                   clk: int = 0, save_vizualisation: bool = False) -> None:
         super().__init__(name = self.name, 
                          clk = clk,
                          save_vizualisation = save_vizualisation)
         
-        self.num_channels = window.n_channels
+        self.num_channels = n_channels
 
     def run(self) -> NDArray[np.float32]:
         # load input data

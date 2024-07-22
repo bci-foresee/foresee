@@ -20,7 +20,9 @@ class FFT(ProcessingElement):
     """
     name = "FFT"
 
-    def __init__(self, window: Window, berger_bands: List[Tuple[int, int]],
+    def __init__(self, berger_bands: List[Tuple[int, int]],
+                 n_samples: int, 
+                 fs: int,
                  clk: int = 0, save_vizualisation: bool = False,
                  ) -> None:
 
@@ -28,8 +30,8 @@ class FFT(ProcessingElement):
                          clk = clk,
                          save_vizualisation = save_vizualisation)
         
-        self.points = window.n_samples
-        self.sample_freq = window.fs
+        self.points = n_samples
+        self.sample_freq = fs
         self.berger_bands = berger_bands
     
     def run(self) -> NDArray[np.float32]:
