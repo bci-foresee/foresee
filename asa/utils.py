@@ -52,7 +52,7 @@ class INPUT_PE(ProcessingElement):
                   clk: int = 0) -> None:
         super().__init__(name = self.name, 
                          clk = clk,
-                         save_vizualisation = False)
+                         save_visualization = False)
         self.input = input
 
     def run(self) -> NDArray[np.float32]:

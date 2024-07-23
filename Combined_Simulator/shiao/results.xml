@@ -1,6 +1,6 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1721506124" />
-    <testcase name="test_fft_verilog" classname="pipeline" file="/workspaces/aloha-verilog/Combined_Simulator/shiao/pipeline.py" lineno="24" time="11.420134782791138" sim_time_ns="497184.001" ratio_time="43535.73845285964" />
+    <property name="random_seed" value="1721755971" />
+    <testcase name="test_fft_verilog" classname="pipeline" file="/workspaces/aloha-verilog/Combined_Simulator/shiao/pipeline.py" lineno="24" time="10.892473220825195" sim_time_ns="497184.001" ratio_time="45644.730165545836" />
   </testsuite>
 </testsuites>

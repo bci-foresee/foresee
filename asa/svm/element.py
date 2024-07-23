@@ -12,10 +12,10 @@ class SVM(ProcessingElement):
     name = "SVM"
 
     def __init__(self, weights: NDArray[np.float32], 
-                 clk: int = 0, save_vizualisation: bool = False) -> None:
+                 clk: int = 0, save_visualization: bool = False) -> None:
         super().__init__(name=self.name, 
                          clk=clk,
-                         save_vizualisation=save_vizualisation)
+                         save_visualization=save_visualization)
 
         self.weights: NDArray[np.int32] = weights
 
@@ -28,8 +28,8 @@ class SVM(ProcessingElement):
         # compute
         output = self.compute(features=input_data)
         # vizualise
-        if self.save_vizualisation:
-            self.vizualise()
+        if self.save_visualization:
+            self.visualize()
         # return data
         return output
     
@@ -59,7 +59,7 @@ class SVM(ProcessingElement):
            acc += self.weights[i] * features[i] 
         return acc
     
-    def vizualise(self) -> None:
+    def visualize(self) -> None:
         # nothing to visualise for SVM
         pass
 

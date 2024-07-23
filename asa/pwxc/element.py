@@ -15,10 +15,10 @@ class PWXC(ProcessingElement):
     name = "PWXC"
 
     def __init__(self, n_channels: int,
-                  clk: int = 0, save_vizualisation: bool = False) -> None:
+                  clk: int = 0, save_visualization: bool = False) -> None:
         super().__init__(name = self.name, 
                          clk = clk,
-                         save_vizualisation = save_vizualisation)
+                         save_visualization = save_visualization)
         
         self.num_channels = n_channels
 
@@ -30,8 +30,8 @@ class PWXC(ProcessingElement):
         # compute
         output = self.compute(input=input_data)
         # vizualise
-        if self.save_vizualisation:
-            self.vizualise()
+        if self.save_visualization:
+            self.visualize()
         # return data
         return output
 
@@ -65,7 +65,7 @@ class PWXC(ProcessingElement):
         self.correlations = correlations
         return correlations
     
-    def vizualise(self) -> None:
+    def visualize(self) -> None:
         # Ensure the directory exists
         output_dir = 'plots'
         os.makedirs(output_dir, exist_ok=True)

@@ -20,7 +20,7 @@ def test_thr_basic() -> None:
     
     output = pipeline.run()
     for element in pipeline.elements:
-        print(f"Element: {element.name}, visualisation generated: {element.save_vizualisation}")
+        print(f"Element: {element.name}, visualisation generated: {element.save_visualization}")
     print()
     print(f"output:\n {output}")
     assert output == 1, f"Expected 1 (all SVM weights = 0, therefore within threshold), but got {output}"

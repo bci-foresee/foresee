@@ -1,6 +1,5 @@
 
 from asa import FFT, SVM, THR, BBF, PWXC, LOADER
-
 import numpy as np
 from pipelines.parent import Pipeline
 from signals.parent import Window
@@ -19,20 +18,20 @@ class Shiao_Pipe(Pipeline):
 
         # add processing elements to the pipeline
         self.loader = LOADER(input=input_window.load_signal(),
-                      save_vizualisation=True)
+                      save_visualization=True)
         
         self.fft = FFT(n_samples=input_window.n_samples,
                        fs=input_window.fs,
                        clk=1,
                        berger_bands=berger_bands,
-                       save_vizualisation=True)
+                       save_visualization=True)
         
         self.bbf = BBF(fs=input_window.fs,
                           berger_bands=berger_bands,
-                          save_vizualisation=True)
+                          save_visualization=True)
         
         self.pwxc = PWXC(n_channels=input_window.n_channels,
-                         save_vizualisation=True)
+                         save_visualization=True)
 
         
         # loading random weights, size = berger bands * channels + berger bands * channels + (channels * (channels - 1)) / 2
@@ -48,11 +47,11 @@ class Shiao_Pipe(Pipeline):
         one_weights = np.ones(weights_size)
 
         self.svm = SVM(weights=zero_weights,
-                       save_vizualisation=False)
+                       save_visualization=False)
         
         self.thr = THR(lower_bound=0,
                        upper_bound=1,
-                       save_vizualisation=False)
+                       save_visualization=False)
        
         # add PEs to list of elements
         self.add_elements([self.loader, self.fft, self.bbf, self.pwxc, self.svm, self.thr])

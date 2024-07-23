@@ -13,13 +13,13 @@ class FFT_Pipe(Pipeline):
 
         # add processing elements to the pipeline
         self.loader = LOADER(input=input_window.load_signal(),
-                      save_vizualisation=True)
+                      save_visualization=True)
         
         self.fft = FFT(n_samples=input_window.n_samples,
                        fs=input_window.fs,
                        clk=1,
                        berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
-                       save_vizualisation=True)
+                       save_visualization=True)
        
         # add PEs to list of elements
         self.add_elements([self.loader, self.fft])
@@ -48,7 +48,7 @@ def test_fft_pipeline() -> None:
     
     output_features = pipeline.run()
     for element in pipeline.elements:
-        print(f"Element: {element.name}, visualisation generated: {element.save_vizualisation}")
+        print(f"Element: {element.name}, visualisation generated: {element.save_visualization}")
     print()
     print(f"assert test case not implemented yet, output shape:\n {output_features.shape}")
     assert 1 == 1

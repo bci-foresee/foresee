@@ -6,7 +6,7 @@ class ProcessingElement:
     def __init__(self, 
                 name: str,
                 clk: int = 0,
-                save_vizualisation: bool = False) -> None:
+                save_visualization: bool = False) -> None:
 
         # name of the processing element
         self.name = name
@@ -15,7 +15,7 @@ class ProcessingElement:
         self.clk = clk
 
         # save vizualisation of processing element
-        self.save_vizualisation = save_vizualisation
+        self.save_visualization = save_visualization
         
         # i/o
         self.inputs = []
@@ -38,7 +38,7 @@ class ProcessingElement:
         # load input data
         # validate dimensions
         # compute
-        # vizualise
+        # visualize
         # return data
         raise NotImplementedError("run method not implemented")
     

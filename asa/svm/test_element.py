@@ -15,12 +15,12 @@ class SVM_Pipe(Pipeline):
 
         # add processing elements to the pipeline
         self.loader = LOADER(input=input_window.load_signal(),
-                      save_vizualisation=True)
+                      save_visualization=True)
         
         self.fft = FFT(n_samples=input_window.n_samples,
                        fs=input_window.fs,
                        berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
-                       save_vizualisation=True)
+                       save_visualization=True)
         
         # loading random weights, size= berger bands * channels
         
@@ -30,7 +30,7 @@ class SVM_Pipe(Pipeline):
         # setup loading in weights
 
         self.svm = SVM(weights=random_weights,
-                       save_vizualisation=False)
+                       save_visualization=False)
        
         # add PEs to list of elements
         self.add_elements([self.loader, self.fft, self.svm])
@@ -59,7 +59,7 @@ def test_svm_basic() -> None:
     
     output_features = pipeline.run()
     for element in pipeline.elements:
-        print(f"Element: {element.name}, visualisation generated: {element.save_vizualisation}")
+        print(f"Element: {element.name}, visualisation generated: {element.save_visualization}")
     print()
     print(f"assert test case not implemented yet, output:\n {output_features}")
     assert 1 == 1

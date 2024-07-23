@@ -1,14 +1,8 @@
-from pipelines.parent import Pipeline
 from signals.parent import Window
-from asa import FFT, LOADER
-
+from asa import FFT
 from asa.utils import create_testing_pipeline, generate_signal
     
-
-# run the pipeline to test the element
 def test_fft_v3() -> None:
-
-    # input signal window
     # need to define signal properties for the input signal
     input_window = Window(fs=400, channels=2, samples=8000)
     
@@ -24,7 +18,7 @@ def test_fft_v3() -> None:
                  fs=400,
                  berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
                  clk=1,
-                 save_vizualisation=True)
+                 save_visualization=True)
 
     # create testing pipeline
     testing_pipeline = create_testing_pipeline(test_pe=fft_pe,
@@ -35,7 +29,7 @@ def test_fft_v3() -> None:
     output = testing_pipeline.run()
 
     for element in testing_pipeline.elements:
-        print(f"Element: {element.name}, visualisation generated: {element.save_vizualisation}")
+        print(f"Element: {element.name}, visualisation generated: {element.save_visualization}")
     print()
     print(f"assert test case not implemented yet, output shape:\n {output.shape}")
     assert 1 == 1

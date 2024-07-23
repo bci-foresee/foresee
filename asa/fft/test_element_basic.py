@@ -26,7 +26,7 @@ def test_fft_basic() -> None:
                  fs=input_fs,
                  berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
                  clk=1,
-                 save_vizualisation=True)
+                 save_visualization=True)
     
     # connect PEs
     input_pe.add_output(fft_pe)
@@ -38,7 +38,7 @@ def test_fft_basic() -> None:
     elements = [input_pe, fft_pe]
 
     for element in elements:
-        print(f"Element: {element.name}, visualisation generated: {element.save_vizualisation}")
+        print(f"Element: {element.name}, visualisation generated: {element.save_visualization}")
     print()
     print(f"assert test case not implemented yet, output shape:\n {output.shape}")
     assert 1 == 1

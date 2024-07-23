@@ -13,11 +13,11 @@ class BBF_Pipe(Pipeline):
 
         # add processing elements to the pipeline
         self.loader = LOADER(input=input_window.load_signal(),
-                      save_vizualisation=True)
+                      save_visualization=True)
         
         self.bbf = BBF(fs=input_window.fs,
                        berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
-                       save_vizualisation=True)
+                       save_visualization=True)
        
         # add PEs to list of elements
         self.add_elements([self.loader, self.bbf])
@@ -46,7 +46,7 @@ def test_bbf_basic() -> None:
     
     output_features = pipeline.run()
     for element in pipeline.elements:
-        print(f"Element: {element.name}, visualisation generated: {element.save_vizualisation}")
+        print(f"Element: {element.name}, visualization generated: {element.save_visualization}")
     print()
     print(f"assert test case not implemented yet, output shape:\n {output_features.shape}")
     assert 1 == 1

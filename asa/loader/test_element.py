@@ -11,7 +11,7 @@ def test_loader_basic() -> None:
     ], dtype=np.int16)
 
     loader = LOADER(input=signal_in,
-        save_vizualisation=True)
+        save_visualization=True)
 
     expected_result = np.array([
         [1, 2, 3, 2, 1],

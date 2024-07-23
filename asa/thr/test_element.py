@@ -15,13 +15,13 @@ class THR_Pipe(Pipeline):
 
         # add processing elements to the pipeline
         self.loader = LOADER(input=input_window.load_signal(),
-                      save_vizualisation=True)
+                      save_visualization=True)
         
         self.fft = FFT(n_samples=input_window.n_samples,
                        fs=input_window.fs,
                        clk=1,
                        berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)],
-                       save_vizualisation=True)
+                       save_visualization=True)
 
         
         # loading random weights, size= berger bands * channels
@@ -31,11 +31,11 @@ class THR_Pipe(Pipeline):
         one_weights = np.ones(len(self.fft.berger_bands) * input_window.n_channels)
 
         self.svm = SVM(weights=zero_weights,
-                       save_vizualisation=False)
+                       save_visualization=False)
         
         self.thr = THR(lower_bound=0,
                        upper_bound=1,
-                       save_vizualisation=False)
+                       save_visualization=False)
        
         # add PEs to list of elements
         self.add_elements([self.loader, self.fft, self.svm, self.thr])
@@ -68,7 +68,7 @@ def test_thr_basic() -> None:
     
     output = pipeline.run()
     for element in pipeline.elements:
-        print(f"Element: {element.name}, visualisation generated: {element.save_vizualisation}")
+        print(f"Element: {element.name}, visualisation generated: {element.save_visualization}")
     print()
     print(f"output:\n {output}")
     assert output == 1, f"Expected 1 (all SVM weights = 0, therefore within threshold), but got {output}"

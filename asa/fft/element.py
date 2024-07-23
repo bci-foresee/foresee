@@ -1,14 +1,12 @@
 
 import numpy as np
-from numpy.typing import NDArray
-from typing import List, Tuple
-import os
-
 import matplotlib.pyplot as plt
 
-from asa.parent import ProcessingElement
-
+from numpy.typing import NDArray
 from typing import List, Tuple
+
+import os
+from asa.parent import ProcessingElement
 
 
 class FFT(ProcessingElement):
@@ -21,12 +19,12 @@ class FFT(ProcessingElement):
     def __init__(self, berger_bands: List[Tuple[int, int]],
                  n_samples: int, 
                  fs: int,
-                 clk: int = 0, save_vizualisation: bool = False,
+                 clk: int = 0, save_visualization: bool = False,
                  ) -> None:
 
         super().__init__(name = self.name,
                          clk = clk,
-                         save_vizualisation = save_vizualisation)
+                         save_visualization = save_visualization)
         
         self.points = n_samples
         self.sample_freq = fs
@@ -40,8 +38,8 @@ class FFT(ProcessingElement):
         # compute
         output = self.compute(input=input_data)
         # vizualise
-        if self.save_vizualisation:
-            self.vizualise()
+        if self.save_visualization:
+            self.visualize()
         # return data
         return output
 
@@ -60,6 +58,8 @@ class FFT(ProcessingElement):
         self.input_dimension = input.shape
         self.channels = self.input_dimension[0]
         self.num_samples = self.input_dimension[1]
+        
+        assert self.num_samples == self.points, "Number of samples must match"
 
     def compute(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
         fft_power_features = []
@@ -83,14 +83,14 @@ class FFT(ProcessingElement):
 
             fft_power_features.append(fft_power)
 
-        # also save for vizualisation
+        # also save for visualisation
         fft_power_features = np.array(fft_power_features)
         self.fft_power_features = fft_power_features
         self.fft_outputs = np.array(fft_outputs)
 
         return fft_power_features
     
-    def vizualise(self) -> None:
+    def visualize(self) -> None:
         # Ensure the directory exists
         output_dir = 'plots'
         os.makedirs(output_dir, exist_ok=True)

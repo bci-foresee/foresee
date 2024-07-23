@@ -20,10 +20,10 @@ class LOADER(ProcessingElement):
     name = "Loader"
 
     def __init__(self, input: NDArray[np.float32],
-                  clk: int = 0, save_vizualisation: bool = False) -> None:
+                  clk: int = 0, save_visualization: bool = False) -> None:
         super().__init__(name = self.name, 
                          clk = clk,
-                         save_vizualisation = save_vizualisation)
+                         save_visualization = save_visualization)
         self.input = input
         
 
@@ -34,9 +34,9 @@ class LOADER(ProcessingElement):
         self.dimension_validate(input=input)
         # compute output
         output = self.compute(input=input)
-        # vizualise the output (only if save_vizualisation is True)
-        if self.save_vizualisation:
-            self.vizualise(output)
+        # vizualise the output (only if save_visualization is True)
+        if self.save_visualization:
+            self.visualize(output)
         return output
 
     # function that gets the dimension of the input signal
@@ -52,7 +52,7 @@ class LOADER(ProcessingElement):
         return input
 
     # vizualises data flow through PE and stores in /plots/ directory
-    def vizualise(self, data: NDArray[np.float32]) -> None:
+    def visualize(self, data: NDArray[np.float32]) -> None:
         # Create a figure and subplots for each channel
         fig, axs = plt.subplots(self.channels, 1, figsize=(10, 20), sharex=True)
 

@@ -17,10 +17,10 @@ class BBF(ProcessingElement):
     def __init__(self, 
                  fs: int,
                  berger_bands: List[Tuple[int, int]],
-                 clk: int = 0, save_vizualisation: bool = False) -> None:
+                 clk: int = 0, save_visualization: bool = False) -> None:
         super().__init__(name = self.name,
                          clk = clk,
-                         save_vizualisation = save_vizualisation)
+                         save_visualization = save_visualization)
         
         self.sample_freq = fs
         self.berger_bands = berger_bands
@@ -33,9 +33,9 @@ class BBF(ProcessingElement):
         self.dimension_validate(input=input_data)
         # compute
         output = self.compute(input=input_data)
-        # vizualise
-        if self.save_vizualisation:
-            self.vizualise()
+        # visualize
+        if self.save_visualization:
+            self.visualize()
         # return data
         return output
     
@@ -104,7 +104,7 @@ class BBF(ProcessingElement):
         return bbf_power_features
         
     # necessary method to validate the dimensions of the input data
-    def vizualise(self) -> None:
+    def visualize(self) -> None:
         # Ensure the directory exists
         output_dir = 'plots'
         os.makedirs(output_dir, exist_ok=True)

@@ -12,11 +12,11 @@ class THR(ProcessingElement):
     name = "THR"
 
     def __init__(self, lower_bound: float, upper_bound: float, 
-                 clk: int = 0, save_vizualisation: bool = False) -> None:
+                 clk: int = 0, save_visualization: bool = False) -> None:
         
         super().__init__(name=self.name, 
                          clk=clk,
-                         save_vizualisation=save_vizualisation)
+                         save_visualization=save_visualization)
         
         # no use of window atm
         self.lower_bound: float = lower_bound
@@ -30,8 +30,8 @@ class THR(ProcessingElement):
         # compute
         output = self.compute(input=input_data)
         # vizualise
-        if self.save_vizualisation:
-            self.vizualise()
+        if self.save_visualization:
+            self.visualize()
         # return data
         return output
     
@@ -61,7 +61,7 @@ class THR(ProcessingElement):
             return 1
         return 0
     
-    def vizualise(self):
+    def visualize(self):
         # nothing to vizualise
         pass
 
