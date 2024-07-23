@@ -37,5 +37,5 @@ jobs:
         source $HOME/miniconda/bin/activate
         conda activate scalo_sim
         conda list  # List installed packages to confirm numpy is installed
-        cd ./pipelines/seizure/shiao/
+        cd ./pipelines/
         pytest -v -rP
