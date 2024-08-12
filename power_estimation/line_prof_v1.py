@@ -43,3 +43,9 @@ power_weights = {
 # Estimate power consumption
 estimated_power = estimate_power_from_line_profile(lp.get_stats(), power_weights)
 print(f"Estimated power consumption: {estimated_power}")
+
+# should do something of the sort like 
+# how much time spent on how many computations
+# total time spent
+# use to calculate latency estimate
+# use to calculate dynamic power estimate
