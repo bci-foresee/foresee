@@ -1,29 +1,37 @@
-module subtractor;
+module subtractor_testbench;
+    //i/o ports. i - registers so vals can be saved, o - wires from PE modules
     reg [31:0] in1, in2;
     wire [31:0] out;
+    // instantiate the PE module
+    subtractor subtractor_instance(
+        .in1(in1),
+        .in2(in2),
+        .out(out)
+    );
+
+    // read write from i/o text files
     integer infile, outfile, r;
-
-    assign out = in1 - in2;
-
     initial begin
-        infile = $fopen("subtractor_input.txt", "r");
+        infile = $fopen("subtractor_input.txt", "r"); // open files
         outfile = $fopen("subtractor_output.txt", "w");
 
-        if (infile == 0 || outfile == 0) begin
-            $display("Error opening file.");
-            $finish;
-        end
+        r = $fscanf(infile, "%h %h", in1, in2); //read data
 
-        // Read inputs from file
-        r = $fscanf(infile, "%h %h", in1, in2);
+        //computation occurs here, when inputs are set.
 
-        #1;  // Small delay to ensure correct computation
+        $fwrite(outfile, "%h\n", out); //write output to file
 
-        // Write output to file
-        $fwrite(outfile, "%h\n", out);
-
-        $fclose(infile);
+        $fclose(infile); //close files
         $fclose(outfile);
         $finish;
     end
+endmodule
+
+//PE module
+module subtractor(
+    input [31:0] in1,
+    input [31:0] in2,
+    output [31:0] out
+);
+    assign out = in1 - in2;
 endmodule
