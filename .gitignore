@@ -12,3 +12,6 @@
 *.xml
 *.npy
 **/plots/
+**/sim
+**/**_input.txt
+**/**_output.txt
