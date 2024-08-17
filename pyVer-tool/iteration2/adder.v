@@ -2,7 +2,7 @@ module adder_testbench; //adder testbench
 
     //module name
     parameter MAX_NAME_LENGTH = 40;
-    reg [8*MAX_NAME_LENGTH:1] name = "adder";
+    reg [8*MAX_NAME_LENGTH:1] name = "";
 
     //set up i/o ports for module
     // all inputs are registers so we can store values to them from txt files
@@ -21,8 +21,8 @@ module adder_testbench; //adder testbench
     integer infile, outfile, r;
     initial begin
         //open i/o files
-        infile = $fopen({name, "_input_buffer.txt"}, "r");
-        outfile = $fopen({name, "_output_buffer.txt"}, "w");
+        infile = $fopen("input_buffer.txt", "r");
+        outfile = $fopen("output_buffer.txt", "w");
         // Read inputs from file
         r = $fscanf(infile, "%h %h", in1, in2);
         // let computation happen (maybe need a delay here)

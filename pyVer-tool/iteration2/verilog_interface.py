@@ -4,6 +4,9 @@ import numpy as np
 
 class VerilogInterface:
 
+    input_buffer = "input_buffer.txt"
+    output_buffer = "output_buffer.txt"
+
     def run_verilog_simulation(self, verilog_file, output_file):
         # Run the Verilog simulation using Icarus Verilog or another Verilog simulator
         subprocess.run(["iverilog", "-o", "sim", verilog_file])
@@ -19,42 +22,35 @@ class VerilogInterface:
         
         return output_array
 
-    def adder(self, a, b):
+    def adder(self, a:int, b:int):
         PE_name = "adder"
         verilog_file = PE_name + ".v"
-        input_buffer = PE_name + "_input_buffer.txt"
-        output_buffer = PE_name + "_output_buffer.txt"
 
-        with open(input_buffer, 'w') as file:
+        with open(self.input_buffer, 'w') as file:
             file.write(f"{a:08x} {b:08x}\n")  # Write inputs in hexadecimal
 
-        result = self.run_verilog_simulation(verilog_file, output_buffer)
+        result = self.run_verilog_simulation(verilog_file, self.output_buffer)
         return result
 
-    def subtractor(self, a, b):
+    def subtractor(self, a:int, b:int):
         PE_name = "subtractor"
         verilog_file = PE_name + ".v"
-        input_buffer = PE_name + "_input_buffer.txt"
-        output_buffer = PE_name + "_output_buffer.txt"
-        with open(input_buffer, 'w') as file:
+        with open(self.input_buffer, 'w') as file:
             file.write(f"{a:08x} {b:08x}\n")  # Write inputs in hexadecimal
 
-        result = self.run_verilog_simulation(verilog_file, output_buffer)
+        result = self.run_verilog_simulation(verilog_file, self.output_buffer)
         return result
     
-    def clocked_adder(self, a, b, clk=0):
+    def clocked_adder(self, a:np.ndarray, b:np.ndarray, clk=0):
         PE_name = "clocked_adder"
         verilog_file = PE_name + ".v"
-        input_buffer = PE_name + "_input_buffer.txt"
-        output_buffer = PE_name + "_output_buffer.txt"
 
-        with open(input_buffer, 'w') as file:
+        with open(self.input_buffer, 'w') as file:
+            # writing input buffer
             for i in range(len(a)):
                 file.write(f"{a[i]:08x} {b[i]:08x}\n")
-            # buffer work in here
-            # ie how is data fed into the clocked adder (one line one input?)
 
-        result = self.run_verilog_simulation(verilog_file, output_buffer)
+        result = self.run_verilog_simulation(verilog_file, self.output_buffer)
         return result
 
 

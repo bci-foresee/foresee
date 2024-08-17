@@ -2,7 +2,7 @@ module subtractor_testbench;
 
     //module name
     parameter MAX_NAME_LENGTH = 40;
-    reg [8*MAX_NAME_LENGTH:1] name = "subtractor";
+    reg [8*MAX_NAME_LENGTH:1] name = "";
 
     //i/o ports. i - registers so vals can be saved, o - wires from PE modules
     reg [31:0] in1, in2;
@@ -17,8 +17,8 @@ module subtractor_testbench;
     // read write from i/o text files
     integer infile, outfile, r;
     initial begin
-        infile =  $fopen({name, "_input_buffer.txt"} , "r"); // open files
-        outfile = $fopen({name, "_output_buffer.txt"}, "w");
+        infile = $fopen("input_buffer.txt", "r"); // open files
+        outfile = $fopen("output_buffer.txt", "w");
 
         r = $fscanf(infile, "%h %h", in1, in2); //read data
 

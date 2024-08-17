@@ -1,10 +1,6 @@
 
 module clocked_adder_testbench; //adder testbench
 
-    //module name
-    parameter MAX_NAME_LENGTH = 40;
-    reg [8*MAX_NAME_LENGTH:1] name = "clocked_adder";
-
     //set up i/o ports for module
     // all inputs are registers so we can store values to them from txt files
     // all outputs are wires that attach to the PE modules.
@@ -36,8 +32,8 @@ module clocked_adder_testbench; //adder testbench
     integer buffer_in, buffer_out, r;
     initial begin
         //open i/o files
-        buffer_in = $fopen({name, "_input_buffer.txt"}, "r"); 
-        buffer_out = $fopen({name, "_output_buffer.txt"}, "w");
+        buffer_in = $fopen("input_buffer.txt", "r"); 
+        buffer_out = $fopen("output_buffer.txt", "w");
         
         // ------ computation ------
 
