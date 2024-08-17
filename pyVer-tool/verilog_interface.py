@@ -13,14 +13,15 @@ class VerilogInterface:
         subprocess.run(["vvp", "sim"])
         
         # Read the output
+        numbers = []
         with open(output_file, 'r') as file:
-            # Read all lines and strip whitespace
-            lines = [line.strip() for line in file]
-            
-            # Convert each line from hex to int and create a numpy array
-            output_array = np.array([int(line, base=16) for line in lines])
+            for line in file:
+                # Split each line into words and convert each word from hex to int
+                line_numbers = [int(word, base=16) for word in line.split()]
+                numbers.extend(line_numbers)
         
-        return output_array
+        # Convert the list of numbers to a numpy array
+        return np.array(numbers)
 
     def adder(self, a:int, b:int):
         PE_name = "adder"
@@ -49,6 +50,19 @@ class VerilogInterface:
             # writing input buffer
             for i in range(len(a)):
                 file.write(f"{a[i]:08x} {b[i]:08x}\n")
+
+        result = self.run_verilog_simulation(verilog_file, self.output_buffer)
+        return result
+    
+    def spiral_fft_8192(self, a:np.ndarray, clk=0):
+        PE_name = "spiral_fft_8192"
+        verilog_file = PE_name + ".v"
+
+        # 2048 cycles for 8192 points
+        with open(self.input_buffer, 'w') as file:
+            # writing input buffer
+            for i in range(2048):
+                file.write(f"{a[4*i]:08x} {0:08x} {a[4*i+1]:08x} {0:08x} {a[4*i+2]:08x} {0:08x} {a[4*i+3]:08x} {0:08x}\n")
 
         result = self.run_verilog_simulation(verilog_file, self.output_buffer)
         return result
