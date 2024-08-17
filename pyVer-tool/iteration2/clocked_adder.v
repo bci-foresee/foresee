@@ -1,5 +1,10 @@
 
 module clocked_adder_testbench; //adder testbench
+
+    //module name
+    parameter MAX_NAME_LENGTH = 40;
+    reg [8*MAX_NAME_LENGTH:1] name = "clocked_adder";
+
     //set up i/o ports for module
     // all inputs are registers so we can store values to them from txt files
     // all outputs are wires that attach to the PE modules.
@@ -28,34 +33,41 @@ module clocked_adder_testbench; //adder testbench
     );
 
     // read inputs for computation to happen.
-    integer infile, outfile, r;
+    integer buffer_in, buffer_out, r;
     initial begin
         //open i/o files
-        infile = $fopen("clocked_adder_input.txt", "r");
-        outfile = $fopen("clocked_adder_output.txt", "w");
+        buffer_in = $fopen({name, "_input_buffer.txt"}, "r"); 
+        buffer_out = $fopen({name, "_output_buffer.txt"}, "w");
         
         // ------ computation ------
 
         @(posedge clk) reset = 1; // reset module
         @(posedge clk); //let reset propagate
         @(posedge clk) reset = 0; // deassert reset
-
-        // Read inputs from file
-        r = $fscanf(infile, "%h %h", in1, in2);
+                    
+        // r = $fscanf(buffer_in, "%h %h", in1, in2); // this would read the second line of inputs
 
         // let computation happen 10 cycle delay, show intermediate results
-        repeat(10) begin
-            @(posedge clk);
-            // $display("Cycle %d: %h + %h = %h", cycles, in1, in2, out);
-        end
-        
-        // Write output to file
-        $fwrite(outfile, "%h\n", out);
+        repeat(3) begin
+            // latch inputs
+            r = $fscanf(buffer_in, // buffer to read inputs from
+                    "%h %h", // format of inputs
+                    in1, // where to latch first input
+                    in2); // where to latch second input
 
+            // clock cycle to let computation happen
+            @(posedge clk);
+            
+            // Write output to file
+            // $fwrite(buffer_out, "%h\n", out);
+            $fdisplay(buffer_out, "%h", out);
+
+        end
+    
         // -------------------------
         //close files
-        $fclose(infile);
-        $fclose(outfile);
+        $fclose(buffer_in);
+        $fclose(buffer_out);
         $finish;
     end
 endmodule
