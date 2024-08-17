@@ -1,9 +1,5 @@
 module adder_testbench; //adder testbench
 
-    //module name
-    parameter MAX_NAME_LENGTH = 40;
-    reg [8*MAX_NAME_LENGTH:1] name = "";
-
     //set up i/o ports for module
     // all inputs are registers so we can store values to them from txt files
     // all outputs are wires that attach to the PE modules.
@@ -27,7 +23,7 @@ module adder_testbench; //adder testbench
         r = $fscanf(infile, "%h %h", in1, in2);
         // let computation happen (maybe need a delay here)
         // Write output to file
-        $fwrite(outfile, "%h\n", out);
+        $fdisplay(outfile, "%h", out);
         //close files
         $fclose(infile);
         $fclose(outfile);

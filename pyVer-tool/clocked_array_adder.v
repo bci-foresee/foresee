@@ -1,8 +1,8 @@
 
-module clocked_adder_testbench; //adder testbench
+module clocked_array_adder_testbench; //adder testbench
 
     //set up i/o ports for module
-    // all inputs are registers so we can store values to them from txt files
+    // all inputs are registers so we can store values to them from buffer txt files
     // all outputs are wires that attach to the PE modules.
     reg [31:0] in1, in2;
     reg reset = 0;
@@ -10,7 +10,7 @@ module clocked_adder_testbench; //adder testbench
 
     // initialize clock
     reg clk = 0;
-    always #10000 clk = ~clk;
+    always #100000 clk = ~clk;
 
     // count number of clock cycles
     reg[31:0] cycles;
@@ -20,7 +20,7 @@ module clocked_adder_testbench; //adder testbench
     end
 
     // instantiate the PE module
-    clocked_adder clocked_adder_instance(
+    clocked_array_adder clocked_array_adder_instance(
         .clk(clk),
         .reset(reset),
         .in1(in1),
@@ -28,36 +28,29 @@ module clocked_adder_testbench; //adder testbench
         .out(out)
     );
 
-    // read inputs for computation to happen.
+    // space for buffer i/o
     integer buffer_in, buffer_out, r;
+
     initial begin
         //open i/o files
         buffer_in = $fopen("input_buffer.txt", "r"); 
         buffer_out = $fopen("output_buffer.txt", "w");
         
-        // ------ computation ------
-
+        // reset module
         @(posedge clk) reset = 1; // reset module
         @(posedge clk); //let reset propagate
         @(posedge clk) reset = 0; // deassert reset
                     
-        // r = $fscanf(buffer_in, "%h %h", in1, in2); // this would read the second line of inputs
-
-        // let computation happen 10 cycle delay, show intermediate results
+        // how many times to do addition
         repeat(3) begin
             // latch inputs
-            r = $fscanf(buffer_in, // buffer to read inputs from
-                    "%h %h", // format of inputs
-                    in1, // where to latch first input
-                    in2); // where to latch second input
+            r = $fscanf(buffer_in, "%h %h", in1, in2);
 
             // clock cycle to let computation happen
             @(posedge clk);
             
             // Write output to file
-            // $fwrite(buffer_out, "%h\n", out);
             $fdisplay(buffer_out, "%h", out);
-
         end
     
         // -------------------------
@@ -69,7 +62,7 @@ module clocked_adder_testbench; //adder testbench
 endmodule
 
 
-module clocked_adder (
+module clocked_array_adder (
     input clk,                // Clock signal
     input reset,              // Reset signal
     input [31:0] in1, in2,         // 4-bit inputs

@@ -17,7 +17,7 @@ class VerilogInterface:
             # Read all lines and strip whitespace
             lines = [line.strip() for line in file]
             
-            # Convert each line from hex to int and create a NumPy array
+            # Convert each line from hex to int and create a numpy array
             output_array = np.array([int(line, base=16) for line in lines])
         
         return output_array
@@ -41,8 +41,8 @@ class VerilogInterface:
         result = self.run_verilog_simulation(verilog_file, self.output_buffer)
         return result
     
-    def clocked_adder(self, a:np.ndarray, b:np.ndarray, clk=0):
-        PE_name = "clocked_adder"
+    def clocked_array_adder(self, a:np.ndarray, b:np.ndarray, clk=0):
+        PE_name = "clocked_array_adder"
         verilog_file = PE_name + ".v"
 
         with open(self.input_buffer, 'w') as file:

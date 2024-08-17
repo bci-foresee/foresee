@@ -1,9 +1,5 @@
 module subtractor_testbench;
 
-    //module name
-    parameter MAX_NAME_LENGTH = 40;
-    reg [8*MAX_NAME_LENGTH:1] name = "";
-
     //i/o ports. i - registers so vals can be saved, o - wires from PE modules
     reg [31:0] in1, in2;
     wire [31:0] out;
@@ -24,7 +20,7 @@ module subtractor_testbench;
 
         //computation occurs here, when inputs are set.
 
-        $fwrite(outfile, "%h\n", out); //write output to file
+        $fdisplay(outfile, "%h", out); //write output to file
 
         $fclose(infile); //close files
         $fclose(outfile);

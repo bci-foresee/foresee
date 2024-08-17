@@ -13,6 +13,4 @@
 *.npy
 **/plots/
 **/sim
-**/**_input.txt
-**/**_output.txt
 **/**_buffer.txt
