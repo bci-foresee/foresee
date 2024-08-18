@@ -1,4 +1,4 @@
-name: PE tests
+name: PE Verilog tests
 
 on: [push, pull_request]
 
@@ -38,4 +38,4 @@ jobs:
         conda activate scalo_sim
         conda list  # List installed packages to confirm numpy is installed
         cd ./asa/
-        pytest -v -rP
+        pytest */**_verilog.py -v -rP

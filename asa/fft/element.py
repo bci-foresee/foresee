@@ -19,11 +19,14 @@ class FFT(ProcessingElement):
     def __init__(self, berger_bands: List[Tuple[int, int]],
                  n_samples: int, 
                  fs: int,
-                 clk: int = 0, save_visualization: bool = False,
+                 clk: int = 0, 
+                 rtl_sim: bool = False,
+                 save_visualization: bool = False,
                  ) -> None:
 
         super().__init__(name = self.name,
                          clk = clk,
+                         rtl_sim = rtl_sim,
                          save_visualization = save_visualization)
         
         self.points = n_samples
@@ -36,7 +39,11 @@ class FFT(ProcessingElement):
         # validate dimensions
         self.dimension_validate(input=input_data)
         # compute
-        output = self.compute(input=input_data)
+        if self.rtl_sim:
+            output = self.compute_verilog(input=input_data) # replace with verilog compute
+        else:
+            output = self.compute(input=input_data)
+        
         # vizualise
         if self.save_visualization:
             self.visualize()
@@ -90,6 +97,58 @@ class FFT(ProcessingElement):
 
         return fft_power_features
     
+    def compute_verilog(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
+        
+        # do if statements to choose between verilog implementations (ie how many points) here
+
+        PE_name = "spiral_fft_8192"
+        verilog_file = "./rtl/" + PE_name + ".v"
+
+        fft_power_features = []
+        fft_outputs = []
+        num_samples = self.points
+
+        for signal in input:
+            
+            signal_int = signal.astype(np.int32)
+
+            # 2048 cycles for 8192 points
+            with open(self.input_buffer, 'w') as file:
+                # writing input buffer
+                for i in range(2048):
+                    file.write(f"{signal_int[4*i]:08x} {0:08x} {signal_int[4*i+1]:08x} {0:08x} {signal_int[4*i+2]:08x} {0:08x} {signal_int[4*i+3]:08x} {0:08x}\n")
+
+            verilog_result = self.run_verilog_simulation(verilog_file, self.output_buffer)
+
+            fft_output = np.zeros(num_samples, dtype=np.complex64)
+
+            # coalesce the real and imaginary parts
+            for i in range(len(verilog_result)//2):
+                fft_output[i] = verilog_result[2*i] + 1j*verilog_result[2*i+1]
+
+            fft_outputs.append(fft_output)
+            positive_freqs = fft_output[:num_samples // 2]
+
+            sample_spacing = 1 / self.sample_freq
+            freq_bins = np.fft.fftfreq(num_samples, sample_spacing)
+            positive_freq_bins = freq_bins[:num_samples // 2]
+
+            fft_power = np.zeros(len(self.berger_bands))
+            for band in self.berger_bands:
+                band_magnitudes = np.abs(positive_freqs[(positive_freq_bins >= band[0]) & (positive_freq_bins < band[1])])
+                band_power = np.sum(band_magnitudes)
+                fft_power[self.berger_bands.index(band)] = band_power
+
+            fft_power_features.append(fft_power)
+
+        # also save for visualisation
+        fft_power_features = np.array(fft_power_features)
+        self.fft_power_features = fft_power_features
+        self.fft_outputs = np.array(fft_outputs)
+
+        return fft_power_features
+
+
     def visualize(self) -> None:
         # Ensure the directory exists
         output_dir = 'plots'

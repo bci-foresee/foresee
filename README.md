@@ -2,11 +2,13 @@
 
 ### Tool Status
 
-![PE Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/test-suite.yml/badge.svg)
+![PE Python Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/PE-python-suite.yml/badge.svg)
+
+![PE Verilog Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/PE-verilog-suite.yml/badge.svg)
 
 ![Pipeline Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/pipeline-suite.yml/badge.svg)
 
-Last updated: 23 July 2024
+Readme last updated: 23 July 2024
 
 ## Overview
 
@@ -69,7 +71,7 @@ The Simulator is divided into multiple directories, each with a specific purpose
 ASA stands for accelerator set architecture. This directory contains all of the processing elements that are used in pipelines created by the simulator. For example, let's say you wanted to create a pipeline for detecting seizures from ieeg data. One method (inspired by [Shiao et al.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5359075/)) is to use the pipeline depicted below.
 
 <div style="text-align: center;">
-  <img src="./images/seizure_pipeline.png" alt="seizure pipeline" style="width: 80%;">
+  <img src="./readme-images/seizure_pipeline.png" alt="seizure pipeline" style="width: 80%;">
 </div>
 
 To create this pipeline we would have to first implement all of the individual processing elements such as the FFT, SVM, etc. In [./asa/parent](./asa/parent) you can see the parent class which every processing element inherits from. This class defines all the necessary methods and attributes a processing element must contain.

@@ -56,6 +56,8 @@ module spiral_fft_8192_testbench; //adder testbench
    integer buffer_in, buffer_out, r;
 
    initial begin
+      $display("Starting simulation...");
+
       //open i/o files
       buffer_in = $fopen("input_buffer.txt", "r"); 
       buffer_out = $fopen("output_buffer.txt", "w");
@@ -71,6 +73,7 @@ module spiral_fft_8192_testbench; //adder testbench
 
       // 8192 complex words over 2048 cycles
       // 4 complex words per cycle
+      $display("Reading in from buffer...");
       for (j=0; j < 2048; j = j+1) begin
          // Input: 4 complex words per cycle
          r = $fscanf(buffer_in, 
@@ -85,6 +88,7 @@ module spiral_fft_8192_testbench; //adder testbench
       @(posedge clk) #1;
        
       // read output
+      $display("Writing to buffer...");
       for (m=0; m<2048; m=m+1) begin
          $fdisplay(buffer_out,
                    "%h %h %h %h %h %h %h %h", 
@@ -94,6 +98,7 @@ module spiral_fft_8192_testbench; //adder testbench
       
       // -------------------------
       //close files
+      $display("Simulation complete.");
       $fclose(buffer_in);
       $fclose(buffer_out);
       $finish;

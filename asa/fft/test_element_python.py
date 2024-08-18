@@ -11,7 +11,7 @@ def test_fft_basic() -> None:
     # input signal window
     input_fs = 400
     input_channels = 2
-    input_samples = 8000
+    input_samples = 8192
     
     input_signal = generate_signal(frequencies=[10, 20, 40],
                                    amplitudes=[20, 15, 10],

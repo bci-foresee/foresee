@@ -32,5 +32,7 @@ e = interface.clocked_array_adder(a, b)
 generic_display("Clocked Array Adder", [a, b], [e])
     
 arr = np.zeros(8192, dtype=np.int16)
+for i in range(8192):
+    arr[i] = i
 out = interface.spiral_fft_8192(arr)
-print(out)
+generic_display("Spiral FFT 8192", [arr], [out])

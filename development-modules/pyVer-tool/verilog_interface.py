@@ -25,7 +25,7 @@ class VerilogInterface:
 
     def adder(self, a:int, b:int):
         PE_name = "adder"
-        verilog_file = PE_name + ".v"
+        verilog_file = "./rtl/" + PE_name + ".v"
 
         with open(self.input_buffer, 'w') as file:
             file.write(f"{a:08x} {b:08x}\n")  # Write inputs in hexadecimal
