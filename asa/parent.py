@@ -4,6 +4,7 @@ This file defines the base class for all hardware components
 
 import subprocess
 import numpy as np
+import struct
 
 class ProcessingElement:
     def __init__(self, 
@@ -67,6 +68,10 @@ class ProcessingElement:
         # visualize
         # return data
         raise NotImplementedError("run method not implemented")
+    
+    def int_to_signedHex(self, value: int) -> str:
+        item = f"{struct.unpack('I', struct.pack('i', value))[0]:08x}"
+        return item
     
     # necessary method to load input data from input processing elements
     def load_inputs(self):

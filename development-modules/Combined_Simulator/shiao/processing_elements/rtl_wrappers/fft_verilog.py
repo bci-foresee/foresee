@@ -121,6 +121,9 @@ async def fft_verilog(dut,
     await RisingEdge(dut.fft_clk) # wait for rising edge
     dut.fft_next.value = 0 # reset the flag
 
+    print()
+    print(f"input signal: {signal_in[0:10]}") # debug
+
     # input loop while the input data exists, keep inputting data until there is no more.
     while len(signal_in) >= 4:
         # wait for falling edge to latch inputs
@@ -195,6 +198,7 @@ async def fft_verilog(dut,
     for i in range(len(real_output)):
         output_spectrum[i] = np.sqrt(np_real_output[i]**2 + np_imag_output[i]**2)
 
+    print(f"output_spectrum[0:10] = {output_spectrum[0:10]}") # debug
     # helpful debugging code
     # print(output_spectrum)
     # num_inf_nan = np.count_nonzero(np.isnan(output_spectrum) | np.isinf(output_spectrum))

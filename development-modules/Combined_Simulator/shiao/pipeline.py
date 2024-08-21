@@ -27,7 +27,7 @@ async def test_fft_verilog(dut):
     # Sample information
 
     num_channels = 16 # 16 channels of ieeg data
-    num_samples = 8000 # how many samples in window
+    num_samples = 8192 # how many samples in window
     sample_rate = 400 # sample rate in Hz
     sample_window = num_samples / sample_rate # how long the window is in seconds
     

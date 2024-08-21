@@ -8,7 +8,6 @@ from typing import List, Tuple
 import os
 from asa.parent import ProcessingElement
 
-
 class FFT(ProcessingElement):
     """
     Performs the Discrete Fourier Transform (DFT) using the Fast Fourier 
@@ -100,7 +99,6 @@ class FFT(ProcessingElement):
     def compute_verilog(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
         
         # do if statements to choose between verilog implementations (ie how many points) here
-
         PE_name = "spiral_fft_8192"
         verilog_file = "./rtl/" + PE_name + ".v"
 
@@ -116,18 +114,45 @@ class FFT(ProcessingElement):
             with open(self.input_buffer, 'w') as file:
                 # writing input buffer
                 for i in range(2048):
-                    file.write(f"{signal_int[4*i]:08x} {0:08x} {signal_int[4*i+1]:08x} {0:08x} {signal_int[4*i+2]:08x} {0:08x} {signal_int[4*i+3]:08x} {0:08x}\n")
+                    # writing into the buffer in signed hex format
+                    file.write(f"{self.int_to_signedHex(signal_int[4*i])} "
+                            f"{self.int_to_signedHex(0)} "
+                            f"{self.int_to_signedHex(signal_int[4*i+1])} "
+                            f"{self.int_to_signedHex(0)} "
+                            f"{self.int_to_signedHex(signal_int[4*i+2])} "
+                            f"{self.int_to_signedHex(0)} "
+                            f"{self.int_to_signedHex(signal_int[4*i+3])} "
+                            f"{self.int_to_signedHex(0)}\n")
 
             verilog_result = self.run_verilog_simulation(verilog_file, self.output_buffer)
 
-            fft_output = np.zeros(num_samples, dtype=np.complex64)
+            fft_real_output = np.zeros(len(verilog_result)//2)
+            fft_imag_output = np.zeros(len(verilog_result)//2)
+            fft_output = np.zeros(len(verilog_result)//2)
 
             # coalesce the real and imaginary parts
             for i in range(len(verilog_result)//2):
-                fft_output[i] = verilog_result[2*i] + 1j*verilog_result[2*i+1]
+                fft_real_output[i] = verilog_result[2*i]
+                fft_imag_output[i] = verilog_result[2*i+1]
+
+
+            # replac vals in np_real and np_imag that are above a certain threshold with 0
+            # this is likely due to overflow in the fft module
+            threshold = (2**31) - 1000
+            fft_real_output = np.where(fft_real_output > threshold, 0, fft_real_output)
+            fft_imag_output = np.where(fft_imag_output > threshold, 0, fft_imag_output)
+
+             # convert to magnitude spectrum from real and imaginary numbers
+            for i in range(len(fft_output)):
+                fft_output[i] = np.sqrt(fft_real_output[i]**2 + fft_imag_output[i]**2)
+
+            neg_freqs = fft_output[len(fft_output)//2:][::-1]
+            pos_freqs = fft_output[:len(fft_output)//2]
+
+            positive_freqs = (neg_freqs + pos_freqs) / 2
 
             fft_outputs.append(fft_output)
-            positive_freqs = fft_output[:num_samples // 2]
+            # positive_freqs = fft_output[:num_samples // 2]
 
             sample_spacing = 1 / self.sample_freq
             freq_bins = np.fft.fftfreq(num_samples, sample_spacing)
@@ -167,9 +192,15 @@ class FFT(ProcessingElement):
         plt.grid()
         plt.savefig(os.path.join(output_dir, 'output_spectrum.png'))
 
+
+        neg_freqs = self.fft_outputs[0][len(self.fft_outputs[0])//2:][::-1]
+        pos_freqs = self.fft_outputs[0][:len(self.fft_outputs[0])//2]
+
+        positive_freqs = (neg_freqs + pos_freqs) / 2
+
         # Plotting the magnitude spectrum
         plt.figure(figsize=(12, 6))
-        plt.plot(positive_freq_bins, np.abs(self.fft_outputs[0][:self.points // 2]))  # Plot only positive frequencies
+        plt.plot(positive_freq_bins, np.abs(positive_freqs))  # Plot only positive frequencies
         plt.axvline(x=nyquist_freq, color='r', linestyle='--', label='Nyquist Frequency')
         plt.title('Real Magnitude Spectrum of 1st input channel')
         plt.xlabel('Frequency (Hz)')

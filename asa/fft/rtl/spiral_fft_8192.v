@@ -18,7 +18,7 @@ module spiral_fft_8192_testbench; //adder testbench
 
    // initialize clock
    reg clk = 0;
-   always #100000 clk = ~clk;
+   always #10000 clk = ~clk;
 
    // count number of clock cycles
    reg[31:0] cycles;
@@ -61,14 +61,17 @@ module spiral_fft_8192_testbench; //adder testbench
       //open i/o files
       buffer_in = $fopen("input_buffer.txt", "r"); 
       buffer_out = $fopen("output_buffer.txt", "w");
+
+      //set all inputs to zero
+      X0 = 0; X1 = 0; X2 = 0; X3 = 0; X4 = 0; X5 = 0; X6 = 0; X7 = 0;
       
       // reset module
-      @(posedge clk) reset = 1; // reset module
-      @(posedge clk); //let reset propagate
-      @(posedge clk) reset = 0; // deassert reset
+      @(posedge clk) reset <= 1; // reset module
+      @(posedge clk) #1; //let reset propagate
+      reset <= 0;
 
       next <= 1; // signal start of computation
-      @(posedge clk); 
+      @(posedge clk) #1; 
       next <= 0;
 
       // 8192 complex words over 2048 cycles
@@ -77,11 +80,15 @@ module spiral_fft_8192_testbench; //adder testbench
       for (j=0; j < 2048; j = j+1) begin
          // Input: 4 complex words per cycle
          r = $fscanf(buffer_in, 
-                     "%h %h %h %h %h %h %h %h", 
+                     "%x %x %x %x %x %x %x %x", 
                      X0, X1, X2, X3, X4, X5, X6, X7);
-         @(posedge clk) #1;
+                     
+         @(posedge clk) #10;
          // $display("j=%d", j);
       end
+
+      X0 = 0; X1 = 0; X2 = 0; X3 = 0; X4 = 0; X5 = 0; X6 = 0; X7 = 0;
+      @(posedge clk) #1; // wait until computation is done
       
       // wait until computation is done
       @(posedge next_out);
@@ -93,7 +100,8 @@ module spiral_fft_8192_testbench; //adder testbench
          $fdisplay(buffer_out,
                    "%h %h %h %h %h %h %h %h", 
                    Y0, Y1, Y2, Y3, Y4, Y5, Y6, Y7);
-         @(posedge clk); #1;
+
+         @(posedge clk) #1;
       end
       
       // -------------------------
