@@ -110,7 +110,7 @@ class FFT(ProcessingElement):
             
             signal_int = signal.astype(np.int32)
 
-            # 2048 cycles for 8192 points
+            # 2048 cycles for 8192 points < -----  MAKE THIS A HELPER FUNCTION
             with open(self.input_buffer, 'w') as file:
                 # writing input buffer
                 for i in range(2048):
