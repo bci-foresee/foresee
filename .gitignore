@@ -14,3 +14,9 @@
 **/plots/
 **/sim
 **/**_buffer.txt
+
+# power estimation
+**/*_synth.v
+**/*.vcd
+**/*.ys
+**/*.tcl

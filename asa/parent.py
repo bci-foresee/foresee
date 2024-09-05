@@ -6,6 +6,8 @@ import subprocess
 import numpy as np
 import struct
 
+from numpy.typing import NDArray
+
 class ProcessingElement:
     def __init__(self, 
                 name: str,
@@ -59,15 +61,23 @@ class ProcessingElement:
         
         # Convert the list of numbers to a numpy array
         return np.array(numbers)
-
     # necessary method to run the processing element
-    def run(self):
+    def run(self) -> NDArray[np.float32]:
         # load input data
+        input_data = self.load_inputs()
         # validate dimensions
+        self.dimension_validate(input=input_data)
         # compute
-        # visualize
+        if self.rtl_sim:
+            output = self.compute_verilog(input=input_data) # replace with verilog compute
+        else:
+            output = self.compute(input=input_data)
+        
+        # vizualise
+        if self.save_visualization:
+            self.visualize()
         # return data
-        raise NotImplementedError("run method not implemented")
+        return output
     
     def int_to_signedHex(self, value: int) -> str:
         item = f"{struct.unpack('I', struct.pack('i', value))[0]:08x}"
