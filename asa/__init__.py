@@ -1,4 +1,3 @@
-from .xc.element import XC
 from .fft.element import FFT
 from .svm.element import SVM
 from .thr.element import THR

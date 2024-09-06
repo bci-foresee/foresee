@@ -22,19 +22,6 @@ class PWXC(ProcessingElement):
         
         self.num_channels = n_channels
 
-    def run(self) -> NDArray[np.float32]:
-        # load input data
-        input_data = self.load_inputs()
-        # validate dimensions
-        self.dimension_validate(input=input_data)
-        # compute
-        output = self.compute(input=input_data)
-        # vizualise
-        if self.save_visualization:
-            self.visualize()
-        # return data
-        return output
-
     def load_inputs(self) -> NDArray[np.float32]:
         input_PEs = self.inputs
         # concatenate input data from input PEs

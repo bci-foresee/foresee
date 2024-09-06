@@ -21,19 +21,6 @@ class THR(ProcessingElement):
         # no use of window atm
         self.lower_bound: float = lower_bound
         self.upper_bound: float = upper_bound
-
-    def run(self) -> NDArray[np.float32]:
-        # load input data
-        input_data = self.load_inputs()
-        # validate dimensions
-        self.dimension_validate(input=input_data)
-        # compute
-        output = self.compute(input=input_data)
-        # vizualise
-        if self.save_visualization:
-            self.visualize()
-        # return data
-        return output
     
     def load_inputs(self) -> NDArray[np.float32]:
         input_PEs = self.inputs

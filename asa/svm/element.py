@@ -18,20 +18,6 @@ class SVM(ProcessingElement):
                          save_visualization=save_visualization)
 
         self.weights: NDArray[np.int32] = weights
-
-
-    def run(self) -> NDArray[np.float32]:
-        # load input data
-        input_data = self.load_inputs()
-        # validate dimensions
-        self.dimension_validate(input=input_data)
-        # compute
-        output = self.compute(features=input_data)
-        # vizualise
-        if self.save_visualization:
-            self.visualize()
-        # return data
-        return output
     
     def load_inputs(self) -> NDArray[np.float32]:
         input_PEs = self.inputs
