@@ -59,7 +59,7 @@ class ProcessingElement:
     # to run the PE's verilog implementation
     def run_verilog_simulation(self, verilog_file, output_file):
         # Run the Verilog simulation using Icarus Verilog or another Verilog simulator
-        subprocess.run(["iverilog", "-o", f"./rtl/{verilog_file}_sim", f"./rtl/{verilog_file}.v", f"./rtl/{verilog_file}_tb.v"])
+        subprocess.run(["iverilog", "-o", f"./rtl/{verilog_file}_sim", f"./rtl/{verilog_file}_tb.v", f"./rtl/{verilog_file}.v"])
         subprocess.run(["vvp", f"./rtl/{verilog_file}_sim"])
 
         # tests

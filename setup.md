@@ -86,10 +86,10 @@ yosys -V
 
 To run:
 ```sh
-yosys -s synth.ys
-iverilog -o clocked_adder clocked_adder_tb.v clocked_adder.v
-vvp clocked_adder
-sta power_sta.tcl
+# yosys -s synth.ys
+# iverilog -o clocked_adder clocked_adder_tb.v clocked_adder.v
+# vvp clocked_adder
+# sta power_sta.tcl
 ```
 
 ## Notes

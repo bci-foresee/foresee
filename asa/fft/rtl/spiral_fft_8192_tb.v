@@ -85,6 +85,9 @@ module spiral_fft_8192_testbench; //adder testbench
          r = $fscanf(buffer_in, 
                      "%x %x %x %x %x %x %x %x", 
                      X0, X1, X2, X3, X4, X5, X6, X7);
+
+         // $display("Number of values read: %d", r);
+         // $display("%x %x %x %x %x %x %x %x", X0, X1, X2, X3, X4, X5, X6, X7);
                      
          @(posedge clk) #10;
          // $display("j=%d", j);

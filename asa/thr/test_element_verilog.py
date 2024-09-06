@@ -14,7 +14,7 @@ def test_thr_basic() -> None:
     
     thr_pe = THR(lower_bound=0,
                  upper_bound=100,
-                 rtl_sim=False,
+                 rtl_sim=True,
                  clk=1,
                  save_visualization=True)
     
