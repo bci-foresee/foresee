@@ -65,7 +65,9 @@ class THR(ProcessingElement):
                         f"{self.int_to_signedHex(self.lower_bound)} "
                         f"{self.int_to_signedHex(self.upper_bound)}\n")
 
-        verilog_result = self.run_verilog_simulation(verilog_file, self.output_buffer)
+        verilog_result = self.run_verilog_simulation(PE_name=self.name,
+                                                     verilog_file=verilog_file,
+                                                     output_file=self.output_buffer)
 
         return verilog_result
     

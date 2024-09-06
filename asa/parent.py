@@ -6,6 +6,7 @@ import subprocess
 import re
 import numpy as np
 import struct
+import os
 
 from numpy.typing import NDArray
 
@@ -57,8 +58,15 @@ class ProcessingElement:
             self.outputs.append(node)
 
     # to run the PE's verilog implementation
-    def run_verilog_simulation(self, verilog_file, output_file):
+    def run_verilog_simulation(self, PE_name, verilog_file, output_file):
         # Run the Verilog simulation using Icarus Verilog or another Verilog simulator
+        # Get the top-level directory of the Git repo
+        top_level_dir = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True
+        ).stdout.strip()
+
+        # Change the directory in Python
+        os.chdir(f"{top_level_dir}/asa/{PE_name.lower()}")
         subprocess.run(["iverilog", "-o", f"./rtl/{verilog_file}_sim", f"./rtl/{verilog_file}_tb.v", f"./rtl/{verilog_file}.v"])
         subprocess.run(["vvp", f"./rtl/{verilog_file}_sim"])
 
@@ -102,7 +110,7 @@ class ProcessingElement:
         subprocess.run(yosys_cmd, shell=True, check=True, timeout=None)
 
         # Run OpenSTA
-        opensta_cmd = "sta power_analysis.tcl"
+        opensta_cmd = "../../external/OpenSTA/app/sta power_analysis.tcl"
         result = subprocess.run(opensta_cmd, shell=True, check=True, capture_output=True, text=True, timeout=None)
 
         # Pattern to match each row of the power data

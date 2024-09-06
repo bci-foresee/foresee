@@ -1,4 +1,4 @@
-
+`timescale 1ns/1ps
 
 module spiral_fft_8192_testbench; //adder testbench
 

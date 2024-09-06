@@ -1,3 +1,4 @@
+`timescale 1ns/1ps
 
 
 module thr_tb; //adder testbench
@@ -72,11 +73,8 @@ module thr_tb; //adder testbench
                      "%x %x %x", 
                      value, lower_bound, upper_bound);
 
-        $display("Number of values read: %d", r);
-         $display("%d %d %d", value, lower_bound, upper_bound);
-
          @(posedge clk) #10;
-         $display("j=%d", j);
+         // $display("j=%d", j);
       end
 
       
@@ -85,7 +83,7 @@ module thr_tb; //adder testbench
       @(posedge clk) #1; // wait until computation is done
       @(posedge clk) #1; // wait until computation is done
 
-      $display("%d %d %d %d", value, lower_bound, upper_bound, result);
+      // $display("%d %d %d %d", value, lower_bound, upper_bound, result);
        
       // read output
       $display("Writing to buffer...");

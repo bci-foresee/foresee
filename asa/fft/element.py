@@ -125,7 +125,9 @@ class FFT(ProcessingElement):
                             f"{self.int_to_signedHex(signal_int[4*i+3])} "
                             f"{self.int_to_signedHex(0)}\n")
 
-            verilog_result = self.run_verilog_simulation(verilog_file, self.output_buffer)
+            verilog_result = self.run_verilog_simulation(PE_name=self.name,
+                                                     verilog_file=verilog_file,
+                                                     output_file=self.output_buffer)
 
             fft_real_output = np.zeros(len(verilog_result)//2)
             fft_imag_output = np.zeros(len(verilog_result)//2)
