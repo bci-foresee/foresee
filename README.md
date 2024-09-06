@@ -18,13 +18,6 @@ This tool allows for rapid prototyping of BCI pipelines, built upon a growing li
 
 Furthermore, this tool allows for the simple integration of RTL within the high level simulation. This allows for rapid prototyping of BCI pipelines in Python/C and then a more detailed, hardware accurate simulation with Verilog.
 
-## TODOs
-- Add `pydoc`
-- Enforce `mypy`
-- Add automatic formatting of Python style
-- Add verilog into `pytest` testing
-- Finish table of contents
-
 ## Table of contents
 - [Introduction](#overview)
 - [Simulator Overview](#simulator-overview)
