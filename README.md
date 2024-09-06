@@ -1,4 +1,4 @@
-# ALOHA
+# SCALO Simulator
 
 ### Tool Status
 
@@ -8,7 +8,7 @@
 
 ![Pipeline Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/pipeline-suite.yml/badge.svg)
 
-Readme last updated: 23 July 2024
+Readme last updated: 4 September 2024
 
 ## Overview
 
@@ -26,10 +26,9 @@ Furthermore, this tool allows for the simple integration of RTL within the high 
 - Finish table of contents
 
 ## Table of contents
-- [Introduction](#introduction)
+- [Introduction](#overview)
 - [Simulator Overview](#simulator-overview)
 - [Environment Setup](#environment-setup)
-- ... to do
 
 ## Simulator Overview
 
