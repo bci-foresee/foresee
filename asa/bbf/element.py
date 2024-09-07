@@ -25,20 +25,6 @@ class BBF(ProcessingElement):
         self.sample_freq = fs
         self.berger_bands = berger_bands
 
-    # necessary method to run the processing element
-    def run(self) -> NDArray[np.float32]:
-        # load input data
-        input_data = self.load_inputs()
-        # validate dimensions
-        self.dimension_validate(input=input_data)
-        # compute
-        output = self.compute(input=input_data)
-        # visualize
-        if self.save_visualization:
-            self.visualize()
-        # return data
-        return output
-    
     # necessary method to load input data from input processing elements
     def load_inputs(self) -> NDArray[np.float32]:
         input_PEs = self.inputs
@@ -118,8 +104,4 @@ class BBF(ProcessingElement):
         plt.ylabel('Power')
         plt.grid()
         plt.savefig(os.path.join(output_dir, 'bbf_power_in_berger_bands.png'))
-
-    # return way to identify the processing element
-    def __repr__(self) -> str:
-        return f"{self.name}"
 

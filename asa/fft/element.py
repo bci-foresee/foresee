@@ -20,12 +20,14 @@ class FFT(ProcessingElement):
                  fs: int,
                  clk: int = 0, 
                  rtl_sim: bool = False,
+                 rtl_power_estimation: bool = False,
                  save_visualization: bool = False,
                  ) -> None:
 
         super().__init__(name = self.name,
                          clk = clk,
                          rtl_sim = rtl_sim,
+                         rtl_power_estimation = rtl_power_estimation,
                          save_visualization = save_visualization)
         
         self.points = n_samples
@@ -99,8 +101,7 @@ class FFT(ProcessingElement):
     def compute_verilog(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
         
         # do if statements to choose between verilog implementations (ie how many points) here
-        PE_name = "spiral_fft_8192"
-        verilog_file = "./rtl/" + PE_name + ".v"
+        verilog_file = "spiral_fft_8192"
 
         fft_power_features = []
         fft_outputs = []
@@ -124,7 +125,9 @@ class FFT(ProcessingElement):
                             f"{self.int_to_signedHex(signal_int[4*i+3])} "
                             f"{self.int_to_signedHex(0)}\n")
 
-            verilog_result = self.run_verilog_simulation(verilog_file, self.output_buffer)
+            verilog_result = self.run_verilog_simulation(PE_name=self.name,
+                                                     verilog_file=verilog_file,
+                                                     output_file=self.output_buffer)
 
             fft_real_output = np.zeros(len(verilog_result)//2)
             fft_imag_output = np.zeros(len(verilog_result)//2)
@@ -173,7 +176,6 @@ class FFT(ProcessingElement):
 
         return fft_power_features
 
-
     def visualize(self) -> None:
         # Ensure the directory exists
         output_dir = 'plots'
@@ -219,6 +221,3 @@ class FFT(ProcessingElement):
         plt.grid()
         plt.savefig(os.path.join(output_dir, 'fft_power_in_berger_bands.png'))
         
-
-    def __repr__(self) -> str:
-        return f"{self.name}_{self.points}"

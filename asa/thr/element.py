@@ -12,39 +12,29 @@ class THR(ProcessingElement):
     name = "THR"
 
     def __init__(self, lower_bound: float, upper_bound: float, 
-                 clk: int = 0, save_visualization: bool = False) -> None:
+                 clk: int = 0, save_visualization: bool = False,
+                 rtl_sim: bool = False, rtl_power_estimation: bool = False) -> None:
         
         super().__init__(name=self.name, 
                          clk=clk,
-                         save_visualization=save_visualization)
+                         save_visualization=save_visualization,
+                         rtl_sim=rtl_sim,
+                         rtl_power_estimation=rtl_power_estimation)
         
         # no use of window atm
         self.lower_bound: float = lower_bound
         self.upper_bound: float = upper_bound
-
-    def run(self) -> NDArray[np.float32]:
-        # load input data
-        input_data = self.load_inputs()
-        # validate dimensions
-        self.dimension_validate(input=input_data)
-        # compute
-        output = self.compute(input=input_data)
-        # vizualise
-        if self.save_visualization:
-            self.visualize()
-        # return data
-        return output
     
     def load_inputs(self) -> NDArray[np.float32]:
         input_PEs = self.inputs
         # concatenate input data from input PEs
         input_data = []
         for PE in input_PEs:
-            input_data.append(PE.run().flatten()) # flatten because output of each PE is going to have multiple channels
+            input_data.append(PE.run()) # flatten because output of each PE is going to have multiple channels
 
         # concatenate input data
-        input_data = np.concatenate(input_data, axis=0)
-        return input_data
+        # input_data = np.concatenate(input_data, axis=0)
+        return np.array(input_data)
     
     def dimension_validate(self, input: NDArray[np.float32]) -> None:
         self.input_dimension = input.shape
@@ -60,6 +50,26 @@ class THR(ProcessingElement):
         if (self.lower_bound <= value) and (value <= self.upper_bound):
             return 1
         return 0
+    
+    def compute_verilog(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
+        
+        # do if statements to choose between verilog implementations (ie how many points) here
+        verilog_file = "thr"
+
+        input_int = input[0].astype(np.int32)
+
+        with open(self.input_buffer, 'w') as file:
+            for i in range(1):
+                # writing into the buffer in signed hex format
+                file.write(f"{self.int_to_signedHex(input_int)} "
+                        f"{self.int_to_signedHex(self.lower_bound)} "
+                        f"{self.int_to_signedHex(self.upper_bound)}\n")
+
+        verilog_result = self.run_verilog_simulation(PE_name=self.name,
+                                                     verilog_file=verilog_file,
+                                                     output_file=self.output_buffer)
+
+        return verilog_result
     
     def visualize(self):
         # nothing to vizualise

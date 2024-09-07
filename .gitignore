@@ -20,3 +20,5 @@
 **/*.vcd
 **/*.ys
 **/*.tcl
+**/*_sim
+# external/*

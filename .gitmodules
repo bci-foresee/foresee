@@ -1,3 +1,9 @@
 [submodule "datasets/ieeg/ieegpy"]
 	path = datasets/ieeg/ieegpy
 	url = git@github.com:ieeg-portal/ieegpy.git
+[submodule "external/cudd"]
+	path = external/cudd
+	url = https://github.com/ivmai/cudd.git
+[submodule "external/OpenSTA"]
+	path = external/OpenSTA
+	url = https://github.com/The-OpenROAD-Project/OpenSTA.git

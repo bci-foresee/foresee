@@ -25,19 +25,6 @@ class LOADER(ProcessingElement):
                          clk = clk,
                          save_visualization = save_visualization)
         self.input = input
-        
-
-    # takes in a signal 2d array (channels, num_samples) and returns itself.
-    def run(self) -> NDArray[np.float32]:
-        input = self.input
-        # validate the input signal
-        self.dimension_validate(input=input)
-        # compute output
-        output = self.compute(input=input)
-        # vizualise the output (only if save_visualization is True)
-        if self.save_visualization:
-            self.visualize(output)
-        return output
 
     # function that gets the dimension of the input signal
     # in future can be used to validate input sizes
@@ -74,6 +61,3 @@ class LOADER(ProcessingElement):
 
         # Save the figure in the plots/ directory
         plt.savefig(os.path.join(output_dir, 'input_signal.png'))
-
-    def __repr__(self) -> str:
-        return f"{self.name}"
