@@ -1,4 +1,4 @@
-
+import pydoc
 import numpy as np
 from numpy.typing import NDArray
 from typing import List, Tuple
@@ -50,3 +50,5 @@ class Window:
         if self.input_signal is None:
             raise ValueError("No input signal has been set")
         return self.input_signal
+    
+    pydoc.writedoc('parent')
