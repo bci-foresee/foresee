@@ -115,6 +115,7 @@ def plot_power_visualization(df, df_comp, num_runs):
     plt.title('Power Plot')
     plt.show()
 
+
 def plot_custom_visualization(df, df_comp, custom):
     """Plots a custom visualization.
 
@@ -123,7 +124,7 @@ def plot_custom_visualization(df, df_comp, custom):
     df_comp: pandas DataFrame containing the data we are comparing against.
     custom: custom function to plot the data.
   """
-    
+
     # Import the user-defined function dynamically
     try:
         module = __import__(custom)
@@ -137,6 +138,7 @@ def plot_custom_visualization(df, df_comp, custom):
 
     # Show the plot
     plt.show()
+
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
