@@ -50,3 +50,5 @@ class Window:
         if self.input_signal is None:
             raise ValueError("No input signal has been set")
         return self.input_signal
+
+    pydoc.writedoc('parent')
