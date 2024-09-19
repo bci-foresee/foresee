@@ -4,9 +4,11 @@ import io
 import numpy as np
 from scipy import signal
 
+
 def your_compute_function(x, y):
     z = np.add(x, y)
     return signal.convolve(z, np.ones(10))
+
 
 # Prepare some sample data
 x = np.random.rand(1000)

@@ -38,14 +38,13 @@ prev_label_data = None
 for file in files:
     file_path = os.path.join(directory, file)
 
-    
     file_parts = file.split('_')
-    current_file_sign = file_parts[2] # whether it is negative or positive labelled
-    current_file_type = file_parts[3] # whether it is a signal or label
+    current_file_sign = file_parts[
+        2]  # whether it is negative or positive labelled
+    current_file_type = file_parts[3]  # whether it is a signal or label
 
     data = np.load(file_path)
 
-    
     if current_file_type == "signals.npy":
         # print("hmmsmdsmda")
         if current_file_sign == prev_file_sign:
@@ -57,7 +56,6 @@ for file in files:
                 ieeg_signals.append(data[i].tolist())
                 ieeg_signals_labels.append(prev_label_data[i].tolist())
 
-
     elif current_file_type == "labels.npy":
         prev_label_data = data
 
@@ -66,10 +64,13 @@ for file in files:
 # ieeg_signals = np.array(ieeg_signals).astype(np.float32)
 # ieeg_signals_labels = np.array(ieeg_signals_labels).astype(np.int64)
 print()
-print("shape of (ieeg_signals: items, channels, signals), (ieeg_signals_labels):")
-print(len(ieeg_signals), len(ieeg_signals[0]), len(ieeg_signals[0][0]), len(ieeg_signals_labels), "\n")
+print(
+    "shape of (ieeg_signals: items, channels, signals), (ieeg_signals_labels):"
+)
+print(len(ieeg_signals), len(ieeg_signals[0]), len(ieeg_signals[0][0]),
+      len(ieeg_signals_labels), "\n")
 
-#- - - - - - - - - - - - - - - - - - - - - - - - - - 
+#- - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #--------------------- training --------------------
 
@@ -87,7 +88,7 @@ n_classes = 1
 #     print(f"feature gen iteration {i}")
 
 #     # pre computing features for faster training
-#     fft_power_features = fft_py(sampled_signals=ieeg_signals[i], 
+#     fft_power_features = fft_py(sampled_signals=ieeg_signals[i],
 #                                   sample_freq=512,
 #                                   berger_bands=berger_bands,
 #                                   saveGraphs=False)
@@ -95,22 +96,21 @@ n_classes = 1
 #     fft_power_features = np.array(fft_power_features).flatten()
 
 #     bbf_power_features = bbf_py(sampled_signals=ieeg_signals[i],
-#                              sample_freq=512, 
-#                              berger_bands=berger_bands, 
+#                              sample_freq=512,
+#                              berger_bands=berger_bands,
 #                              saveGraphs=False)
 
 #     bbf_power_features = np.array(bbf_power_features).flatten()
 
-#     xcorr_features = xcorr_py(sampled_signals=ieeg_signals[i], 
-#                               num_channels=n_channels, 
+#     xcorr_features = xcorr_py(sampled_signals=ieeg_signals[i],
+#                               num_channels=n_channels,
 #                               saveGraphs=False)
-    
+
 #     xcorr_features = np.array(xcorr_features).flatten()
 
 #     concatenated_features = np.concatenate((fft_power_features, bbf_power_features, xcorr_features))
-    
-#     x_tensor_list.append(torch.tensor(concatenated_features))
 
+#     x_tensor_list.append(torch.tensor(concatenated_features))
 
 # X = torch.stack(x_tensor_list)
 # y = torch.tensor(ieeg_signals_labels)
@@ -129,18 +129,22 @@ print(y.shape)
 # Convert labels to {-1, 1}
 y = y * 2 - 1
 
+
 # Define the custom SVM model
 class SVM(nn.Module):
+
     def __init__(self, n_features):
         super(SVM, self).__init__()
         self.linear = nn.Linear(n_features, 1)
-    
+
     def forward(self, x):
         return self.linear(x)
+
 
 # Define hinge loss function
 def hinge_loss(output, target):
     return torch.mean(torch.clamp(1 - output * target, min=0))
+
 
 # Instantiate the model, define the optimizer
 n_features = X.shape[1]
@@ -154,20 +158,20 @@ losses = []
 for epoch in range(n_epochs):
     model.train()
     optimizer.zero_grad()
-    
+
     # Forward pass
     outputs = model(X).squeeze()
-    
+
     # Compute the loss
     loss = hinge_loss(outputs, y.float())
-    
+
     # Backward pass and optimization
     loss.backward()
     optimizer.step()
-    
+
     # Store the loss value
     losses.append(loss.item())
-    
+
     if (epoch + 1) % 1000 == 0:
         print(f'Epoch [{epoch + 1}/{n_epochs}], Loss: {loss.item():.4f}')
 
@@ -184,11 +188,9 @@ losses = np.array(losses, dtype=float)
 fig = go.Figure()
 fig.add_trace(go.Scatter(y=losses, mode='lines', name='Loss'))
 
-fig.update_layout(
-    title='Loss over Epochs',
-    xaxis_title='Epoch',
-    yaxis_title='Loss'
-)
+fig.update_layout(title='Loss over Epochs',
+                  xaxis_title='Epoch',
+                  yaxis_title='Loss')
 
 # Save the plot as an HTML file
 fig.write_html('loss.html')

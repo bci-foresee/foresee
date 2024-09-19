@@ -4,7 +4,6 @@ import pytest
 import numpy as np
 from pipeline import Pipeline
 from scipy.signal import butter, filtfilt
-
 '''
 To run the tests:
 
@@ -17,6 +16,7 @@ pytest -v test_shiao.py
 # loading in all the c functions for the pipeline
 pipeline = Pipeline(kernel_lib='libkernels.so')
 
+
 # XCORR ------------------------------------------------------------------------------------------
 def test_xcorr_basic():
     # dummy data
@@ -24,7 +24,8 @@ def test_xcorr_basic():
         [1, 2, 3, 4, 5],
         [1, 2, 3, 4, 6],
         [1, 2, 3, 4, 7],
-    ], dtype=np.uint16)
+    ],
+                      dtype=np.uint16)
     num_channels, num_samples = inputs.shape
 
     # calling the c function
@@ -32,13 +33,16 @@ def test_xcorr_basic():
 
     # Use numpy's dot product for expected result
     expected_result = [
-        np.dot(inputs[0], inputs[1]), 
-        np.dot(inputs[0], inputs[2]), 
-        np.dot(inputs[1], inputs[2]), 
+        np.dot(inputs[0], inputs[1]),
+        np.dot(inputs[0], inputs[2]),
+        np.dot(inputs[1], inputs[2]),
     ]
 
     # Allow for floating-point precision errors
-    assert np.allclose(result, expected_result), f"Expected {expected_result}, but got {result}"
+    assert np.allclose(
+        result,
+        expected_result), f"Expected {expected_result}, but got {result}"
+
 
 def test_xcorr_8000():
     # dummy data
@@ -46,7 +50,8 @@ def test_xcorr_8000():
         [1, 2, 3, 4, 5],
         [1, 2, 3, 4, 6],
         [1, 2, 3, 4, 7],
-    ], dtype=np.uint16)
+    ],
+                      dtype=np.uint16)
     num_channels, num_samples = inputs.shape
 
     # calling the c function
@@ -54,30 +59,38 @@ def test_xcorr_8000():
 
     # Use numpy's dot product for expected result
     expected_result = [
-        np.dot(inputs[0], inputs[1]), 
-        np.dot(inputs[0], inputs[2]), 
-        np.dot(inputs[1], inputs[2]), 
+        np.dot(inputs[0], inputs[1]),
+        np.dot(inputs[0], inputs[2]),
+        np.dot(inputs[1], inputs[2]),
     ]
 
     # Allow for floating-point precision errors
-    assert np.allclose(result, expected_result), f"Expected {expected_result}, but got {result}"
+    assert np.allclose(
+        result,
+        expected_result), f"Expected {expected_result}, but got {result}"
+
 
 # BBF --------------------------------------------------------------------------------------------
+
 
 def test_bbf():
     #dummy signal to sample
     def signal(x):
         # return np.ones_like(x)
-        return 10*np.sin(x) + 5*np.sin(2*x) + 2*np.sin(3*x) + 1*np.sin(4*x)
-    
-    #dummy data
-    sample_rate = 400 #Hz, how many samples per second
-    num_samples = 8000 # how many samples fed into bbf <- may need to change
+        return 10 * np.sin(x) + 5 * np.sin(2 * x) + 2 * np.sin(
+            3 * x) + 1 * np.sin(4 * x)
 
-    sample_window = (1/sample_rate) * num_samples # seconds, how much time the samples are taken over around 2.56 seconds
+    #dummy data
+    sample_rate = 400  #Hz, how many samples per second
+    num_samples = 8000  # how many samples fed into bbf <- may need to change
+
+    sample_window = (
+        1 / sample_rate
+    ) * num_samples  # seconds, how much time the samples are taken over around 2.56 seconds
 
     # taking samples
-    sample_space = np.linspace(0, sample_window * 2 * np.pi, num_samples) # assuming 2 pi radians per second
+    sample_space = np.linspace(0, sample_window * 2 * np.pi,
+                               num_samples)  # assuming 2 pi radians per second
     signal_samples = signal(sample_space)
     signal_samples = np.array(signal_samples, dtype=np.uint16)
 
@@ -103,8 +116,8 @@ def test_bbf():
     print()
 
     # calling the c function, result is power in a certain band (need to implement band part)
-    result = pipeline.bbf(signal_in=signal_samples, 
-                          filter_vals=filter_vals, 
+    result = pipeline.bbf(signal_in=signal_samples,
+                          filter_vals=filter_vals,
                           gain=gain,
                           num_points=num_samples)
 
@@ -118,20 +131,21 @@ def test_bbf():
     print(out)
     print("30-80: ", out[4])
 
-    assert result == result - 1 + 1 , "Test not implemented"
+    assert result == result - 1 + 1, "Test not implemented"
+
 
 def give_me_bbf_values(filter_range):
     if filter_range == "30-80":
         filter_vals = np.array([
-             -0.0723156691,  0.6368872577,
-             -2.8198218361,  8.0640603736,
-            -16.3818055300, 24.6025699180,
-            -27.6694600560, 23.0616757780,
-            -13.6958889160,  5.2541969233
-            ], dtype=np.double)
-        gain =  3.049509079e+02
+            -0.0723156691, 0.6368872577, -2.8198218361, 8.0640603736,
+            -16.3818055300, 24.6025699180, -27.6694600560, 23.0616757780,
+            -13.6958889160, 5.2541969233
+        ],
+                               dtype=np.double)
+        gain = 3.049509079e+02
         return (gain, filter_vals)
-    
+
+
 def expected_bbf(signal):
     SAMPLING_FREQ = 400
     BANDS = [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)]
@@ -139,7 +153,7 @@ def expected_bbf(signal):
     result = []
     for band in BANDS:
         order = 5
-        low_freq = band[0] / (SAMPLING_FREQ / 2.0) # why is it div by 2?
+        low_freq = band[0] / (SAMPLING_FREQ / 2.0)  # why is it div by 2?
         high_freq = band[1] / (SAMPLING_FREQ / 2.0)
         # low_freq = band[0] / (SAMPLING_FREQ)
         # high_freq = band[1] / (SAMPLING_FREQ)
@@ -153,7 +167,9 @@ def expected_bbf(signal):
         result.append(power_est)
     return result
 
+
 # FFT --------------------------------------------------------------------------------------------
+
 
 def test_fft_1024():
     # dummy data
@@ -161,15 +177,15 @@ def test_fft_1024():
     signal_in = np.zeros(2048, dtype=np.double)
 
     for i in range(1024):
-        signal_in[2 * i] = 100 # real part of the signal
-        signal_in[2*i + 1] = 0 # imaginary part of the signal
-    
+        signal_in[2 * i] = 100  # real part of the signal
+        signal_in[2 * i + 1] = 0  # imaginary part of the signal
+
     # calling the c function
     result = pipeline.fft(signal_in, num_points=1024)
 
     # further testing code
-    real_out = [result[2*i] for i in range(1024)]
-    imag_out = [result[2*i + 1] for i in range(1024)]
+    real_out = [result[2 * i] for i in range(1024)]
+    imag_out = [result[2 * i + 1] for i in range(1024)]
 
     # get magnitude of output
     magnitude = np.zeros(1024, dtype=np.double)
@@ -177,29 +193,30 @@ def test_fft_1024():
         magnitude[i] = np.sqrt(real_out[i]**2 + imag_out[i]**2)
 
     # "ideal" using np.fft.fft
-    real_signal_in = [signal_in[2*i] for i in range(1024)]
+    real_signal_in = [signal_in[2 * i] for i in range(1024)]
     ideal_out = np.fft.fft(real_signal_in)
 
     # test
-    assert np.allclose(magnitude, np.abs(ideal_out)), f"Expected {np.abs(ideal_out)}, but got {magnitude}"
+    assert np.allclose(magnitude, np.abs(
+        ideal_out)), f"Expected {np.abs(ideal_out)}, but got {magnitude}"
 
 
 def test_fft_8000():
     # dummy data
     # 8000 points, so 16000 values (pair of real and complex for each "point")
     num_points = 8000
-    signal_in = np.zeros(num_points*2, dtype=np.double)
+    signal_in = np.zeros(num_points * 2, dtype=np.double)
 
     for i in range(num_points):
-        signal_in[2 * i] = 100 # real part of the signal
-        signal_in[2*i + 1] = 0 # imaginary part of the signal
-    
+        signal_in[2 * i] = 100  # real part of the signal
+        signal_in[2 * i + 1] = 0  # imaginary part of the signal
+
     # calling the c function
     result = pipeline.fft(signal_in, num_points=num_points)
 
     # further testing code
-    real_out = [result[2*i] for i in range(num_points)]
-    imag_out = [result[2*i + 1] for i in range(num_points)]
+    real_out = [result[2 * i] for i in range(num_points)]
+    imag_out = [result[2 * i + 1] for i in range(num_points)]
 
     # get magnitude of output
     magnitude = np.zeros(num_points, dtype=np.double)
@@ -207,11 +224,13 @@ def test_fft_8000():
         magnitude[i] = np.sqrt(real_out[i]**2 + imag_out[i]**2)
 
     # "ideal" using np.fft.fft
-    real_signal_in = [signal_in[2*i] for i in range(num_points)]
+    real_signal_in = [signal_in[2 * i] for i in range(num_points)]
     ideal_out = np.fft.fft(real_signal_in)
 
     # test
-    assert np.allclose(magnitude, np.abs(ideal_out)), f"Expected {np.abs(ideal_out)}, but got {magnitude}"
+    assert np.allclose(magnitude, np.abs(
+        ideal_out)), f"Expected {np.abs(ideal_out)}, but got {magnitude}"
+
 
 # SVM --------------------------------------------------------------------------------------------
 def test_svm_predict():
@@ -222,14 +241,18 @@ def test_svm_predict():
 
     # calling the c function
     result = pipeline.svm_predict(model, values, size)
-    
+
     # Use numpy's dot product for expected result
     expected_result = np.dot(model, values)
-    
+
     # Allow for floating-point precision errors
-    assert np.isclose(result, expected_result), f"Expected {expected_result}, but got {result}"
+    assert np.isclose(
+        result,
+        expected_result), f"Expected {expected_result}, but got {result}"
+
 
 # THR --------------------------------------------------------------------------------------------
+
 
 def test_threshold():
     # dummy data

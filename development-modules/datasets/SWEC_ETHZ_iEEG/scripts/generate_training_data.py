@@ -3,9 +3,9 @@ from splice_data import splice_seizure_data, splice_nonseizure_data
 
 import numpy as np
 
-sample_rate=512 # Hz
-offset_beg = -180 * sample_rate #120s * 512Hz
-offset_end =  180 * sample_rate  #120s * 512Hz
+sample_rate = 512  # Hz
+offset_beg = -180 * sample_rate  #120s * 512Hz
+offset_end = 180 * sample_rate  #120s * 512Hz
 
 patient_dict = create_seizure_indices(offset_beg=offset_beg,
                                       offset_end=offset_end)
@@ -21,18 +21,17 @@ patient_dict = create_seizure_indices(offset_beg=offset_beg,
 # print('\n')
 # print(len(patient_dict))
 
-patient_nums = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10',
-                    '11', '12', '13', '14', '15', '16', '17', '18']
-
-
+patient_nums = [
+    '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12',
+    '13', '14', '15', '16', '17', '18'
+]
 
 splice_seizure_data(patient_id='01',
                     patient_dict=patient_dict,
                     offset_beg=offset_beg,
                     offset_end=offset_end)
 
-
-splice_nonseizure_data(patient_id='01', 
+splice_nonseizure_data(patient_id='01',
                        patient_dict=patient_dict,
                        samples_to_generate=5)
 

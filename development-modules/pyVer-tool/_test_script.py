@@ -4,6 +4,7 @@ import numpy as np
 
 interface = VerilogInterface()
 
+
 def generic_display(PE_name, inputs, outputs):
     print()
     print(f" ------------- {PE_name} ------------- ")
@@ -16,6 +17,7 @@ def generic_display(PE_name, inputs, outputs):
     print(" ------------------------------------ ")
     print()
 
+
 # Example usage
 a = 5
 b = 2
@@ -26,11 +28,11 @@ generic_display("Adder", [a, b], [c])
 d = interface.subtractor(a, b)
 generic_display("Subtractor", [a, b], [d])
 
-a = np.array([5,6,7])
-b = np.array([2,3,4])
+a = np.array([5, 6, 7])
+b = np.array([2, 3, 4])
 e = interface.clocked_array_adder(a, b)
 generic_display("Clocked Array Adder", [a, b], [e])
-    
+
 arr = np.zeros(8192, dtype=np.int16)
 for i in range(8192):
     arr[i] = i
