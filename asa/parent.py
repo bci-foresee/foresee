@@ -7,7 +7,6 @@ import re
 import numpy as np
 import struct
 import os
-import pydoc
 
 from numpy.typing import NDArray
 
@@ -265,5 +264,3 @@ class ProcessingElement:
     # return way to identify the processing element
     def __repr__(self) -> str:
         return f"{self.name}"
-    
-    pydoc.writedoc('parent')
