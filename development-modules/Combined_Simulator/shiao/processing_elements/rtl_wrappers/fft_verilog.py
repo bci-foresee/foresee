@@ -5,7 +5,6 @@ from cocotb.triggers import RisingEdge, FallingEdge, Timer
 from cocotb.types import LogicArray
 import matplotlib.pyplot as plt
 import math
-
 '''
 ##################################
 
@@ -39,35 +38,38 @@ Also look at the cocotb documentation.
 ##################################
 '''
 
+
 async def fft_verilog(dut,
                       fft_clk_freq,
-                      sampled_signals, 
-                      sample_freq, 
+                      sampled_signals,
+                      sample_freq,
                       berger_bands,
                       saveGraphs=False):
-    
 
     # initial setup --------------------
-    nyquist_freq = sample_freq / 2 # Nyquist frequency, max frequency that can be represented in the signal
-    num_samples = sampled_signals[0].shape[0] # how many samples given
+    nyquist_freq = sample_freq / 2  # Nyquist frequency, max frequency that can be represented in the signal
+    num_samples = sampled_signals[0].shape[0]  # how many samples given
 
     # spiral fft requires a power of 2 number of samples
     # so we zero pad 8000 samples to 8192 because a signal of zero does not affect the frequency domain
     for i in range(len(sampled_signals)):
-        sampled_signals[i] = np.pad(sampled_signals[i], (0, 8192 - len(sampled_signals[i])), 'constant', constant_values=(0, 0))
+        sampled_signals[i] = np.pad(sampled_signals[i],
+                                    (0, 8192 - len(sampled_signals[i])),
+                                    'constant',
+                                    constant_values=(0, 0))
 
     # updating num_samples from 8000 to 8192
     num_samples = sampled_signals[0].shape[0]
 
     # print(f"sampled signal: {sampled_signals[0][0:10]}") debug
-    
+
     # helper functions ---------
 
     # convert frequency to period in ns, useful for clock setup
     def HzToPeriodNs(freq):
         period_unrounded = ((1 / freq) * 1e9)
         return math.ceil(period_unrounded)
-    
+
     # helper function to assign inputs to fft module
     # as the fft module can only take 4 inputs at a time, we need to assign them in groups of 4
     def setInputs(dut, input_real, input_imag):
@@ -80,26 +82,25 @@ async def fft_verilog(dut,
         dut.fft_X6.value = int(input_real[3])
         dut.fft_X7.value = int(input_imag[3])
 
-
     # setup --------------------
 
     # clock
-    fft_clk_period = HzToPeriodNs(fft_clk_freq) # clock frequency -> period in ns for cocotb interface
+    fft_clk_period = HzToPeriodNs(
+        fft_clk_freq)  # clock frequency -> period in ns for cocotb interface
 
     # starting the clock
-    fft_clk = Clock(dut.fft_clk, fft_clk_period, units="ns")  # Create a clock for dut
+    fft_clk = Clock(dut.fft_clk, fft_clk_period,
+                    units="ns")  # Create a clock for dut
     cocotb.start_soon(fft_clk.start(start_high=False))
 
     # i/o setups
-    dut.fft_reset.value = 0 # reset the fft module
-    dut.fft_next.value = 0 # no new input data coming in, so flag = 0
-    cycles_run = 0 # counter for cycles
+    dut.fft_reset.value = 0  # reset the fft module
+    dut.fft_next.value = 0  # no new input data coming in, so flag = 0
+    cycles_run = 0  # counter for cycles
 
     # initial input data = 0
-    setInputs(dut=dut,
-              input_real=[0, 0, 0, 0],
-              input_imag=[0, 0, 0, 0])
-    
+    setInputs(dut=dut, input_real=[0, 0, 0, 0], input_imag=[0, 0, 0, 0])
+
     # reset for 5 cycles to make sure everything is clear
     for i in range(5):
         cycles_run += 1
@@ -117,21 +118,23 @@ async def fft_verilog(dut,
     signal_in = sampled_signals[0]
 
     # input flag = 1
-    dut.fft_next.value = 1 # set the flag to 1, this means data in from next cycle onwards
-    await RisingEdge(dut.fft_clk) # wait for rising edge
-    dut.fft_next.value = 0 # reset the flag
+    dut.fft_next.value = 1  # set the flag to 1, this means data in from next cycle onwards
+    await RisingEdge(dut.fft_clk)  # wait for rising edge
+    dut.fft_next.value = 0  # reset the flag
 
     print()
-    print(f"input signal: {signal_in[0:10]}") # debug
+    print(f"input signal: {signal_in[0:10]}")  # debug
 
     # input loop while the input data exists, keep inputting data until there is no more.
     while len(signal_in) >= 4:
         # wait for falling edge to latch inputs
         await FallingEdge(dut.fft_clk)
         setInputs(dut=dut,
-                input_real=[signal_in[0], signal_in[1], signal_in[2], signal_in[3]],
-                input_imag=[0, 0, 0, 0])
-        
+                  input_real=[
+                      signal_in[0], signal_in[1], signal_in[2], signal_in[3]
+                  ],
+                  input_imag=[0, 0, 0, 0])
+
         # Remove the first 4 items
         signal_in = signal_in[4:]
 
@@ -139,16 +142,16 @@ async def fft_verilog(dut,
         cycles_run += 1
 
     # when all input data has been inputted, set input data = 0 so no artifacts
-    setInputs(dut=dut,
-            input_real=[0, 0, 0, 0],
-            input_imag=[0, 0, 0, 0])
+    setInputs(dut=dut, input_real=[0, 0, 0, 0], input_imag=[0, 0, 0, 0])
 
     # data ready check -------------------
-    is_data_ready = False # flag set by dut.next_out
+    is_data_ready = False  # flag set by dut.next_out
     while not is_data_ready:
         await RisingEdge(dut.fft_clk)
         cycles_run += 1
-        is_data_ready = LogicArray(dut.fft_next_out.value) == LogicArray("1") # checking if data ready, but also able to deal with "X" and "Z" outputs
+        is_data_ready = LogicArray(dut.fft_next_out.value) == LogicArray(
+            "1"
+        )  # checking if data ready, but also able to deal with "X" and "Z" outputs
 
     # fft output loop -------------------
 
@@ -196,45 +199,47 @@ async def fft_verilog(dut,
 
     # convert to magnitude spectrum from real and imaginary numbers
     for i in range(len(real_output)):
-        output_spectrum[i] = np.sqrt(np_real_output[i]**2 + np_imag_output[i]**2)
+        output_spectrum[i] = np.sqrt(np_real_output[i]**2 +
+                                     np_imag_output[i]**2)
 
-    print(f"output_spectrum[0:10] = {output_spectrum[0:10]}") # debug
+    print(f"output_spectrum[0:10] = {output_spectrum[0:10]}")  # debug
     # helpful debugging code
     # print(output_spectrum)
     # num_inf_nan = np.count_nonzero(np.isnan(output_spectrum) | np.isinf(output_spectrum))
     # print(f"Number of values in output_spectrum that are inf or nan: {num_inf_nan}")
-    
 
     # frequency spectrum -------------------
 
     # the fft module seems to produce better results in the negative frequencies
     # as the negative frequencies are a mirror of the positive frequencies, we can just reverse the positive frequencies
     # so we take avg of positive and negative frequencies to ensure a lower probability of error
-    neg_freqs = output_spectrum[len(output_spectrum)//2:][::-1]
-    pos_freqs = output_spectrum[:len(output_spectrum)//2]
+    neg_freqs = output_spectrum[len(output_spectrum) // 2:][::-1]
+    pos_freqs = output_spectrum[:len(output_spectrum) // 2]
 
     # take avg of positive and negative frequencies
     positive_freqs = (neg_freqs + pos_freqs) / 2
 
     # calculate the frequency bins
-    sample_spacing = 1/sample_freq # how much time between samples
+    sample_spacing = 1 / sample_freq  # how much time between samples
 
     # provide a frequency for each index of the fft output
-    freq_bins = np.fft.fftfreq(num_samples, sample_spacing) 
-    positive_freq_bins = freq_bins[:num_samples // 2] # only positive frequencies bins
-
+    freq_bins = np.fft.fftfreq(num_samples, sample_spacing)
+    positive_freq_bins = freq_bins[:num_samples //
+                                   2]  # only positive frequencies bins
 
     # power estimate in berger bands from fft
-        # shiao - sum of the magnitudes of the fft output in the berger bands
+    # shiao - sum of the magnitudes of the fft output in the berger bands
 
     fft_power_features = []
 
     fft_power = np.zeros(len(berger_bands))
     for band in berger_bands:
-        band_magnitudes = np.abs(positive_freqs[(positive_freq_bins >= band[0]) & (positive_freq_bins < band[1])])
+        band_magnitudes = np.abs(
+            positive_freqs[(positive_freq_bins >= band[0])
+                           & (positive_freq_bins < band[1])])
         band_power = np.sum(band_magnitudes)
         fft_power[berger_bands.index(band)] = band_power
-    
+
     fft_power_features.append(fft_power)
 
     # plotting the output spectrum
@@ -242,15 +247,18 @@ async def fft_verilog(dut,
         # Plotting the magnitude spectrum
         plt.figure(figsize=(12, 6))
         # x-axis is the frequency bins,
-        plt.plot(positive_freq_bins, positive_freqs)  # Plot only positive frequencies
-        plt.axvline(x=nyquist_freq, color='r', linestyle='--', label='Nyquist Frequency')
+        plt.plot(positive_freq_bins,
+                 positive_freqs)  # Plot only positive frequencies
+        plt.axvline(x=nyquist_freq,
+                    color='r',
+                    linestyle='--',
+                    label='Nyquist Frequency')
         plt.title('Magnitude Spectrum')
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Magnitude')
         plt.legend()
         plt.grid()
         plt.savefig('plots/rtl_PEs/fft_magnitude_spectrum.png')
-
 
         plt.figure(figsize=(12, 6))
         plt.plot(freq_bins, output_spectrum)
@@ -263,7 +271,8 @@ async def fft_verilog(dut,
         # Plotting the power in the berger bands
         plt.figure(figsize=(12, 6))
         plt.bar(range(len(berger_bands)), fft_power)
-        plt.xticks(ticks=range(len(berger_bands)), labels=[str(band) for band in berger_bands])
+        plt.xticks(ticks=range(len(berger_bands)),
+                   labels=[str(band) for band in berger_bands])
         plt.title('Power in Berger Bands')
         plt.xlabel('Band')
         plt.ylabel('Power')

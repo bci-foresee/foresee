@@ -37,7 +37,8 @@ def main():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--user', required=True, help='username')
-    parser.add_argument('-p', '--password',
+    parser.add_argument('-p',
+                        '--password',
                         help='password (will be prompted if omitted)')
 
     parser.add_argument('dataset', help='dataset name')
@@ -64,8 +65,10 @@ def main():
                 if a.type == args.annotation_type:
                     start_time = a.start_time_offset_usec
                     end_time = a.end_time_offset_usec
-                    raw_data = dataset.get_data(start_time, end_time - start_time, channels)
-        
+                    raw_data = dataset.get_data(start_time,
+                                                end_time - start_time,
+                                                channels)
+
         print(raw_data.shape)
         print(raw_data[0].shape)
         print(raw_data[:][0])

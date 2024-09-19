@@ -1,4 +1,3 @@
-
 import numpy as np
 from numpy.typing import NDArray
 
@@ -19,11 +18,13 @@ class LOADER(ProcessingElement):
     """
     name = "Loader"
 
-    def __init__(self, input: NDArray[np.float32],
-                  clk: int = 0, save_visualization: bool = False) -> None:
-        super().__init__(name = self.name, 
-                         clk = clk,
-                         save_visualization = save_visualization)
+    def __init__(self,
+                 input: NDArray[np.float32],
+                 clk: int = 0,
+                 save_visualization: bool = False) -> None:
+        super().__init__(name=self.name,
+                         clk=clk,
+                         save_visualization=save_visualization)
         self.input = input
 
     # function that gets the dimension of the input signal
@@ -41,7 +42,10 @@ class LOADER(ProcessingElement):
     # vizualises data flow through PE and stores in /plots/ directory
     def visualize(self, data: NDArray[np.float32]) -> None:
         # Create a figure and subplots for each channel
-        fig, axs = plt.subplots(self.channels, 1, figsize=(10, 20), sharex=True)
+        fig, axs = plt.subplots(self.channels,
+                                1,
+                                figsize=(10, 20),
+                                sharex=True)
 
         # Plot each channel
         for i in range(self.channels):

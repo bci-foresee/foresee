@@ -3,103 +3,111 @@ from scipy.io import loadmat
 import os
 import re
 
+
 # this function and the following helper functions go into the massive dataset downloaded
 # and (with some padding) return the areas of the recording with seizures.
 def splice_seizure_data(patient_id, patient_dict, offset_beg, offset_end):
 
     for i in range(len(patient_dict[patient_id].seizure_start_files)):
 
-        start_file=patient_dict[patient_id].seizure_start_files[i]
-        end_file=patient_dict[patient_id].seizure_end_files[i]
-        start_idx=patient_dict[patient_id].seizure_start_indicies[i]
-        end_idx=patient_dict[patient_id].seizure_end_indicies[i]
+        start_file = patient_dict[patient_id].seizure_start_files[i]
+        end_file = patient_dict[patient_id].seizure_end_files[i]
+        start_idx = patient_dict[patient_id].seizure_start_indicies[i]
+        end_idx = patient_dict[patient_id].seizure_end_indicies[i]
 
-        save_seizure_splice(start_file=start_file, 
-                            end_file=end_file, 
-                            start_idx=start_idx, 
-                            end_idx=end_idx, 
-                            i=i, 
+        save_seizure_splice(start_file=start_file,
+                            end_file=end_file,
+                            start_idx=start_idx,
+                            end_idx=end_idx,
+                            i=i,
                             patient_id=patient_id,
-                            offset_beg=offset_beg, 
+                            offset_beg=offset_beg,
                             offset_end=offset_end)
 
-        
-def save_seizure_splice(start_file, end_file, start_idx, end_idx, i, patient_id, offset_beg, offset_end):
+
+def save_seizure_splice(start_file, end_file, start_idx, end_idx, i,
+                        patient_id, offset_beg, offset_end):
     if start_file != end_file:
         #start data
-        patient_file = '../data/ID01_'+str(int(start_file[0]))+'h.mat'
+        patient_file = '../data/ID01_' + str(int(start_file[0])) + 'h.mat'
         data = loadmat(patient_file)
         spliced_data_start = data['EEG'][:16, int(start_idx):]
-        
-        #end data 
-        patient_file = '../data/ID01_'+str(int(end_file[0]))+'h.mat'
+
+        #end data
+        patient_file = '../data/ID01_' + str(int(end_file[0])) + 'h.mat'
         data = loadmat(patient_file)
         spliced_data_end = data['EEG'][:16, :int(end_idx)]
 
-        spliced_data = np.concatenate((spliced_data_start, spliced_data_end), axis=1)
+        spliced_data = np.concatenate((spliced_data_start, spliced_data_end),
+                                      axis=1)
 
         #labels
         splice_size = len(spliced_data[0])
-        
+
         label_arr_1 = np.zeros(-offset_beg)
-        label_arr_2 = np.ones(splice_size - (offset_end + (-offset_beg) ))
+        label_arr_2 = np.ones(splice_size - (offset_end + (-offset_beg)))
         label_arr_3 = np.zeros(offset_end)
 
-        label_arr = np.concatenate((label_arr_1, label_arr_2, label_arr_3)).astype(np.int64)
+        label_arr = np.concatenate(
+            (label_arr_1, label_arr_2, label_arr_3)).astype(np.int64)
 
         # print("Spliced data shape:")
         # print(label_arr.shape)
         # print(spliced_data.shape)
-        
+
     else:
-        patient_file = '../data/ID01_'+str(int(start_file[0]))+'h.mat'
+        patient_file = '../data/ID01_' + str(int(start_file[0])) + 'h.mat'
         data = loadmat(patient_file)
-        
+
         # splice of data with a seizure present
-        spliced_data = data['EEG'][:16, int(start_idx):int(end_idx)] #take first 16 channels
+        spliced_data = data['EEG'][:16, int(start_idx):int(
+            end_idx)]  #take first 16 channels
 
         splice_size = int(end_idx) - int(start_idx)
         # print(splice_size)
         # print(len(spliced_data[0]))
-        
+
         #labels
         label_arr_1 = np.zeros(-offset_beg)
-        label_arr_2 = np.ones(splice_size - (offset_end + (-offset_beg) ))
+        label_arr_2 = np.ones(splice_size - (offset_end + (-offset_beg)))
         label_arr_3 = np.zeros(offset_end)
 
-        label_arr = np.concatenate((label_arr_1, label_arr_2, label_arr_3)).astype(np.int64)
-
+        label_arr = np.concatenate(
+            (label_arr_1, label_arr_2, label_arr_3)).astype(np.int64)
 
     # convert it into format for training
     # 20s windows with a label saying "seizure" or not "seizure"
 
     # Parameters for slicing
-    slice_size = 20 * 512 # 20s * 512 Hz (num indexes)
-    step_size = 10 * 512 # 10s * 512 Hz (how much shift between slices)
-    
+    slice_size = 20 * 512  # 20s * 512 Hz (num indexes)
+    step_size = 10 * 512  # 10s * 512 Hz (how much shift between slices)
+
     # List to store the slices
     slices = []
     slices_labels = []
-    
+
     # Loop to create overlapping slices
-    for start_index in range(0, len(spliced_data[0]) - slice_size + 1, step_size):
+    for start_index in range(0,
+                             len(spliced_data[0]) - slice_size + 1, step_size):
         end_index = start_index + slice_size
 
         # one 20s slice of data, all 16 channel
         slice = spliced_data[:, start_index:end_index]
-        
+
         print("shape", start_index)
         print(slice.shape)
 
         # is it a seizure or not
-        counts = np.bincount(label_arr[start_index:end_index]) # how many ones or zeros
-        most_common_value = np.argmax(counts) # take most common occurence as an indicator of seizure or not
-        
+        counts = np.bincount(
+            label_arr[start_index:end_index])  # how many ones or zeros
+        most_common_value = np.argmax(
+            counts
+        )  # take most common occurence as an indicator of seizure or not
+
         # print(type(slice))
         slices.append(slice)
         slices_labels.append(most_common_value)
 
-    
     # Convert the list of slices to a numpy array
     slices_array = np.array(slices)
     slices_labels_array = np.array(slices_labels)
@@ -109,40 +117,41 @@ def save_seizure_splice(start_file, end_file, start_idx, end_idx, i, patient_id,
     # print(slices_array[0].shape)
     print(slices_labels_array.shape)
 
-
     #save labels
     # format:
     # 93 items each corresponding to a label in ieeg_signals.npy
-    np.save('./test_save_data/ID'+patient_id+'_'+str(i)+'_positive_labels.npy',slices_labels_array)
+    np.save(
+        './test_save_data/ID' + patient_id + '_' + str(i) +
+        '_positive_labels.npy', slices_labels_array)
 
     #save the ieeg data
-    # format: 
+    # format:
     # 93 rows each of a 20s ieeg input with a corresponding label
-    np.save('./test_save_data/ID'+patient_id+'_'+str(i)+'_positive_signals.npy',slices_array)
-
-
+    np.save(
+        './test_save_data/ID' + patient_id + '_' + str(i) +
+        '_positive_signals.npy', slices_array)
 
 
 # this function and the following helper functions generate non-seizure slices of ieeg data
 def splice_nonseizure_data(patient_id, patient_dict, samples_to_generate=5):
     # find out which files not to take data from:
 
-    omit_files = set() # set of files to not take nonseizure data from
-    
+    omit_files = set()  # set of files to not take nonseizure data from
+
     for i in range(len(patient_dict[patient_id].seizure_start_files)):
 
-        start_file=int(patient_dict[patient_id].seizure_start_files[i][0])
-        end_file=int(patient_dict[patient_id].seizure_end_files[i][0])
+        start_file = int(patient_dict[patient_id].seizure_start_files[i][0])
+        end_file = int(patient_dict[patient_id].seizure_end_files[i][0])
 
-        correlated_zone_size = 3 # how many files to leave to have no correlation
-        
-        for j in range(start_file-correlated_zone_size,end_file+correlated_zone_size):
+        correlated_zone_size = 3  # how many files to leave to have no correlation
+
+        for j in range(start_file - correlated_zone_size,
+                       end_file + correlated_zone_size):
             omit_files.add(j)
 
     # sort omit_files
     # omit_files = sorted(omit_files)
     # print(omit_files)
-
 
     #finding upper limit of file indexes we can sample from:
     directory = '../data'
@@ -162,15 +171,14 @@ def splice_nonseizure_data(patient_id, patient_dict, samples_to_generate=5):
     sampleable_files = np.array([x for x in numbers if x not in omit_files])
     # print(sampleable_files)
 
-
-    sample_length = 600 #seconds
-    sample_rate = 512 #Hz
+    sample_length = 600  #seconds
+    sample_rate = 512  #Hz
     sample_idx_len = sample_length * sample_rate
 
-    offset = 30 #seconds
+    offset = 30  #seconds
     offset_idx = offset * sample_rate
     sample_idx_len = sample_idx_len + offset_idx
-    
+
     for i in range(samples_to_generate):
 
         # choose random file to sample from
@@ -178,9 +186,9 @@ def splice_nonseizure_data(patient_id, patient_dict, samples_to_generate=5):
         print("sampled_file: " + str(random_file))
 
         # open the chosen random
-        patient_file = '../data/ID01_'+str(i+1)+'h.mat'
+        patient_file = '../data/ID01_' + str(i + 1) + 'h.mat'
         data = loadmat(patient_file)
-        
+
         # splice of data with no seizure present
         spliced_data = data['EEG'][:16, int(offset_idx):int(sample_idx_len)]
 
@@ -191,66 +199,54 @@ def splice_nonseizure_data(patient_id, patient_dict, samples_to_generate=5):
 
         label_arr = np.zeros(label_size).astype(np.int64)
         # print(label_arr.shape)
-    
+
         # Parameters for slicing
-        slice_size = 20 * 512 # 20s * 512 Hz (num indexes)
-        step_size = 10 * 512 # 10s * 512 Hz (how much shift between slices)
-        
+        slice_size = 20 * 512  # 20s * 512 Hz (num indexes)
+        step_size = 10 * 512  # 10s * 512 Hz (how much shift between slices)
+
         # List to store the slices
         slices = []
         slices_labels = []
-        
+
         # Loop to create overlapping slices
-        for start_index in range(0, len(spliced_data[0]) - slice_size + 1, step_size):
+        for start_index in range(0,
+                                 len(spliced_data[0]) - slice_size + 1,
+                                 step_size):
             end_index = start_index + slice_size
-    
+
             # one 20s slice of data
-            slice = spliced_data[:,start_index:end_index]
-    
+            slice = spliced_data[:, start_index:end_index]
+
             # is it a seizure or not
-            counts = np.bincount(label_arr[start_index:end_index]) # how many ones or zeros
-            most_common_value = np.argmax(counts) # take most common occurence as an indicator of seizure or not
-            
+            counts = np.bincount(
+                label_arr[start_index:end_index])  # how many ones or zeros
+            most_common_value = np.argmax(
+                counts
+            )  # take most common occurence as an indicator of seizure or not
+
             #print(slice.shape)
             slices.append(slice)
             slices_labels.append(most_common_value)
-        
+
         # Convert the list of slices to a numpy array
         slices_array = np.array(slices)
         slices_labels_array = np.array(slices_labels)
-    
+
         print("slices shape nonseizure:")
         print(slices_array.shape)
         print(slices_array[0].shape)
         print(slices_labels_array.shape)
-    
+
         #save labels
         # format:
         # 93 items each corresponding to a label in ieeg_signals.npy
-        np.save('./test_save_data/ID'+patient_id+'_'+str(i)+'_negative_labels.npy',slices_labels_array)
-    
+        np.save(
+            './test_save_data/ID' + patient_id + '_' + str(i) +
+            '_negative_labels.npy', slices_labels_array)
+
         #save the ieeg data
-        # format: 
+        # format:
         # 93 rows each of a 20s ieeg input with a corresponding label
-        np.save('./test_save_data/ID'+patient_id+'_'+str(i)+'_negative_signals.npy',slices_array)
-
-        
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
+        np.save(
+            './test_save_data/ID' + patient_id + '_' + str(i) +
+            '_negative_signals.npy', slices_array)

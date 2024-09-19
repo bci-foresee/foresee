@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
 '''
 ##################################
 
@@ -23,8 +22,9 @@ All other channels are filled with with a constant signal of 1.
 ##################################
 '''
 
-def sample_signals(num_channels, 
-                   sample_window, 
+
+def sample_signals(num_channels,
+                   sample_window,
                    num_samples,
                    frequencies,
                    amplitudes,
@@ -38,21 +38,25 @@ def sample_signals(num_channels,
         # amplitudes =  [20]
         returnSignal = 0
         for i in range(len(frequencies)):
-            returnSignal += amplitudes[i] * np.sin(2*np.pi*frequencies[i]*t)  
+            returnSignal += amplitudes[i] * np.sin(
+                2 * np.pi * frequencies[i] * t)
 
         # shiftedReturnSignal = [returnSignal[i] << 10 for i in range(len(returnSignal))]
         # return (returnSignal * (1 << 10))
         return returnSignal
-    
+
     def constant_signal(t):
         return np.ones_like(t) * 100
-    
+
     def randomvals(t):
         return np.ones_like(t)
-    
+
     sampled_signals = []
     for i in range(num_channels):
-        x = np.linspace(start=0, stop=sample_window, num=num_samples, endpoint=False)
+        x = np.linspace(start=0,
+                        stop=sample_window,
+                        num=num_samples,
+                        endpoint=False)
         if i == 0:
             sampled_signals.append(signal1(x))
             # sampled_signals.append(constant_signal(x))
@@ -68,7 +72,10 @@ def sample_signals(num_channels,
                 plt.savefig('plots/signal_gen/sampled_signal.png')
 
                 # also printing int converted graph
-                int_sampled_signal = [int(sampled_signals[0][i]) for i in range(len(sampled_signals[0]))]
+                int_sampled_signal = [
+                    int(sampled_signals[0][i])
+                    for i in range(len(sampled_signals[0]))
+                ]
                 plt.figure(figsize=(12, 6))
                 plt.plot(x, int_sampled_signal)
                 plt.title('Sampled Signal int conversion')

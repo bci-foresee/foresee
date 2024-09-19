@@ -10,13 +10,15 @@ import os
 
 from numpy.typing import NDArray
 
+
 class ProcessingElement:
-    def __init__(self, 
-                name: str,
-                clk: int = 0,
-                rtl_sim: bool = False,
-                rtl_power_estimation: bool = False,
-                save_visualization: bool = False) -> None:
+
+    def __init__(self,
+                 name: str,
+                 clk: int = 0,
+                 rtl_sim: bool = False,
+                 rtl_power_estimation: bool = False,
+                 save_visualization: bool = False) -> None:
 
         # name of the processing element
         self.name = name
@@ -29,7 +31,9 @@ class ProcessingElement:
 
         if rtl_power_estimation:
             if clk == 0:
-                raise ValueError("Please provide a clock frequency (PE.clk, in Hz) for the RTL simulation")
+                raise ValueError(
+                    "Please provide a clock frequency (PE.clk, in Hz) for the RTL simulation"
+                )
             else:
                 self.clk = clk
 
@@ -38,7 +42,7 @@ class ProcessingElement:
 
         # save vizualisation of processing element
         self.save_visualization = save_visualization
-        
+
         # i/o
         self.inputs = []
         self.outputs = []
@@ -46,7 +50,7 @@ class ProcessingElement:
         # name the input and output buffers - used for the verilog simulation
         self.input_buffer = "input_buffer.txt"
         self.output_buffer = "output_buffer.txt"
-    
+
     # add inputs to the processing element
     def add_input(self, node: 'ProcessingElement') -> None:
         if node not in self.inputs:
@@ -61,25 +65,30 @@ class ProcessingElement:
     def run_verilog_simulation(self, PE_name, verilog_file, output_file):
         # Run the Verilog simulation using Icarus Verilog or another Verilog simulator
         # Get the top-level directory of the Git repo
-        top_level_dir = subprocess.run(
-            ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True
-        ).stdout.strip()
+        top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                                       capture_output=True,
+                                       text=True).stdout.strip()
 
         # Change the directory in Python
         os.chdir(f"{top_level_dir}/asa/{PE_name.lower()}")
-        subprocess.run(["iverilog", "-o", f"./rtl/{verilog_file}_sim", f"./rtl/{verilog_file}_tb.v", f"./rtl/{verilog_file}.v"])
+        subprocess.run([
+            "iverilog", "-o", f"./rtl/{verilog_file}_sim",
+            f"./rtl/{verilog_file}_tb.v", f"./rtl/{verilog_file}.v"
+        ])
         subprocess.run(["vvp", f"./rtl/{verilog_file}_sim"])
 
         # tests
         if self.rtl_power_estimation:
-            power_estimate = self.run_rtl_power_estimation(verilog_file=verilog_file,
-                                                           process_library="../../hardware_lib/sky130_fd_sc_hd__ff_n40C_1v65",
-                                                           clock_freq=self.clk)
+            power_estimate = self.run_rtl_power_estimation(
+                verilog_file=verilog_file,
+                process_library=
+                "../../hardware_lib/sky130_fd_sc_hd__ff_n40C_1v65",
+                clock_freq=self.clk)
             for key, value in power_estimate.items():
                 print(f"{key}:")
                 for k, v in value.items():
                     print(f"  {k}: {v}")
-        
+
         # Read the output
         numbers = []
         with open(output_file, 'r') as file:
@@ -87,19 +96,20 @@ class ProcessingElement:
                 # Split each line into words and convert each word from hex to int
                 line_numbers = [int(word, base=16) for word in line.split()]
                 numbers.extend(line_numbers)
-        
+
         # Convert the list of numbers to a numpy array
         return np.array(numbers)
-    
+
     # to run the PE's rtl power estimation
-    def run_rtl_power_estimation(self, verilog_file, process_library, clock_freq):
+    def run_rtl_power_estimation(self, verilog_file, process_library,
+                                 clock_freq):
 
         clock_period_ns = (1 / clock_freq) * 1e9
 
         # Create Yosys synthesis script
-        self.create_yosys_synth_file(verilog_file=verilog_file, 
+        self.create_yosys_synth_file(verilog_file=verilog_file,
                                      process_library=process_library)
-        
+
         # Create OpenSTA power analysis script
         self.create_power_opesta_tcl_file(verilog_file=verilog_file,
                                           process_library=process_library,
@@ -111,10 +121,17 @@ class ProcessingElement:
 
         # Run OpenSTA
         opensta_cmd = "../../external/OpenSTA/app/sta power_analysis.tcl"
-        result = subprocess.run(opensta_cmd, shell=True, check=True, capture_output=True, text=True, timeout=None)
+        result = subprocess.run(opensta_cmd,
+                                shell=True,
+                                check=True,
+                                capture_output=True,
+                                text=True,
+                                timeout=None)
 
         # Pattern to match each row of the power data
-        pattern = re.compile(r"(\w+)\s+([\d.e+-]+)\s+([\d.e+-]+)\s+([\d.e+-]+)\s+([\d.e+-]+)\s+([\d.e+-]+)%?")
+        pattern = re.compile(
+            r"(\w+)\s+([\d.e+-]+)\s+([\d.e+-]+)\s+([\d.e+-]+)\s+([\d.e+-]+)\s+([\d.e+-]+)%?"
+        )
 
         # Dictionary to store power data
         power_data = {}
@@ -127,7 +144,7 @@ class ProcessingElement:
             leakage_power = float(match[3])
             total_power = float(match[4])
             percentage = float(match[5])
-            
+
             # Store each entry in a nested dictionary
             power_data[group_name] = {
                 'Internal Power': internal_power,
@@ -136,7 +153,6 @@ class ProcessingElement:
                 'Total Power': total_power,
                 'Percentage': percentage
             }
-
 
         return power_data
 
@@ -148,40 +164,40 @@ class ProcessingElement:
         self.dimension_validate(input=input_data)
         # compute
         if self.rtl_sim:
-            output = self.compute_verilog(input=input_data) # replace with verilog compute
+            output = self.compute_verilog(
+                input=input_data)  # replace with verilog compute
         else:
             output = self.compute(input=input_data)
-        
+
         # vizualise
         if self.save_visualization:
             self.visualize()
         # return data
         return output
-    
+
     def int_to_signedHex(self, value: int) -> str:
         item = f"{struct.unpack('I', struct.pack('i', value))[0]:08x}"
         return item
-    
+
     # necessary method to load input data from input processing elements
     def load_inputs(self):
         raise NotImplementedError("run method not implemented")
-    
+
     # necessary method to validate the dimensions of the input data
     def dimension_validate(self):
         raise NotImplementedError("run method not implemented")
-    
+
     # necessary method to calculate processing element's computation
     def compute(self):
         raise NotImplementedError("run method not implemented")
-    
+
     # method to compute using the verilog implementation of PE
     def compute_verilog(self):
         raise NotImplementedError("run method not implemented")
-    
+
     # necessary method to validate the dimensions of the input data
     def vizualise(self):
         raise NotImplementedError("run method not implemented")
-    
 
     def create_yosys_synth_file(self, verilog_file, process_library):
         # function that creates a yosys synthesis script
@@ -207,7 +223,8 @@ class ProcessingElement:
         with open("synth.ys", "w") as f:
             f.write(content)
 
-    def create_power_opesta_tcl_file(self,verilog_file, process_library, clock_period):
+    def create_power_opesta_tcl_file(self, verilog_file, process_library,
+                                     clock_period):
         # function that creates a power analysis tcl script
         # used for PE power estimation
 
@@ -222,7 +239,7 @@ class ProcessingElement:
         if debug:
             comment_db = ""
 
-        content=f"""
+        content = f"""
         # Read the synthesized netlist
         read_verilog ./rtl/{verilog_file}_synth.v
 
@@ -259,7 +276,6 @@ class ProcessingElement:
         """
         with open("power_analysis.tcl", "w") as f:
             f.write(content)
-    
 
     # return way to identify the processing element
     def __repr__(self) -> str:

@@ -1,5 +1,4 @@
 import numpy as np
-
 '''
 ##################################
 
@@ -17,6 +16,7 @@ output = weights * features + bias
 
 ##################################
 '''
+
 
 def svm_py(features, weights, bias):
     # dot product of features and weights

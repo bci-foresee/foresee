@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
-
 '''
 ##################################
 
@@ -24,10 +23,8 @@ Then the power in the pre defined berger bands is estimated and returned.
 ##################################
 '''
 
-def fft_py(sampled_signals, 
-           sample_freq, 
-           berger_bands, 
-           saveGraphs=False):
+
+def fft_py(sampled_signals, sample_freq, berger_bands, saveGraphs=False):
 
     sampled_signals = np.array(sampled_signals)
 
@@ -37,26 +34,32 @@ def fft_py(sampled_signals,
     fft_power_features = []
     i = 0
 
-    nyquist_freq = sample_freq / 2 # Nyquist frequency, max frequency that can be represented in the signal
+    nyquist_freq = sample_freq / 2  # Nyquist frequency, max frequency that can be represented in the signal
     num_samples = sampled_signals[0].shape[0]
 
     for samples in sampled_signals:
         fft_output = np.fft.fft(samples)
-        positive_freqs = fft_output[:num_samples // 2] # from 0 - Nyquist frequency are the "positive" frequency outputs
-        
+        positive_freqs = fft_output[:num_samples //
+                                    2]  # from 0 - Nyquist frequency are the "positive" frequency outputs
+
         # frequency bins
-        sample_spacing = 1/sample_freq # how much time between samples
-        freq_bins = np.fft.fftfreq(num_samples, sample_spacing) # provide a frequency for each index of the fft output
-        positive_freq_bins = freq_bins[:num_samples // 2] # only positive frequencies bins
+        sample_spacing = 1 / sample_freq  # how much time between samples
+        freq_bins = np.fft.fftfreq(
+            num_samples, sample_spacing
+        )  # provide a frequency for each index of the fft output
+        positive_freq_bins = freq_bins[:num_samples //
+                                       2]  # only positive frequencies bins
 
         # power estimate in berger bands from fft
         # shiao - sum of the magnitudes of the fft output in the berger bands
         fft_power = np.zeros(len(berger_bands))
         for band in berger_bands:
-            band_magnitudes = np.abs(positive_freqs[(positive_freq_bins >= band[0]) & (positive_freq_bins < band[1])])
+            band_magnitudes = np.abs(
+                positive_freqs[(positive_freq_bins >= band[0])
+                               & (positive_freq_bins < band[1])])
             band_power = np.sum(band_magnitudes)
             fft_power[berger_bands.index(band)] = band_power
-        
+
         fft_power_features.append(fft_power)
 
         # if the first signal then plot stuff
@@ -92,5 +95,5 @@ def fft_py(sampled_signals,
         #     plt.grid()
         #     plt.savefig('plots/python_PEs/fft_power_in_berger_bands.png')
         # i = i + 1
-    
+
     return fft_power_features
