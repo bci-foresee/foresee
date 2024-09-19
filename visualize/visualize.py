@@ -10,7 +10,8 @@ def plot_visualizations(filename,
                         time=False,
                         power=False,
                         num_runs=1,
-                        compare_to_filename=None):
+                        compare_to_filename=None,
+                        custom=None):
     """Plots the data for the given pipeline or PE file.
 
   Args:
@@ -19,7 +20,8 @@ def plot_visualizations(filename,
     time: Optional flag to create a plot based on time.
     power: Optional flag to create a plot based on power.
     num_runs: Optional flag to specify the number of runs to plot.
-    compare_to_filename=Optional flag to specify the PE or pipeline we are comparing against.
+    compare_to_filename: Optional flag to specify the PE or pipeline we are comparing against.
+    custom: Optional flag to specify a custom function to plot the data.
   """
 
     # Read the CSV file(s) into a pandas DataFrame
@@ -35,6 +37,8 @@ def plot_visualizations(filename,
         plot_time_visualization(df, df_comp, num_runs)
     elif power:
         plot_power_visualization(df, df_comp, num_runs)
+    elif custom:
+        plot_custom_visualization(df, df_comp, custom)
 
 
 def plot_accuracy_visualization(df, df_comp, num_runs):
@@ -112,10 +116,34 @@ def plot_power_visualization(df, df_comp, num_runs):
     plt.show()
 
 
+def plot_custom_visualization(df, df_comp, custom):
+    """Plots a custom visualization.
+
+  Args:
+    df: pandas DataFrame containing the data.
+    df_comp: pandas DataFrame containing the data we are comparing against.
+    custom: custom function to plot the data.
+  """
+
+    # Import the user-defined function dynamically
+    try:
+        module = __import__(custom)
+        plot_function = getattr(module, custom)
+    except ImportError:
+        print(f"Error: Could not import function '{custom}'.")
+        return
+
+    # Use the imported function to plot the data
+    plot_function(df, df_comp)
+
+    # Show the plot
+    plt.show()
+
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print(
-            "Usage: python visualize.py <filename.csv> [--accuracy] [--time] [--power] [--num_runs=n] [--compare_to=filename]"
+            "Usage: python visualize.py <filename.csv> [--accuracy] [--time] [--power] [--num_runs=n] [--compare_to=filename] [--custom=function_name]"
         )
         sys.exit(1)
 
@@ -125,6 +153,7 @@ if __name__ == '__main__':
     power = None
     num_runs = None
     compare_to_filename = None
+    custom = None
 
     # Parse command-line arguments
     for arg in sys.argv[2:]:
@@ -138,10 +167,13 @@ if __name__ == '__main__':
             num_runs = int(arg.split('=')[1])
         elif arg.startswith('--compare_to='):
             compare_to_filename = int(arg.split('=')[1])
+        elif arg.startswith('--custom='):
+            custom = int(arg.split('=')[1])
 
     plot_visualizations(filename,
                         accuracy=accuracy,
                         time=time,
                         power=power,
                         num_runs=num_runs,
-                        compare_to_filename=compare_to_filename)
+                        compare_to_filename=compare_to_filename,
+                        custom=custom)
