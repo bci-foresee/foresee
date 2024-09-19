@@ -1,4 +1,3 @@
-import pydoc
 import matplotlib.pyplot as plt
 import pandas as pd
 import sys
@@ -129,5 +128,3 @@ if __name__ == '__main__':
       compare_to_filename = int(arg.split('=')[1])
 
   plot_visualizations(filename, accuracy=accuracy, time=time, power=power, num_runs=num_runs, compare_to_filename=compare_to_filename)
-
-  pydoc.writedoc('visualize')
