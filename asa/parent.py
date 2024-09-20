@@ -65,12 +65,12 @@ class ProcessingElement:
     def run_verilog_simulation(self, PE_name, verilog_file, output_file):
         # Run the Verilog simulation using Icarus Verilog or another Verilog simulator
         # Get the top-level directory of the Git repo
-        top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
-                                       capture_output=True,
-                                       text=True).stdout.strip()
+        # top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+        #                                capture_output=True,
+        #                                text=True).stdout.strip()
 
-        # Change the directory in Python
-        os.chdir(f"{top_level_dir}/asa/{PE_name.lower()}")
+        # # Change the directory in Python
+        # os.chdir(f"{top_level_dir}/asa/{PE_name.lower()}")
         subprocess.run([
             "iverilog", "-o", f"./rtl/{verilog_file}_sim.vvp",
             f"./rtl/{verilog_file}_tb.v", f"./rtl/{verilog_file}.v"
@@ -158,6 +158,14 @@ class ProcessingElement:
 
     # necessary method to run the processing element
     def run(self) -> NDArray[np.float32]:
+        # Get the top-level directory of the Git repo
+        top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                                       capture_output=True,
+                                       text=True).stdout.strip()
+
+        # Change the directory in Python
+        os.chdir(f"{top_level_dir}/asa/{self.name.lower()}")
+
         # load input data
         input_data = self.load_inputs()
         # validate dimensions

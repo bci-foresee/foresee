@@ -36,24 +36,6 @@ class FFT(ProcessingElement):
         self.sample_freq = fs
         self.berger_bands = berger_bands
 
-    def run(self) -> NDArray[np.float32]:
-        # load input data
-        input_data = self.load_inputs()
-        # validate dimensions
-        self.dimension_validate(input=input_data)
-        # compute
-        if self.rtl_sim:
-            output = self.compute_verilog(
-                input=input_data)  # replace with verilog compute
-        else:
-            output = self.compute(input=input_data)
-
-        # vizualise
-        if self.save_visualization:
-            self.visualize()
-        # return data
-        return output
-
     def load_inputs(self) -> NDArray[np.float32]:
         input_PEs = self.inputs
         # concatenate input data from input PEs

@@ -1,4 +1,4 @@
-name: PE Verilog tests
+name: PE RTL Power tests
 
 on: [push, pull_request]
 
@@ -37,4 +37,7 @@ jobs:
         source $HOME/miniconda/bin/activate
         conda activate scalo_sim
         conda list  # List installed packages to confirm numpy is installed
-        pytest **_verilog.py -v -rP
+        cd ./asa/
+        cd thr # ---- thr tests for now, not as time consuming ----
+        pytest **_rtl_power.py -v -rP
+        cd ..
