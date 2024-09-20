@@ -20,5 +20,5 @@
 **/*.vcd
 **/*.ys
 **/*.tcl
-**/*_sim
+**/*.vvp
 # external/*

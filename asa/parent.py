@@ -72,10 +72,10 @@ class ProcessingElement:
         # Change the directory in Python
         os.chdir(f"{top_level_dir}/asa/{PE_name.lower()}")
         subprocess.run([
-            "iverilog", "-o", f"./rtl/{verilog_file}_sim",
+            "iverilog", "-o", f"./rtl/{verilog_file}_sim.vvp",
             f"./rtl/{verilog_file}_tb.v", f"./rtl/{verilog_file}.v"
         ])
-        subprocess.run(["vvp", f"./rtl/{verilog_file}_sim"])
+        subprocess.run(["vvp", f"./rtl/{verilog_file}_sim.vvp"])
 
         # tests
         if self.rtl_power_estimation:
