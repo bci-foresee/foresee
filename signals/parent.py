@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 from typing import List, Tuple
-
+import pydoc
 
 # this class holds the input data dimensions and is capable of generating & holding the input data.
 class Window:
@@ -51,4 +51,4 @@ class Window:
             raise ValueError("No input signal has been set")
         return self.input_signal
 
-    pydoc.writedoc('parent')
+    # pydoc.writedoc('parent')

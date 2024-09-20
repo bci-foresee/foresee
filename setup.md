@@ -39,6 +39,12 @@ sudo apt-get update
 sudo apt-get install flex libeigen3-dev autoconf automake
 ```
 
+Setting up submodules
+```sh
+git rm -rf external/
+git rm .gitmodules
+echo "" > .gitmodules
+```
 
 CUDD
 clone from git:
