@@ -3,6 +3,7 @@ from numpy.typing import NDArray
 from typing import List, Tuple
 import pydoc
 
+
 # this class holds the input data dimensions and is capable of generating & holding the input data.
 class Window:
 
