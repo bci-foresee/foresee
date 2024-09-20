@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sys
 
+
 #TODO(Bernardo): The functions below can be simplified further.
 #TODO(Bernardo): Finish the num_runs functionality.
 def plot_visualizations(filename,
@@ -40,6 +41,7 @@ def plot_visualizations(filename,
     if custom:
         plot_custom_visualization(df, df_comp, custom)
 
+
 def plot_accuracy_visualization(df, df_comp, num_runs):
     """Plots accuracy.
 
@@ -75,6 +77,7 @@ def plot_accuracy_visualization(df, df_comp, num_runs):
     filepath = os.path.join(output_dir, filename)
     plt.savefig(filepath)
 
+
 def plot_time_visualization(df, df_comp, num_runs):
     """Plots time.
 
@@ -99,7 +102,7 @@ def plot_time_visualization(df, df_comp, num_runs):
     plt.xlabel('Run')
     plt.ylabel('Time')
     plt.title('Time Plot')
-    
+
     output_dir = 'visualize/output_plots'
     filename = 'time_plot.png'
 
@@ -109,6 +112,7 @@ def plot_time_visualization(df, df_comp, num_runs):
     # Save the plot to the specified location
     filepath = os.path.join(output_dir, filename)
     plt.savefig(filepath)
+
 
 def plot_power_visualization(df, df_comp, num_runs):
     """Plots power.
@@ -144,6 +148,7 @@ def plot_power_visualization(df, df_comp, num_runs):
     filepath = os.path.join(output_dir, filename)
     plt.savefig(filepath)
 
+
 def plot_custom_visualization(df, df_comp, custom):
     """Plots a custom visualization.
 
@@ -160,7 +165,7 @@ def plot_custom_visualization(df, df_comp, custom):
     except ImportError:
         print(f"Error: Could not import function '{custom}'.")
         return
-    
+
     plt.clf()
 
     # Use the imported function to plot the data
