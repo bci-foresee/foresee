@@ -1,7 +1,7 @@
+import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import sys
-
 
 #TODO(Bernardo): The functions below can be simplified further.
 #TODO(Bernardo): Finish the num_runs functionality.
@@ -33,13 +33,12 @@ def plot_visualizations(filename,
     # TODO(Bernardo): Separate the functions below into their own files.
     if accuracy:
         plot_accuracy_visualization(df, df_comp, num_runs)
-    elif time:
+    if time:
         plot_time_visualization(df, df_comp, num_runs)
-    elif power:
+    if power:
         plot_power_visualization(df, df_comp, num_runs)
-    elif custom:
+    if custom:
         plot_custom_visualization(df, df_comp, custom)
-
 
 def plot_accuracy_visualization(df, df_comp, num_runs):
     """Plots accuracy.
@@ -54,17 +53,27 @@ def plot_accuracy_visualization(df, df_comp, num_runs):
     x = df.iloc[:, 0]
     y = df.iloc[:, 1]
 
+    plt.clf()
+
     # Create the plot
     plt.plot(x, y)
-    if (df_comp):
+    if (not df_comp.empty):
         x_comp = df_comp.iloc[:, 0]
         y_comp = df_comp.iloc[:, 1]
         plt.plot(x_comp, y_comp, label='Comparison')
     plt.xlabel('Run')
     plt.ylabel('Accuracy')
     plt.title('Accuracy Plot')
-    plt.show()
 
+    output_dir = 'visualize/output_plots'
+    filename = 'accuracy_plot.png'
+
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save the plot to the specified location
+    filepath = os.path.join(output_dir, filename)
+    plt.savefig(filepath)
 
 def plot_time_visualization(df, df_comp, num_runs):
     """Plots time.
@@ -79,17 +88,27 @@ def plot_time_visualization(df, df_comp, num_runs):
     x = df.iloc[:, 0]
     y = df.iloc[:, 2]
 
+    plt.clf()
+
     # Create the plot
     plt.plot(x, y)
-    if (df_comp):
+    if (not df_comp.empty):
         x_comp = df_comp.iloc[:, 0]
         y_comp = df_comp.iloc[:, 2]
         plt.plot(x_comp, y_comp, label='Comparison')
     plt.xlabel('Run')
     plt.ylabel('Time')
     plt.title('Time Plot')
-    plt.show()
+    
+    output_dir = 'visualize/output_plots'
+    filename = 'time_plot.png'
 
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save the plot to the specified location
+    filepath = os.path.join(output_dir, filename)
+    plt.savefig(filepath)
 
 def plot_power_visualization(df, df_comp, num_runs):
     """Plots power.
@@ -104,17 +123,26 @@ def plot_power_visualization(df, df_comp, num_runs):
     x = df.iloc[:, 0]
     y = df.iloc[:, 3]
 
+    plt.clf()
+
     # Create the plot
     plt.plot(x, y)
-    if (df_comp):
+    if (not df_comp.empty):
         x_comp = df_comp.iloc[:, 0]
         y_comp = df_comp.iloc[:, 3]
         plt.plot(x_comp, y_comp, label='Comparison')
     plt.xlabel('Run')
     plt.ylabel('Power')
     plt.title('Power Plot')
-    plt.show()
+    output_dir = 'visualize/output_plots'
+    filename = 'power_plot.png'
 
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save the plot to the specified location
+    filepath = os.path.join(output_dir, filename)
+    plt.savefig(filepath)
 
 def plot_custom_visualization(df, df_comp, custom):
     """Plots a custom visualization.
@@ -132,16 +160,25 @@ def plot_custom_visualization(df, df_comp, custom):
     except ImportError:
         print(f"Error: Could not import function '{custom}'.")
         return
+    
+    plt.clf()
 
     # Use the imported function to plot the data
     plot_function(df, df_comp)
 
-    # Show the plot
-    plt.show()
+    output_dir = 'visualize/output_plots'
+    filename = 'custom_plot.png'
+
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save the plot to the specified location
+    filepath = os.path.join(output_dir, filename)
+    plt.savefig(filepath)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print(
             "Usage: python visualize.py <filename.csv> [--accuracy] [--time] [--power] [--num_runs=n] [--compare_to=filename] [--custom=function_name]"
         )
@@ -166,9 +203,9 @@ if __name__ == '__main__':
         elif arg.startswith('--num_runs='):
             num_runs = int(arg.split('=')[1])
         elif arg.startswith('--compare_to='):
-            compare_to_filename = int(arg.split('=')[1])
+            compare_to_filename = str(arg.split('=')[1])
         elif arg.startswith('--custom='):
-            custom = int(arg.split('=')[1])
+            custom = str(arg.split('=')[1])
 
     plot_visualizations(filename,
                         accuracy=accuracy,
