@@ -39,5 +39,5 @@ jobs:
         conda list  # List installed packages to confirm numpy is installed
         cd ./asa/
         cd thr # ---- thr tests for now, not as time consuming ----
-        pytest **_rtl_power.py -v -rP
+        pytest */**_rtl_power.py -v -rP
         cd ..

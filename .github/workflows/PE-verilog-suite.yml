@@ -37,4 +37,4 @@ jobs:
         source $HOME/miniconda/bin/activate
         conda activate scalo_sim
         conda list  # List installed packages to confirm numpy is installed
-        pytest **_verilog.py -v -rP
+        pytest */**_verilog.py -v -rP
