@@ -25,12 +25,10 @@ jobs:
         conda update -q conda
         conda info -a  # Useful for debugging any issues with conda
 
-    - name: Create conda environment
+    - name: Setup Env
       run: |
-        source $HOME/miniconda/bin/activate
-        conda env create -f environment.yaml
-        conda activate scalo_sim
-        conda env list  # List environments to confirm activation
+        chmod +x ./setup.sh
+        ./setup.sh
 
     - name: Run tests
       run: |
