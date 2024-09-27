@@ -59,7 +59,7 @@ def plot_accuracy_visualization(df, df_comp, num_runs):
 
     # Create the plot
     plt.plot(x, y)
-    if (not df_comp.empty):
+    if (df_comp != None and not df_comp.empty):
         x_comp = df_comp.iloc[:, 0]
         y_comp = df_comp.iloc[:, 1]
         plt.plot(x_comp, y_comp, label='Comparison')
@@ -95,7 +95,7 @@ def plot_time_visualization(df, df_comp, num_runs):
 
     # Create the plot
     plt.plot(x, y)
-    if (not df_comp.empty):
+    if (df_comp != None and not df_comp.empty):
         x_comp = df_comp.iloc[:, 0]
         y_comp = df_comp.iloc[:, 2]
         plt.plot(x_comp, y_comp, label='Comparison')
@@ -131,7 +131,7 @@ def plot_power_visualization(df, df_comp, num_runs):
 
     # Create the plot
     plt.plot(x, y)
-    if (not df_comp.empty):
+    if (df_comp != None and not df_comp.empty):
         x_comp = df_comp.iloc[:, 0]
         y_comp = df_comp.iloc[:, 3]
         plt.plot(x_comp, y_comp, label='Comparison')
