@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SCALO Simulator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+</head>
+<body>
+  <h1>SCALO Simulator</h1>
+  <div class="simulate">
+      <form id="simulateForm" action="/output" method="POST">
+        <input placeholder="Pipeline" required="" type="text" name="pipeline"/>
+        <input placeholder="Number of runs" required="" type="number" name="numberRuns"/>
+        <div>
+          <h3>Visualization Options</h3>
+          <div>
+            <br>
+            <label for="accuracy">Accuracy</label>
+            <input type="checkbox" name="accuracy" value="accuracy" id="accuracy">
+            <br>
+
+            <label for="latency">Latency</label>
+            <input type="checkbox" name="latency" value="latency" id="latency">
+            <br>
+
+            <label for="power">Power</label>
+            <input type="checkbox" name="power" value="power" id="power">
+            <br>
+
+            <label for="custom">Custom</label>
+            <input type="checkbox" name="custom" value="custom" id="custom">
+            <br>
+
+            <div id="customPath" name="customPath" style="display: none;">
+              <label for="customPathInput">Custom Function Path</label>
+              <input type="text" id="customPathInput" name="customPathInput">
+            </div>
+          </div>
+        </div>
+        <button type="submit">SIMULATE</button>
+      </form>
+  </div>
+  <script>
+    document.getElementById("custom").addEventListener("change", function() {
+      var customPathDiv = document.getElementById("customPath");
+      if (this.checked) {
+        customPathDiv.style.display = "block";
+      } else {
+        customPathDiv.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
