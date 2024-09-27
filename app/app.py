@@ -6,9 +6,11 @@ import visualize.visualize
 app = Flask(__name__)
 app.config['STATIC_FOLDER'] = 'static'
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route('/output', methods=['POST'])
 def output():
@@ -37,9 +39,18 @@ def output():
     # Create visualizations based on selected options
     # visualize_filename = os.path.join('data', f"{pipeline}_{num_runs}.csv")
     visualize_filename = "app/visualize/input_csv/dummy.csv"
-    visualize.visualize.plot_visualizations(visualize_filename, accuracy=accuracy_selected, time=latency_selected, power=power_selected, custom=custom_selected)
-   
-    return render_template('output.html', accuracy_selected=accuracy_selected, latency_selected=latency_selected, power_selected=power_selected, custom_selected=custom_selected)
+    visualize.visualize.plot_visualizations(visualize_filename,
+                                            accuracy=accuracy_selected,
+                                            time=latency_selected,
+                                            power=power_selected,
+                                            custom=custom_selected)
+
+    return render_template('output.html',
+                           accuracy_selected=accuracy_selected,
+                           latency_selected=latency_selected,
+                           power_selected=power_selected,
+                           custom_selected=custom_selected)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
