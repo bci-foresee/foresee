@@ -109,7 +109,6 @@ class StorageModel:
             print(f"{key}: {value}")
         print("\nBest Case Cell Summary:")
         print("------------------------")
-        print(self.best_case)
         for key, value in self.best_case.items():
             print(f"{key}: {value}")
     
