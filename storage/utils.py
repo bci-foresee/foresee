@@ -9,6 +9,7 @@ class CellType(Enum):
     SRAM = "SRAM"
     CTT = "CTT"
 
+
 class OpTarget(Enum):
     ReadLatency = "ReadLatency"
     WriteLatency = "WriteLatency"
