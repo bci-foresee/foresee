@@ -6,7 +6,6 @@ from enum import Enum
 import pandas as pd
 from utils import CellType, OpTarget
 
-
 # Example usage:
 
 # model = StorageModel(
@@ -26,21 +25,23 @@ from utils import CellType, OpTarget
 # model.display_summary()
 # model.cleanup()
 
+
 class StorageModel:
     """
     A class to model storage performance from various workload and cell configurations.
     """
-    def __init__(self, 
-                 read_frequency: int, 
-                 write_frequency: int, 
-                 read_size: int, 
-                 write_size: int, 
-                 cell_type: CellType, 
-                 word_width: int=16,
-                 process_node: int=22, 
-                 opt_target: OpTarget=OpTarget.ReadLatency, 
-                 capacity: int=1,
-                 bits_per_cell: int=1):
+
+    def __init__(self,
+                 read_frequency: int,
+                 write_frequency: int,
+                 read_size: int,
+                 write_size: int,
+                 cell_type: CellType,
+                 word_width: int = 16,
+                 process_node: int = 22,
+                 opt_target: OpTarget = OpTarget.ReadLatency,
+                 capacity: int = 1,
+                 bits_per_cell: int = 1):
         self.config = {
             "experiment": {
                 "read_frequency": read_frequency,
@@ -48,7 +49,8 @@ class StorageModel:
                 "read_size": read_size,
                 "write_size": write_size,
                 "cell_type": [cell_type.value],
-                "process_node": process_node, #TODO: figure out what this does / why it doesn't trigger new output file
+                "process_node":
+                process_node,  #TODO: figure out what this does / why it doesn't trigger new output file
                 "opt_target": [opt_target.value],
                 "word_width": word_width,
                 "capacity": [capacity],
@@ -61,21 +63,25 @@ class StorageModel:
         self.best_case = None
         self.config_file_path = "nvmexplorer/config/storage_model.json"
         self.results_path = "nvmexplorer/output/results/{}_{}MB_{}_{}BPC-default.csv".format(
-            cell_type.value, capacity, opt_target.value, bits_per_cell) 
-    
+            cell_type.value, capacity, opt_target.value, bits_per_cell)
+
     def run(self):
         '''Runs model in nvmexplorer.'''
         print("Running model...")
         # save config file in nvmexplorer
         self.save_config(self.config_file_path)
-        
+
         # run nvmexplorer
-        run_py_path = os.path.join(os.path.dirname(__file__), 'nvmexplorer', 'run.py')
+        run_py_path = os.path.join(os.path.dirname(__file__), 'nvmexplorer',
+                                   'run.py')
         child_dir = os.path.join(os.path.dirname(__file__), 'nvmexplorer')
 
         try:
             result = subprocess.run(
-                ['python3', run_py_path, self.config_file_path.replace("nvmexplorer/", "", 1)],
+                [
+                    'python3', run_py_path,
+                    self.config_file_path.replace("nvmexplorer/", "", 1)
+                ],
                 check=True,
                 capture_output=True,
                 text=True,
@@ -93,7 +99,7 @@ class StorageModel:
         with open(file_path, 'w') as file:
             json.dump(self.config, file, indent=4)
         print(f"Configuration saved to {file_path}")
-    
+
     def read_output(self):
         '''Extracts best case and worst case data from nvmexplorer's output directory'''
         df = pd.read_csv(self.results_path)
@@ -112,7 +118,7 @@ class StorageModel:
         print(self.best_case)
         for key, value in self.best_case.items():
             print(f"{key}: {value}")
-    
+
     def cleanup(self):
         '''Cleans up nvmexplorer directory. Should be run after done using model.'''
         # delete config file
@@ -121,7 +127,8 @@ class StorageModel:
 
         # clear results directory
         results_dir_path = "nvmexplorer/output/results"
-        if os.path.exists(results_dir_path) and os.path.isdir(results_dir_path):
+        if os.path.exists(results_dir_path) and os.path.isdir(
+                results_dir_path):
             shutil.rmtree(results_dir_path)
 
         # clear logs directory
@@ -131,12 +138,14 @@ class StorageModel:
 
         # clear nvsim_output directory
         nvsim_output_dir_path = "nvmexplorer/output/nvsim_output"
-        if os.path.exists(nvsim_output_dir_path) and os.path.isdir(nvsim_output_dir_path):
+        if os.path.exists(nvsim_output_dir_path) and os.path.isdir(
+                nvsim_output_dir_path):
             shutil.rmtree(nvsim_output_dir_path)
-        
+
         # clear mem_cfs directory
         mem_cfs_dir_path = "nvmexplorer/data/mem_cfgs"
-        if os.path.exists(mem_cfs_dir_path) and os.path.isdir(mem_cfs_dir_path):
+        if os.path.exists(mem_cfs_dir_path) and os.path.isdir(
+                mem_cfs_dir_path):
             shutil.rmtree(mem_cfs_dir_path)
 
         print("Cleanup complete.")
