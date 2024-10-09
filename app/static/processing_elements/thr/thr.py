@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append("./")
 
 from app.static.processing_elements.processing_element import ProcessingElement

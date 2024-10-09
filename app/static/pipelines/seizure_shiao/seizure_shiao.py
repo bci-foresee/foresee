@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append("./")
 
 from app.static.processing_elements.fft.fft import FFT
@@ -11,6 +12,7 @@ from app.static.pipelines.pipeline import Pipeline
 import numpy as np
 from signals.parent import Window
 from asa import SVM, FFT, THR, LOADER
+
 
 # define the pipeline to test the fft PE
 class Shiao_Pipe(Pipeline):

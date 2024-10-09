@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append("./")
 
 from app.static.processing_elements.processing_element import ProcessingElement
@@ -6,7 +7,6 @@ from signals.parent import Window
 import networkx as nx
 import matplotlib.pyplot as plt
 import os
-
 
 
 class Pipeline:
@@ -57,12 +57,13 @@ class Pipeline:
 
     def run(self, window) -> None:
         pass
-    
+
     def visualize(self):
         print("Graphing")
         nx.draw(self.visualization, with_labels=True)
 
-        output_dir = 'app/static/pipelines/' + self.name.lower().replace(" ", "_") + '/visualizations'
+        output_dir = 'app/static/pipelines/' + self.name.lower().replace(
+            " ", "_") + '/visualizations'
 
         # Create the output directory if it doesn't exist
         os.makedirs(output_dir, exist_ok=True)
@@ -71,6 +72,3 @@ class Pipeline:
         filepath = os.path.join(output_dir, 'pipeline.png')
         plt.savefig(filepath)
         # # # for pe in self.elements:
-
-
-

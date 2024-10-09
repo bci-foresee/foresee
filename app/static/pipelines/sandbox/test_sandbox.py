@@ -1,9 +1,11 @@
 import sys
+
 sys.path.append("./")
 
 from sandbox import Sandbox_Pipe
 from signals.parent import Window
 import numpy as np
+
 
 def test_pipeline_basic() -> None:
 
@@ -20,5 +22,6 @@ def test_pipeline_basic() -> None:
     # print(output_features)
     pipeline.visualize()
     assert 1 == 1
+
 
 test_pipeline_basic()

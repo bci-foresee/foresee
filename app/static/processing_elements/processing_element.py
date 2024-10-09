@@ -9,6 +9,7 @@ import struct
 import os
 from numpy.typing import NDArray
 
+
 class ProcessingElement:
 
     def __init__(self,

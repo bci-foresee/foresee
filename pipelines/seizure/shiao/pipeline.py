@@ -4,6 +4,7 @@ from pipelines.parent import Pipeline
 from signals.parent import Window
 from asa import SVM, FFT, THR, LOADER
 
+
 # define the pipeline to test the fft PE
 class Shiao_Pipe(Pipeline):
 
