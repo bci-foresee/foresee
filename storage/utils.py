@@ -2,6 +2,9 @@ from enum import Enum
 
 
 class CellType(Enum):
+    """
+    Memory types supported for modeling
+    """
     STT = "SST"
     PCM = "PCM"
     FeFET = "FeFET"
@@ -11,6 +14,10 @@ class CellType(Enum):
 
 
 class OpTarget(Enum):
+    """
+    Optimization targets for cell configuration
+    (see NVSim documentation for further details)
+    """
     ReadLatency = "ReadLatency"
     WriteLatency = "WriteLatency"
     ReadDynamicEnergy = "ReadDynamicEnergy"

@@ -1,10 +1,10 @@
 import json
-import os
 import shutil
 import subprocess
 from enum import Enum
 import pandas as pd
-from utils import CellType, OpTarget
+from pathlib import Path
+from storage.utils import CellType, OpTarget
 
 # Example usage:
 
@@ -25,7 +25,6 @@ from utils import CellType, OpTarget
 # model.display_summary()
 # model.cleanup()
 
-
 class StorageModel:
     """
     A class to model storage performance from various workload and cell configurations.
@@ -38,10 +37,11 @@ class StorageModel:
                  write_size: int,
                  cell_type: CellType,
                  word_width: int = 16,
-                 process_node: int = 22,
+                 process_node: int = 22, #TODO: figure out what this does / why it doesn't trigger new output file
                  opt_target: OpTarget = OpTarget.ReadLatency,
                  capacity: int = 1,
                  bits_per_cell: int = 1):
+        self.nvm_explorer_path = Path(__file__).resolve().parent / "nvmexplorer"
         self.config = {
             "experiment": {
                 "read_frequency": read_frequency,
@@ -49,43 +49,44 @@ class StorageModel:
                 "read_size": read_size,
                 "write_size": write_size,
                 "cell_type": [cell_type.value],
-                "process_node":
-                process_node,  #TODO: figure out what this does / why it doesn't trigger new output file
+                "process_node": process_node,
                 "opt_target": [opt_target.value],
                 "word_width": word_width,
                 "capacity": [capacity],
                 "bits_per_cell": [bits_per_cell],
-                "nvsim_path": "./nvmexplorer_src/nvsim_src/nvsim",
-                "output_path": "./output",
+                "nvsim_path": str(self.nvm_explorer_path / "nvmexplorer_src" / "nvsim_src" / "nvsim"),
+                "output_path": str(self.nvm_explorer_path / "output"),
             }
         }
         self.worst_case = None
         self.best_case = None
-        self.config_file_path = "nvmexplorer/config/storage_model.json"
-        self.results_path = "nvmexplorer/output/results/{}_{}MB_{}_{}BPC-default.csv".format(
-            cell_type.value, capacity, opt_target.value, bits_per_cell)
+        self.config_file_path = self.nvm_explorer_path / "config" / "storage_model.json"
+        self.results_path = self.nvm_explorer_path / "output" / "results" / f"{cell_type.value}_{capacity}MB_{opt_target.value}_{bits_per_cell}BPC-default.csv"
 
     def run(self):
         '''Runs model in nvmexplorer.'''
         print("Running model...")
+        # check if nvsim executable exists
+        nvsim_path =  self.nvm_explorer_path / "nvmexplorer_src" / "nvsim_src" / "nvsim"
+        if not nvsim_path.exists():
+            raise FileNotFoundError(f"NVSim executable does not exist. Write 'make' in {nvsim_path.parent()}.")
+        
         # save config file in nvmexplorer
-        self.save_config(self.config_file_path)
+        self.save_config()
 
         # run nvmexplorer
-        run_py_path = os.path.join(os.path.dirname(__file__), 'nvmexplorer',
-                                   'run.py')
-        child_dir = os.path.join(os.path.dirname(__file__), 'nvmexplorer')
+        run_py_path = self.nvm_explorer_path / 'run.py'
 
         try:
             result = subprocess.run(
                 [
-                    'python3', run_py_path,
-                    self.config_file_path.replace("nvmexplorer/", "", 1)
+                    'python3', str(run_py_path),
+                    str(self.config_file_path.relative_to(self.nvm_explorer_path))
                 ],
                 check=True,
                 capture_output=True,
                 text=True,
-                cwd=child_dir  # Set the child directory as the working directory
+                cwd=self.nvm_explorer_path  # Set the child directory as the working directory
             )
             print("Run Output:", result.stdout)
         except subprocess.CalledProcessError as e:
@@ -94,11 +95,12 @@ class StorageModel:
         # read outputs from nvm_explorer
         self.read_output()
 
-    def save_config(self, file_path):
+    def save_config(self):
         '''Saves config file in nvmexplorer's configs directory'''
-        with open(file_path, 'w') as file:
+        
+        with self.config_file_path.open('w') as file:
             json.dump(self.config, file, indent=4)
-        print(f"Configuration saved to {file_path}")
+        print(f"Configuration saved to {self.config_file_path}")
 
     def read_output(self):
         '''Extracts best case and worst case data from nvmexplorer's output directory'''
@@ -107,7 +109,7 @@ class StorageModel:
         self.best_case = df.iloc[1]
         return
 
-    def display_summary(self):
+    def print_summary(self):
         '''Prints out best case and worst case performance data'''
         print("Worst Case Cell Summary:")
         print("------------------------")
@@ -121,30 +123,27 @@ class StorageModel:
     def cleanup(self):
         '''Cleans up nvmexplorer directory. Should be run after done using model.'''
         # delete config file
-        if os.path.exists(self.config_file_path):
-            os.remove(self.config_file_path)
+        if self.config_file_path.exists():
+            self.config_file_path.unlink()
 
         # clear results directory
-        results_dir_path = "nvmexplorer/output/results"
-        if os.path.exists(results_dir_path) and os.path.isdir(
-                results_dir_path):
+        results_dir_path = self.nvm_explorer_path / "output" / "results"
+        if results_dir_path.exists() and results_dir_path.is_dir():
             shutil.rmtree(results_dir_path)
 
         # clear logs directory
-        logs_dir_path = "nvmexplorer/output/logs"
-        if os.path.exists(logs_dir_path) and os.path.isdir(logs_dir_path):
+        logs_dir_path = self.nvm_explorer_path / "output" / "logs"
+        if logs_dir_path.exists() and logs_dir_path.is_dir():
             shutil.rmtree(logs_dir_path)
 
         # clear nvsim_output directory
-        nvsim_output_dir_path = "nvmexplorer/output/nvsim_output"
-        if os.path.exists(nvsim_output_dir_path) and os.path.isdir(
-                nvsim_output_dir_path):
+        nvsim_output_dir_path = self.nvm_explorer_path / "output" / "nvsim_output"
+        if nvsim_output_dir_path.exists() and nvsim_output_dir_path.is_dir():
             shutil.rmtree(nvsim_output_dir_path)
 
         # clear mem_cfs directory
-        mem_cfs_dir_path = "nvmexplorer/data/mem_cfgs"
-        if os.path.exists(mem_cfs_dir_path) and os.path.isdir(
-                mem_cfs_dir_path):
+        mem_cfs_dir_path = self.nvm_explorer_path / "data" / "mem_cfgs"
+        if mem_cfs_dir_path.exists() and mem_cfs_dir_path.is_dir():
             shutil.rmtree(mem_cfs_dir_path)
 
         print("Cleanup complete.")
