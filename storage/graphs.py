@@ -38,12 +38,6 @@ def mem_type_comparison(model: StorageModel, result_type: ResultType):
     else:
         bars = plt.bar(X_axis, results, bar_width, color='skyblue', edgecolor='black')
 
-    # add labels
-    for bar in bars:
-        yval = bar.get_height()
-        plt.text(bar.get_x() + bar.get_width() / 2, yval + 0.1, f'{yval:.2f}', 
-                 ha='center', va='bottom', fontsize=10, fontweight='bold')
-
     # se ticks and labels
     plt.xticks(X_axis, cell_types, rotation=45, fontsize=12)
     plt.yticks(fontsize=12)
@@ -103,8 +97,9 @@ def main():
     mem_type_comparison(model, ResultType.TOTAL_POWER)
     mem_type_comparison(model, ResultType.TOTAL_WRITE_LATENCY)
     mem_type_comparison(model, ResultType.LIFE_EXPECTANCY)
+    mem_type_comparison(model, ResultType.AREA)
     
-    model.cleanup()
+    #model.cleanup()
 
     return
 
