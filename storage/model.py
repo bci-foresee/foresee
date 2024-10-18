@@ -4,7 +4,8 @@ import subprocess
 from enum import Enum
 import pandas as pd
 from pathlib import Path
-from storage.utils import CellType, OpTarget
+from utils import CellType, OpTarget, ResultType
+from typing import List
 
 # Example usage:
 
@@ -24,6 +25,8 @@ from storage.utils import CellType, OpTarget
 # model.run()
 # model.display_summary()
 # model.cleanup()
+
+# NVSimcovers the process nodes from 180 nm, 120 nm, 90 nm, 65nm,45 nm, 32 nm to 22 nm
 
 
 class StorageModel:
@@ -69,12 +72,12 @@ class StorageModel:
                     "nvsim"),
                 "output_path":
                 str(self.nvm_explorer_path / "output"),
-            }
+                "custom_cells": True
+            },
+            "custom_cells": []
         }
-        self.worst_case = None
-        self.best_case = None
         self.config_file_path = self.nvm_explorer_path / "config" / "storage_model.json"
-        self.results_path = self.nvm_explorer_path / "output" / "results" / f"{cell_type.value}_{capacity}MB_{opt_target.value}_{bits_per_cell}BPC-default.csv"
+        self.results = None
 
     def run(self):
         '''Runs model in nvmexplorer.'''
@@ -113,6 +116,7 @@ class StorageModel:
 
         # read outputs from nvm_explorer
         self.read_output()
+        self.add_lifetime_data()
 
     def save_config(self):
         '''Saves config file in nvmexplorer's configs directory'''
@@ -122,22 +126,76 @@ class StorageModel:
         print(f"Configuration saved to {self.config_file_path}")
 
     def read_output(self):
-        '''Extracts best case and worst case data from nvmexplorer's output directory'''
-        df = pd.read_csv(self.results_path)
-        self.worst_case = df.iloc[0]
-        self.best_case = df.iloc[1]
+        '''Extracts data from nvmexplorer's output directory'''
+        results_path = self.get_results_path()
+        df = pd.read_csv(results_path)
+        self.results = df.iloc[0]
         return
 
     def print_summary(self):
-        '''Prints out best case and worst case performance data'''
-        print("Worst Case Cell Summary:")
+        '''Prints out entire results dataset.'''
+        print("Summary:")
         print("------------------------")
-        for key, value in self.worst_case.items():
+        for key, value in self.results.items():
             print(f"{key}: {value}")
-        print("\nBest Case Cell Summary:")
-        print("------------------------")
-        for key, value in self.best_case.items():
-            print(f"{key}: {value}")
+    
+    def get_result(self, result_type: ResultType):
+        '''Gets specific result from output dataframe'''
+        if self.results is None:
+            raise Exception(
+                f"Results not found. Make sure to run model first."
+            )
+
+        return self.results[result_type.value]
+
+    def update_config(self, row_name: str, value):
+        '''Updates cell configuration.'''
+        if row_name not in self.config["experiment"]:
+            raise Exception("Invalid row name.")
+        
+        if row_name in ("cell_type", "opt_target", "capacity", "bits_per_cell"):
+            value = [value]
+        
+        self.config["experiment"][row_name] = value
+        return
+    
+    def get_config_val(self, row_name: str):
+        if row_name not in self.config["experiment"]:
+            raise Exception(f"Invalid row name: {row_name}")
+    
+        if row_name in ("cell_type", "opt_target", "capacity", "bits_per_cell"):
+            return self.config["experiment"][row_name][0]
+        else:
+            return self.config["experiment"][row_name]
+        
+    def get_config_vals(self, row_names: List[str]):
+        vals = []
+        for row_name in row_names:
+            vals.append(self.get_config_val(row_name))
+        return vals
+
+    def get_results_path(self):
+        cell_value, capacity, opt_target, bits_per_cell = self.get_config_vals(["cell_type", "capacity", "opt_target", "bits_per_cell"])
+        return self.nvm_explorer_path / "output" / "results" / f"{cell_value}_{capacity}MB_{opt_target}_{bits_per_cell}BPC-default.csv"
+    
+    def add_lifetime_data(self):
+        endurancedf_path = self.nvm_explorer_path / "EducationalTutorial" / "2016-2020_EnduranceSummary.csv"
+        endurancedf = pd.read_csv(endurancedf_path)
+
+        cell_type = self.get_result(ResultType.MEM_CELL_TYPE).strip()
+        if cell_type == 'SRAM':
+            return
+
+        minEndurance = endurancedf[(endurancedf['Memory Cell'] == cell_type)]['min'].iloc[0]
+        
+        # We do not have enough data on the max endurance of some of the cells so if null, we just equal it to the minimum
+        maxEndurance = endurancedf[(endurancedf['Memory Cell'] == cell_type) & (endurancedf['max'].notnull())]['max'].iloc[0]
+
+        min_life_expectancy = minEndurance if self.get_result(ResultType.WRITE_ACCESSES) != 0.0 else 3.2e8
+        max_life_expectancy = maxEndurance if self.get_result(ResultType.WRITE_ACCESSES) != 0.0 else 3.2e8
+
+        # add result as a touple to results dataframe
+        self.results["Life Expectancy (s)"] = (min_life_expectancy, max_life_expectancy)
 
     def cleanup(self):
         '''Cleans up nvmexplorer directory. Should be run after done using model.'''
