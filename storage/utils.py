@@ -11,6 +11,7 @@ class CellType(Enum):
     RRAM = "RRAM"
     SRAM = "SRAM"
 
+
 class OpTarget(Enum):
     """
     Optimization targets for cell configuration
@@ -25,6 +26,7 @@ class OpTarget(Enum):
     LeakagePower = "LeakagePower"
     Area = "Area"
     Exploration = "Exploration"
+
 
 class ResultType(Enum):
     """
