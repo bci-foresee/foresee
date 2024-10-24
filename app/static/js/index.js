@@ -1,19 +1,10 @@
-// Makes the customPath option visible if selected.
 document.addEventListener("DOMContentLoaded", function() {
-    const customElement = document.getElementById("custom");
-
-    if (customElement) {
-        customElement.addEventListener("change", function() {
-            var customPathDiv = document.getElementById("customPath");
-            if (this.checked) {
-                customPathDiv.style.display = "block";
-            } else {
-                customPathDiv.style.display = "none";
-            }
-        });
-    } else {
-        console.error("Element with ID 'custom' not found.");
-    }
+    document.getElementById("selectPipeline").addEventListener("change", function() {
+        var selectPipelineValue = this.value.toLowerCase().replace(/\s+/g, "_");
+        if (selectPipelineValue) {
+            document.getElementById("selectPipelineForm").submit();
+        }
+    })
 });
 
 // Function to dynamically populate pipeline options from the CSV
@@ -22,7 +13,11 @@ function populatePipelineOptionsFromCSV(csvFilePath) {
         .then(response => response.text())
         .then(text => {
             const lines = text.split('\n');
-            const pipelineSelect = document.getElementById("pipeline");
+            const pipelineSelect = document.getElementById("selectPipeline");
+            const option = document.createElement("option");
+            option.value = "";
+            option.text = "";
+            pipelineSelect.appendChild(option);
   
             lines.forEach(line => {
                 const pipeline = line.trim();

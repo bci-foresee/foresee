@@ -52,22 +52,32 @@ def plot_accuracy_visualization(df, df_comp, num_runs):
   """
     # TODO(Bernardo): Fix once we have CSV.
     # Assuming the first column is n_run and the second column is the accuracy value
-    x = df.iloc[:, 0]
-    y = df.iloc[:, 1]
+    # x = df.iloc[:, 0]
+    # y = df.iloc[:, 1]
 
     plt.clf()
 
-    # Create the plot
-    plt.plot(x, y)
-    if (df_comp != None and not df_comp.empty):
-        x_comp = df_comp.iloc[:, 0]
-        y_comp = df_comp.iloc[:, 1]
-        plt.plot(x_comp, y_comp, label='Comparison')
+    plt.bar(df['Run'], df['Loader'], label='Loader')
+    plt.bar(df['Run'], df['FFT'], label='FFT', bottom=df['Loader'])
+
     plt.xlabel('Run')
     plt.ylabel('Accuracy')
-    plt.title('Accuracy Plot')
+    plt.title('Accuracy Breakdown by PE')
+    plt.legend()
+    # plt.show()
 
-    output_dir = 'visualize/output_plots'
+
+    # Create the plot
+    # plt.bar(x, y)
+    # if (df_comp != None and not df_comp.empty):
+    #     x_comp = df_comp.iloc[:, 0]
+    #     y_comp = df_comp.iloc[:, 1]
+    #     plt.bar(x_comp, y_comp, label='Comparison')
+    # plt.xlabel('Run')
+    # plt.ylabel('Accuracy')
+    # plt.title('Accuracy Plot')
+
+    output_dir = 'app/static/output_plots'
     filename = 'accuracy_plot.png'
 
     # Create the output directory if it doesn't exist
@@ -88,22 +98,31 @@ def plot_time_visualization(df, df_comp, num_runs):
   """
     # TODO(Bernardo): Fix once we have CSV.
     # Assuming the first column is n_run and the third column is the time value
-    x = df.iloc[:, 0]
-    y = df.iloc[:, 2]
-
+    # x = df.iloc[:, 0]
+    # y = df.iloc[:, 2]
     plt.clf()
 
-    # Create the plot
-    plt.plot(x, y)
-    if (df_comp != None and not df_comp.empty):
-        x_comp = df_comp.iloc[:, 0]
-        y_comp = df_comp.iloc[:, 2]
-        plt.plot(x_comp, y_comp, label='Comparison')
+    plt.bar(df['Run'], df['Loader'], label='Loader')
+    plt.bar(df['Run'], df['FFT'], label='FFT', bottom=df['Loader'])
+
     plt.xlabel('Run')
     plt.ylabel('Time')
-    plt.title('Time Plot')
+    plt.title('Time Breakdown by PE')
+    plt.legend()
 
-    output_dir = 'visualize/output_plots'
+    # plt.clf()
+
+    # # Create the plot
+    # plt.bar(x, y)
+    # if (df_comp != None and not df_comp.empty):
+    #     x_comp = df_comp.iloc[:, 0]
+    #     y_comp = df_comp.iloc[:, 2]
+    #     plt.bar(x_comp, y_comp, label='Comparison')
+    # plt.xlabel('Run')
+    # plt.ylabel('Time')
+    # plt.title('Time Plot')
+
+    output_dir = 'app/static/output_plots'
     filename = 'time_plot.png'
 
     # Create the output directory if it doesn't exist
@@ -124,21 +143,31 @@ def plot_power_visualization(df, df_comp, num_runs):
   """
     # TODO(Bernardo): Fix once we have CSV.
     # Assuming the first column is n_run and the fourth column is the power value
-    x = df.iloc[:, 0]
-    y = df.iloc[:, 3]
+    # x = df.iloc[:, 0]
+    # y = df.iloc[:, 3]
+
+    # plt.clf()
 
     plt.clf()
 
-    # Create the plot
-    plt.plot(x, y)
-    if (df_comp != None and not df_comp.empty):
-        x_comp = df_comp.iloc[:, 0]
-        y_comp = df_comp.iloc[:, 3]
-        plt.plot(x_comp, y_comp, label='Comparison')
+    plt.bar(df['Run'], df['Loader'], label='Loader')
+    plt.bar(df['Run'], df['FFT'], label='FFT', bottom=df['Loader'])
+
     plt.xlabel('Run')
     plt.ylabel('Power')
-    plt.title('Power Plot')
-    output_dir = 'visualize/output_plots'
+    plt.title('Power Breakdown by PE')
+    plt.legend()
+
+    # # Create the plot
+    # plt.bar(x, y)
+    # if (df_comp != None and not df_comp.empty):
+    #     x_comp = df_comp.iloc[:, 0]
+    #     y_comp = df_comp.iloc[:, 3]
+    #     plt.bar(x_comp, y_comp, label='Comparison')
+    # plt.xlabel('Run')
+    # plt.ylabel('Power')
+    # plt.title('Power Plot')
+    output_dir = 'app/static/output_plots'
     filename = 'power_plot.png'
 
     # Create the output directory if it doesn't exist
@@ -158,28 +187,28 @@ def plot_custom_visualization(df, df_comp, custom):
     custom: custom function to plot the data.
   """
 
-    # Import the user-defined function dynamically
-    try:
-        module = __import__(custom)
-        plot_function = getattr(module, custom)
-    except ImportError:
-        print(f"Error: Could not import function '{custom}'.")
-        return
+    # # Import the user-defined function dynamically
+    # try:
+    #     module = __import__(custom)
+    #     plot_function = getattr(module, custom)
+    # except ImportError:
+    #     print(f"Error: Could not import function '{custom}'.")
+    #     return
 
-    plt.clf()
+    # plt.clf()
 
-    # Use the imported function to plot the data
-    plot_function(df, df_comp)
+    # # Use the imported function to plot the data
+    # plot_function(df, df_comp)
 
-    output_dir = 'visualize/output_plots'
-    filename = 'custom_plot.png'
+    # output_dir = 'app/static/output_plots'
+    # filename = 'custom_plot.png'
 
-    # Create the output directory if it doesn't exist
-    os.makedirs(output_dir, exist_ok=True)
+    # # Create the output directory if it doesn't exist
+    # os.makedirs(output_dir, exist_ok=True)
 
-    # Save the plot to the specified location
-    filepath = os.path.join(output_dir, filename)
-    plt.savefig(filepath)
+    # # Save the plot to the specified location
+    # filepath = os.path.join(output_dir, filename)
+    # plt.savefig(filepath)
 
 
 if __name__ == '__main__':

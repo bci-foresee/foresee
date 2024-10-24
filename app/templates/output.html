@@ -10,9 +10,6 @@
 
     <h2>Visualizations</h2>
     <div id="visualization-container">
-        <img src="{{ url_for('static', filename='pipelines/' + pipeline + '/visualizations/pipeline.png') }}" alt="Pipeline">
-        <br>
-
         {% if accuracy_selected %}
         <img src="{{ url_for('static', filename='output_plots/accuracy_plot.png') }}" alt="Accuracy Plot">
         <br>

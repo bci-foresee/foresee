@@ -14,6 +14,7 @@ class Pipeline:
     def __init__(self, input_window: Window) -> None:
         self.elements: list[ProcessingElement] = []
         self.input_window = input_window
+        # TODO btrevisan try to get this left to right
         self.visualization = nx.DiGraph()
 
     def add_elements(self, nodes: list[ProcessingElement]) -> None:
@@ -60,7 +61,16 @@ class Pipeline:
 
     def visualize(self):
         print("Graphing")
-        nx.draw(self.visualization, with_labels=True)
+
+        node_pos = {"Loader": (0, 0)}
+
+        pos = nx.spring_layout(self.visualization, pos=node_pos)
+        node_colors = ['blue'] * len(self.visualization.nodes())
+        node_colors[0] = 'red'
+
+        # # Draw the graph with different shapes
+        node_sizes = [800 for _ in self.visualization.nodes()]
+        nx.draw(self.visualization, pos=pos, with_labels=True, arrows=True, node_color=node_colors, node_size=node_sizes)
 
         output_dir = 'app/static/pipelines/' + self.name.lower().replace(
             " ", "_") + '/visualizations'

@@ -7,41 +7,19 @@
 </head>
 <body>
   <h1>SCALO Simulator</h1>
-  <div class="simulate">
-      <form id="simulateForm" action="/output" method="POST">
-        <label for="pipeline">Select Pipeline:</label>
-        <select name="pipeline" id="pipeline">
-        </select>
-        <input placeholder="Number of runs" required="" type="number" name="numberRuns"/>
-        <div>
-          <h3>Visualization Options</h3>
-          <div>
-            <br>
-            <label for="accuracy">Accuracy</label>
-            <input type="checkbox" name="accuracy" value="accuracy" id="accuracy">
-            <br>
+  
+  <div class="simulatorDiv">
+    <form id="selectPipelineForm" action="/pipeline" method="POST">
+      <label for="selectPipeline">SELECT A PIPELINE</label><br>
+      <select name="selectPipeline" id="selectPipeline"></select><br>
+    </form>
 
-            <label for="latency">Latency</label>
-            <input type="checkbox" name="latency" value="latency" id="latency">
-            <br>
-
-            <label for="power">Power</label>
-            <input type="checkbox" name="power" value="power" id="power">
-            <br>
-
-            <label for="custom">Custom</label>
-            <input type="checkbox" name="custom" value="custom" id="custom">
-            <br>
-
-            <div id="customPath" name="customPath" style="display: none;">
-              <label for="customPathInput">Custom Function Path</label>
-              <input type="text" id="customPathInput" name="customPathInput">
-            </div>
-          </div>
-        </div>
-        <button type="submit">SIMULATE</button>
-      </form>
+    <form id="createNewPipelineForm" action="/create_pipeline" method="POST">
+      <label for="createNewPipelineButton">OR</label><br><br>
+      <button id="createNewPipelineButton" type="submit">CREATE A NEW PIPELINE</button>
+    </form>
   </div>
+  
   <script>
     populatePipelineOptionsFromCSV("{{ url_for('static', filename='pipelines/pipelines.csv') }}");
   </script>
