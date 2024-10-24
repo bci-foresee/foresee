@@ -38,7 +38,8 @@ def output():
 
     # Create visualizations based on selected options
     # visualize_filename = os.path.join('data', f"{pipeline}_{num_runs}.csv")
-    visualize_filename = "app/visualize/input_csv/dummy.csv"
+    # TODO(btrevisan): Find ways to optimize data organization here.
+    visualize_filename = "/workspaces/aloha-verilog/app/visualize/input_csv/dummy.csv"
     visualize.visualize.plot_visualizations(visualize_filename,
                                             accuracy=accuracy_selected,
                                             time=latency_selected,
@@ -46,6 +47,7 @@ def output():
                                             custom=custom_selected)
 
     return render_template('output.html',
+                           pipeline=pipeline.lower().replace(' ', '_'),
                            accuracy_selected=accuracy_selected,
                            latency_selected=latency_selected,
                            power_selected=power_selected,
