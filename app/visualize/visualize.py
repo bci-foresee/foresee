@@ -66,7 +66,6 @@ def plot_accuracy_visualization(df, df_comp, num_runs):
     plt.legend()
     # plt.show()
 
-
     # Create the plot
     # plt.bar(x, y)
     # if (df_comp != None and not df_comp.empty):

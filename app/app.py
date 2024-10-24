@@ -11,16 +11,21 @@ app.config['STATIC_FOLDER'] = 'static'
 def index():
     return render_template("index.html")
 
+
 @app.route('/pipeline', methods=['POST'])
 def pipeline():
-    selected_pipeline = request.form['selectPipeline'].lower().replace(' ', '_')
+    selected_pipeline = request.form['selectPipeline'].lower().replace(
+        ' ', '_')
     if selected_pipeline != "":
-        return render_template('pipeline.html', selected_pipeline=selected_pipeline)
+        return render_template('pipeline.html',
+                               selected_pipeline=selected_pipeline)
     return render_template('index.html')
+
 
 @app.route('/create_pipeline', methods=['POST'])
 def create_pipeline():
     return render_template('create_pipeline.html')
+
 
 @app.route('/output', methods=['POST'])
 def output():

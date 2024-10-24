@@ -2,7 +2,7 @@
 This file defines the base class for all hardware components
 """
 # TODO(btrevisan): create a function that gives the detailed information for the pe and allow for edits
-# TODO(btrevisan): reorganize the app and directories. keep command linge stuff 
+# TODO(btrevisan): reorganize the app and directories. keep command linge stuff
 import subprocess
 import re
 import numpy as np
@@ -25,7 +25,7 @@ class ProcessingElement:
 
         # clock frequency
         #  TODO btrevisan : add to the plot
-        self.clk = clk 
+        self.clk = clk
 
         # False means run python implementation, True means run verilog implementation
         self.rtl_sim = rtl_sim

@@ -70,7 +70,12 @@ class Pipeline:
 
         # # Draw the graph with different shapes
         node_sizes = [800 for _ in self.visualization.nodes()]
-        nx.draw(self.visualization, pos=pos, with_labels=True, arrows=True, node_color=node_colors, node_size=node_sizes)
+        nx.draw(self.visualization,
+                pos=pos,
+                with_labels=True,
+                arrows=True,
+                node_color=node_colors,
+                node_size=node_sizes)
 
         output_dir = 'app/static/pipelines/' + self.name.lower().replace(
             " ", "_") + '/visualizations'
