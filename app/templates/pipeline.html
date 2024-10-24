@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SCALO Simulator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <script src="{{ url_for('static', filename='js/pipeline.js') }}"></script>
+</head>
+<body>
+  <h1>SCALO Simulator</h1>
+
+  <h3 id="selectedPipeline">{{selected_pipeline}} Pipeline</h3>
+
+  <div id="pipelineImageDiv">
+    <img id="pipelineImage" src="{{ url_for('static', filename='pipelines/' + selected_pipeline + '/visualizations/pipeline.png') }}">
+  </div>
+  <br>
+
+  <h3>Latest Visualizations</h3>
+
+  <div class="carousel-container">
+    <div class="carousel-images">
+      <img class="carousel-image" src="{{ url_for('static', filename='output_plots/accuracy_plot.png') }}">
+      <img class="carousel-image" src="{{ url_for('static', filename='output_plots/time_plot.png') }}">
+      <img class="carousel-image" src="{{ url_for('static', filename='output_plots/power_plot.png') }}">
+      </div>
+  </div> 
+
+  <h3>Run More Experiments</h3>
+
+  <div class="simulatorDiv" id="simulateFormDiv">
+    <form id="simulateForm" action="/output" method="POST">
+      <input placeholder="Number of runs" required="" type="number" name="numberRuns"/><br>
+
+      <div>
+        <h4>Visualization Options</h4>
+        <div>
+          <br>
+          <label for="accuracy" class="visualizationOptions">Accuracy</label>
+          <input type="checkbox" name="accuracy" value="accuracy" id="accuracy">
+          <br>
+
+          <label for="latency" class="visualizationOptions">Latency</label>
+          <input type="checkbox" name="latency" value="latency" id="latency">
+          <br>
+
+          <label for="power" class="visualizationOptions">Power</label>
+          <input type="checkbox" name="power" value="power" id="power">
+          <br>
+
+          <label for="custom" class="visualizationOptions">Custom</label>
+          <input type="checkbox" name="custom" value="custom" id="custom">
+          <br>
+
+          <div id="customPath" name="customPath" style="display: none;">
+            <label for="customPathInput">Custom Function Path</label>
+            <input type="text" id="customPathInput" name="customPathInput">
+          </div>
+        </div>
+      </div>
+      <button type="submit">SIMULATE</button>
+    </form>
+  </div>
+</body>
+</html>
