@@ -1,12 +1,10 @@
 from asa import FFT, SVM, THR, BBF, PWXC, LOADER
 import numpy as np
 from pipelines.parent import Pipeline
-from signals.parent import Window
-from asa import SVM, FFT, THR, LOADER
 
 
 # define the pipeline to test the fft PE
-class Shiao_Pipe(Pipeline):
+class Shiao_Pipe_Partial(Pipeline):
 
     def __init__(self, input_window: Window):
 
@@ -25,13 +23,6 @@ class Shiao_Pipe(Pipeline):
                        clk=1,
                        berger_bands=berger_bands,
                        save_visualization=True)
-
-        self.bbf = BBF(fs=input_window.fs,
-                       berger_bands=berger_bands,
-                       save_visualization=True)
-
-        self.pwxc = PWXC(n_channels=input_window.n_channels,
-                         save_visualization=True)
 
         # loading random weights, size = berger bands * channels + berger bands * channels + (channels * (channels - 1)) / 2
 
@@ -60,8 +51,6 @@ class Shiao_Pipe(Pipeline):
         self.add_edge(from_node=self.loader, to_node=self.pwxc)
 
         self.add_edge(from_node=self.fft, to_node=self.svm)
-        self.add_edge(from_node=self.bbf, to_node=self.svm)
-        self.add_edge(from_node=self.pwxc, to_node=self.svm)
 
         self.add_edge(from_node=self.svm, to_node=self.thr)
 

@@ -42,12 +42,12 @@ class SVM(ProcessingElement):
             self.weights
         ) == self.input_val_size, f"Input size {self.input_val_size} does not match weights size {len(self.weights)}"
 
-    def compute(self, features: NDArray[np.int32]) -> float:
-        assert len(features) == len(self.weights)
+    def compute(self, input: NDArray[np.int32]) -> float:
+        assert len(input) == len(self.weights)
 
         acc: float = 0
-        for i in range(len(features)):
-            acc += self.weights[i] * features[i]
+        for i in range(len(input)):
+            acc += self.weights[i] * input[i]
         return acc
 
     def visualize(self) -> None:
