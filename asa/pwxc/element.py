@@ -17,10 +17,14 @@ class PWXC(ProcessingElement):
     def __init__(self,
                  n_channels: int,
                  clk: int = 0,
-                 save_visualization: bool = False) -> None:
+                 save_visualization: bool = False,
+                 rtl_sim: bool = False,
+                 rtl_power_estimation: bool = False) -> None:
         super().__init__(name=self.name,
                          clk=clk,
-                         save_visualization=save_visualization)
+                         save_visualization=save_visualization,
+                         rtl_sim=rtl_sim,
+                         rtl_power_estimation=rtl_power_estimation)
 
         self.num_channels = n_channels
 
@@ -53,6 +57,63 @@ class PWXC(ProcessingElement):
         correlations = np.array(correlations)
         self.correlations = correlations
         return correlations
+    
+    def compute_verilog(self, input: NDArray[np.float32]
+                        ) -> np.int64:
+
+        input1 = input[0]
+        input2 = input[1]
+
+        # Specify the Verilog file for the cross-correlation module
+        verilog_file = "pwxc"
+
+        # Convert inputs to appropriate integer type (e.g., int16)
+        input1_int = input1.astype(np.int16)
+        input2_int = input2.astype(np.int16)
+
+        # Ensure the input arrays have the correct length
+        if input1_int.size != 8192 or input2_int.size != 8192:
+            raise ValueError("Input signals must be of length 8192.")
+
+        # Define file names for the input and output buffers
+        self.input_x_buffer = 'input_x_buffer.txt'
+        self.input_y_buffer = 'input_y_buffer.txt'
+        self.output_result = 'output_result.txt'
+
+        # Write input1 to "input_x_buffer.txt"
+        with open(self.input_x_buffer, 'w') as file_x:
+            for sample in input1_int:
+                # Writing each sample as a signed hex string
+                file_x.write(f"{self.int_to_signedHex(sample)}\n")
+
+        # Write input2 to "input_y_buffer.txt"
+        with open(self.input_y_buffer, 'w') as file_y:
+            for sample in input2_int:
+                # Writing each sample as a signed hex string
+                file_y.write(f"{self.int_to_signedHex(sample)}\n")
+
+        # Run the Verilog simulation
+        verilog_result = self.run_verilog_simulation(
+            PE_name=self.name,
+            verilog_file=verilog_file,
+            output_file=self.output_result)
+
+        # The result is expected to be in hexadecimal format, read and convert it
+        # The 'verilog_result' is a NumPy array containing integers
+        # Since the cross-correlation result is a single value, extract the first element
+        result_int = verilog_result[0]
+
+        correlations = []
+
+        for i in range(self.num_channels):
+            for j in range(i + 1, self.num_channels):
+                correlations.append(result_int)
+
+        self.correlations = correlations
+
+        return correlations
+
+
 
     def visualize(self) -> None:
         # Ensure the directory exists
