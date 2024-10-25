@@ -83,6 +83,15 @@ class THR(ProcessingElement):
             output_file=self.output_buffer)
 
         return verilog_result
+    
+    def get_tooltip(self):
+        tooltip_text = f"{self.name}\n"
+        tooltip_text += f"Clock Frequency: {self.clk}\n"
+        tooltip_text += f"Run Power Estimation: {self.rtl_power_estimation}\n"
+        tooltip_text += f"RTL Simulation: {self.rtl_sim}\n"
+        tooltip_text += f"Lower Bound: {self.lower_bound}\n"
+        tooltip_text += f"Upper Bound: {self.upper_bound}"
+        return tooltip_text
 
     def visualize(self):
         # nothing to vizualise

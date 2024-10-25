@@ -28,7 +28,8 @@ class Pipeline:
             if pe.name == "Loader":
                 shape = "square"
                 fillcolor = "red"
-            self.visualization.add_node(pe.name, shape=shape, style="filled", fillcolor=fillcolor)
+            tooltip_text = pe.get_tooltip()
+            self.visualization.add_node(pe.name, shape=shape, style="filled", fillcolor=fillcolor, tooltip=tooltip_text)
 
     def add_edge(self, from_node: ProcessingElement,
                  to_node: ProcessingElement) -> None:
@@ -69,7 +70,7 @@ class Pipeline:
         # Create the output directory if it doesn't exist and save image.
         os.makedirs(output_dir, exist_ok=True)
         dot_filepath = os.path.join(output_dir, 'pipeline.dot')
-        png_filepath = os.path.join(output_dir, 'pipeline.png')
+        png_filepath = os.path.join(output_dir, 'pipeline.svg')
         self.visualization.write(dot_filepath)
-        command = ["dot", "-Tpng", dot_filepath, "-o", png_filepath]
+        command = ["dot", "-Tsvg", dot_filepath, "-o", png_filepath]
         subprocess.run(command, check=True)

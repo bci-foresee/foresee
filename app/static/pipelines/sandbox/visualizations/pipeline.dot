@@ -2,9 +2,21 @@ strict digraph "" {
 	graph [rankdir=LR];
 	Loader	[fillcolor=red,
 		shape=square,
-		style=filled];
+		style=filled,
+		tooltip="Loader
+Clock Frequency: 0
+Run Power Estimation: False
+RTL Simulation: False"];
 	FFT	[fillcolor=blue,
 		shape=circle,
-		style=filled];
+		style=filled,
+		tooltip="FFT
+Clock Frequency: 1
+Run Power Estimation: False
+RTL Simulation: False
+Points: 1000
+Sample Frequency: 1000
+Berger Bands: [(0.1, \
+4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)]"];
 	Loader -> FFT;
 }

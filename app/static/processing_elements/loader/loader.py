@@ -42,6 +42,13 @@ class LOADER(ProcessingElement):
     # loader is special case where inputs are not provided by PEs
     def compute(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
         return input
+    
+    def get_tooltip(self):
+        tooltip_text = f"{self.name}\n"
+        tooltip_text += f"Clock Frequency: {self.clk}\n"
+        tooltip_text += f"Run Power Estimation: {self.rtl_power_estimation}\n"
+        tooltip_text += f"RTL Simulation: {self.rtl_sim}"
+        return tooltip_text
 
     # vizualises data flow through PE and stores in /plots/ directory
     def visualize(self, data: NDArray[np.float32]) -> None:
