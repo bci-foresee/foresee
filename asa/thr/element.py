@@ -63,7 +63,7 @@ class THR(ProcessingElement):
         # do if statements to choose between verilog implementations (ie how many points) here
         verilog_file = "thr"
 
-        input_int = input[0].astype(np.int32)
+        input_int = np.int32(input.item())
 
         with open(self.input_buffer, 'w') as file:
             for i in range(1):
@@ -76,6 +76,8 @@ class THR(ProcessingElement):
             PE_name=self.name,
             verilog_file=verilog_file,
             output_file=self.output_buffer)
+        
+        # print(verilog_result)
 
         return verilog_result
 

@@ -10,7 +10,8 @@ def test_pwxc_basic() -> None:
 
     # input signal window
     input_fs = 400
-    input_channels = 16
+    # input_channels = 16
+    input_channels = 1 # 1 for demonstration (speed)
     input_samples = 8192
 
     input_signal = generate_signal(frequencies=[10, 20, 40],
@@ -28,7 +29,7 @@ def test_pwxc_basic() -> None:
                  rtl_sim=False,
                  save_visualization=False)
     
-    some_weights = np.ones(80)
+    some_weights = np.ones(5)
 
     svm_pe = SVM(weights=some_weights,
                  clk=1,
@@ -38,7 +39,8 @@ def test_pwxc_basic() -> None:
     thr_pe = THR(lower_bound=0,
                  upper_bound=1,
                  clk=1,
-                 rtl_sim=False,
+                 rtl_sim=True,
+                 rtl_power_estimation=True,
                  save_visualization=False)
 
     # connect PEs

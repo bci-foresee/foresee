@@ -168,6 +168,16 @@ class ProcessingElement:
 
         # load input data
         input_data = self.load_inputs()
+
+        # loading inputs changes directory, so reset
+        # Get the top-level directory of the Git repo
+        top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                                       capture_output=True,
+                                       text=True).stdout.strip()
+
+        # Change the directory in Python
+        os.chdir(f"{top_level_dir}/asa/{self.name.lower()}")
+
         # validate dimensions
         self.dimension_validate(input=input_data)
         # compute
@@ -176,6 +186,8 @@ class ProcessingElement:
                 input=input_data)  # replace with verilog compute
         else:
             output = self.compute(input=input_data)
+
+        print(f"{self.name} input.shape: {np.array(input_data).shape} output.shape: {np.array(output).shape}")
 
         # vizualise
         if self.save_visualization:
