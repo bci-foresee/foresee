@@ -76,7 +76,7 @@ class THR(ProcessingElement):
             PE_name=self.name,
             verilog_file=verilog_file,
             output_file=self.output_buffer)
-        
+
         # print(verilog_result)
 
         return verilog_result
