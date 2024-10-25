@@ -57,9 +57,8 @@ class PWXC(ProcessingElement):
         correlations = np.array(correlations)
         self.correlations = correlations
         return correlations
-    
-    def compute_verilog(self, input: NDArray[np.float32]
-                        ) -> np.int64:
+
+    def compute_verilog(self, input: NDArray[np.float32]) -> np.int64:
 
         input1 = input[0]
         input2 = input[1]
@@ -112,8 +111,6 @@ class PWXC(ProcessingElement):
         self.correlations = correlations
 
         return correlations
-
-
 
     def visualize(self) -> None:
         # Ensure the directory exists
