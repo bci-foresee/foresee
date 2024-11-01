@@ -59,7 +59,8 @@ class ProcessingElement:
             "output_data": None,
             "power_dict": None,
             "clock_frequency": None,
-            "latency": None # this can be calculated using clock frequency and latency (in cycles) of the PE
+            "latency":
+            None  # this can be calculated using clock frequency and latency (in cycles) of the PE
         }
 
         if self.rtl_sim:

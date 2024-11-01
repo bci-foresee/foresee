@@ -16,7 +16,7 @@ def test_pwxc_basic() -> None:
 
     input_pe = INPUT_PE(input=input_arr, clk=0)
 
-    svm_pe = SVM(weights=input_weights, 
+    svm_pe = SVM(weights=input_weights,
                  clk=1,
                  rtl_sim=True,
                  rtl_power_estimation=False,

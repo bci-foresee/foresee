@@ -53,7 +53,7 @@ class SVM(ProcessingElement):
         for i in range(len(input)):
             acc += self.weights[i] * input[i]
         return acc
-    
+
     def compute_verilog(self, input: NDArray[np.float32]) -> np.int64:
         """
         Computes the dot product using the Verilog 'svm' module with external weights.
@@ -105,9 +105,6 @@ class SVM(ProcessingElement):
             result_int = int(result_str, 10)  # Assuming decimal format
 
         return np.array([result_int])
-
-
-
 
     def visualize(self) -> None:
         # nothing to visualise for SVM

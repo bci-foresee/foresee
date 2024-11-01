@@ -26,9 +26,8 @@ class LOADER(ProcessingElement):
                          clk=clk,
                          save_visualization=save_visualization)
         self.input = input
-        
+
         self.simulation_data['input_dimensions'] = None
-        
 
     # function that gets the dimension of the input signal
     # in future can be used to validate input sizes
