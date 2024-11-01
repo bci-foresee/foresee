@@ -31,12 +31,11 @@ def test_sandbox_pipeline() -> None:
 
     some_weights = np.ones(10)
 
-    svm_pe = SVM(
-        weights=some_weights,
-        clk=1,
-        rtl_sim=True,
-        rtl_power_estimation=False,
-        save_visualization=False)
+    svm_pe = SVM(weights=some_weights,
+                 clk=1,
+                 rtl_sim=True,
+                 rtl_power_estimation=False,
+                 save_visualization=False)
 
     thr_pe = THR(lower_bound=0,
                  upper_bound=1,

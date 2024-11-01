@@ -5,7 +5,6 @@
 # from numpy.typing import NDArray
 # import matplotlib.pyplot as plt
 
-
 # class Sandbox_Pipe(Pipeline):
 
 #     def __init__(self, input_window: Window):
