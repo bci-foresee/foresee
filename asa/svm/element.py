@@ -104,7 +104,7 @@ class SVM(ProcessingElement):
             result_str = f.readline().strip()
             result_int = int(result_str, 10)  # Assuming decimal format
 
-        return result_int
+        return np.array([result_int])
 
 
 
