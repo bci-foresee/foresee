@@ -6,16 +6,12 @@ import numpy as np
 
 
 # run the pipeline to test the element
-def test_pwxc_basic() -> None:
+def test_sandbox_pipeline() -> None:
 
     # input signal window
     input_fs = 400
     # input_channels = 16
-<<<<<<< HEAD
     input_channels = 2 # 1 for demonstration (speed)
-=======
-    input_channels = 1  # 1 for demonstration (speed)
->>>>>>> 5d327b273fd3525bfb87053a67ee0d8b79e53096
     input_samples = 8192
 
     input_signal = generate_signal(frequencies=[10, 20, 40],
@@ -32,13 +28,8 @@ def test_pwxc_basic() -> None:
                  clk=1,
                  rtl_sim=False,
                  save_visualization=False)
-<<<<<<< HEAD
     
     some_weights = np.ones(10)
-=======
-
-    some_weights = np.ones(5)
->>>>>>> 5d327b273fd3525bfb87053a67ee0d8b79e53096
 
     svm_pe = SVM(
         weights=some_weights,
@@ -48,7 +39,7 @@ def test_pwxc_basic() -> None:
 
     thr_pe = THR(lower_bound=0,
                  upper_bound=1,
-                 clk=1,
+                 clk=15_700_000,
                  rtl_sim=True,
                  rtl_power_estimation=True,
                  save_visualization=False)

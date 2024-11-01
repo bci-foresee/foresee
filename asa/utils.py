@@ -53,6 +53,9 @@ class INPUT_PE(ProcessingElement):
 
     def run(self) -> NDArray[np.float32]:
         input = self.input
+        self.simulation_data['input_dimensions'] = input.shape
+        self.simulation_data['output_dimensions'] = input.shape
+        self.simulation_data['output_data'] = input
         return input
 
     def __repr__(self) -> str:

@@ -13,9 +13,13 @@ class SVM(ProcessingElement):
     def __init__(self,
                  weights: NDArray[np.float32],
                  clk: int = 0,
+                 rtl_sim: bool = False,
+                 rtl_power_estimation: bool = False,
                  save_visualization: bool = False) -> None:
         super().__init__(name=self.name,
                          clk=clk,
+                         rtl_sim=rtl_sim,
+                         rtl_power_estimation=rtl_power_estimation,
                          save_visualization=save_visualization)
 
         self.weights: NDArray[np.int32] = weights
@@ -49,6 +53,61 @@ class SVM(ProcessingElement):
         for i in range(len(input)):
             acc += self.weights[i] * input[i]
         return acc
+    
+    def compute_verilog(self, input: NDArray[np.float32]) -> np.int64:
+        """
+        Computes the dot product using the Verilog 'svm' module with external weights.
+
+        Args:
+            input (NDArray[np.float32]): The input vector for the SVM computation.
+            self.weights (NDArray[np.float32]): The weight vector for the SVM computation.
+
+        Returns:
+            np.int64: The result of the dot product computation.
+        """
+
+        # Convert input and weights to appropriate integer types (e.g., int32)
+        input_int = input.astype(np.int32)
+        weights_int = self.weights.astype(np.int32)
+
+        # Ensure the input arrays have the correct length
+        if input_int.size != 10:
+            raise ValueError(f"Input signal must be of length {10}.")
+        if weights_int.size != 10:
+            raise ValueError(f"Weight vector must be of length {10}.")
+
+        # Define file names for the input and output buffers
+        self.input_buffer = 'input_data.txt'
+        self.weights_buffer = 'weights_data.txt'
+        self.output_result = 'output_result.txt'
+
+        # Write input to "input_data.txt"
+        with open(self.input_buffer, 'w') as file_in:
+            for sample in input_int:
+                # Writing each sample as a signed hex string
+                file_in.write(f"{self.int_to_signedHex(sample)}\n")
+
+        # Write weights to "weights_data.txt"
+        with open(self.weights_buffer, 'w') as file_weights:
+            for weight in weights_int:
+                # Writing each weight as a signed hex string
+                file_weights.write(f"{self.int_to_signedHex(weight)}\n")
+
+        # Run the Verilog simulation
+        verilog_result = self.run_verilog_simulation(
+            PE_name=self.name,
+            verilog_file='svm',
+            output_file=self.output_result)
+
+        # The result is expected to be in decimal format, read and convert it
+        with open(self.output_result, 'r') as f:
+            result_str = f.readline().strip()
+            result_int = int(result_str, 10)  # Assuming decimal format
+
+        return result_int
+
+
+
 
     def visualize(self) -> None:
         # nothing to visualise for SVM

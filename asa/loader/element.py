@@ -26,6 +26,9 @@ class LOADER(ProcessingElement):
                          clk=clk,
                          save_visualization=save_visualization)
         self.input = input
+        
+        self.simulation_data['input_dimensions'] = None
+        
 
     # function that gets the dimension of the input signal
     # in future can be used to validate input sizes
@@ -33,10 +36,12 @@ class LOADER(ProcessingElement):
         self.input_dimension = input.shape
         self.channels = self.input_dimension[0]
         self.num_samples = self.input_dimension[1]
+        self.simulation_data['output_dimensions'] = self.input_dimension
 
     # this will compute on the input PEs and provide an output
     # loader is special case where inputs are not provided by PEs
     def compute(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
+        self.simulation_data['output_data'] = input
         return input
 
     # vizualises data flow through PE and stores in /plots/ directory

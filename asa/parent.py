@@ -53,16 +53,18 @@ class ProcessingElement:
 
         self.simulation_data = {
             "name": self.name,
+            "simulation_type": None,
             "input_dimensions": None,
             "output_dimensions": None,
             "output_data": None,
             "power_dict": None,
-            "latency": None,
-            "simulation_type": None
+            "clock_frequency": None,
+            "latency": None # this can be calculated using clock frequency and latency (in cycles) of the PE
         }
 
         if self.rtl_sim:
             self.simulation_data["simulation_type"] = "RTL"
+            self.simulation_data["clock_frequency"] = self.clk
         else:
             self.simulation_data["simulation_type"] = "Python"
 
