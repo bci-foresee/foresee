@@ -2,7 +2,6 @@
 # import numpy as np
 # from pipelines.parent import Pipeline
 
-
 # # define the pipeline to test the fft PE
 # class Shiao_Pipe_Partial(Pipeline):
 

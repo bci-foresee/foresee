@@ -16,7 +16,7 @@ def test_pwxc_basic() -> None:
 
     input_pe = INPUT_PE(input=input_arr, clk=0)
 
-    svm_pe = SVM(weights=input_weights, 
+    svm_pe = SVM(weights=input_weights,
                  clk=1,
                  rtl_sim=True,
                  save_visualization=True)
@@ -38,5 +38,5 @@ def test_pwxc_basic() -> None:
     print(f"assert test case not implemented yet, output:\n {output}")
     print(f"input_arr: {input_arr}")
     print(f"input_weights: {input_weights}")
-    
+
     assert 1 == 1
