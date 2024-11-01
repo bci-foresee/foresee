@@ -207,7 +207,9 @@ class ProcessingElement:
         else:
             output = self.compute(input=input_data)
 
-        print(f"{self.name} input.shape: {np.array(input_data).shape} output.shape: {np.array(output).shape}")
+        print(
+            f"{self.name} input.shape: {np.array(input_data).shape} output.shape: {np.array(output).shape}"
+        )
 
         # store output dimensions for sim_data
         self.simulation_data["output_dimensions"] = np.array(output).shape

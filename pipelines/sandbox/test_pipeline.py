@@ -11,7 +11,11 @@ def test_pwxc_basic() -> None:
     # input signal window
     input_fs = 400
     # input_channels = 16
+<<<<<<< HEAD
     input_channels = 2 # 1 for demonstration (speed)
+=======
+    input_channels = 1  # 1 for demonstration (speed)
+>>>>>>> 5d327b273fd3525bfb87053a67ee0d8b79e53096
     input_samples = 8192
 
     input_signal = generate_signal(frequencies=[10, 20, 40],
@@ -19,7 +23,7 @@ def test_pwxc_basic() -> None:
                                    fs=input_fs,
                                    n_channels=input_channels,
                                    n_samples=input_samples)
-    
+
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
     fft_pe = FFT(berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80)],
@@ -28,14 +32,20 @@ def test_pwxc_basic() -> None:
                  clk=1,
                  rtl_sim=False,
                  save_visualization=False)
+<<<<<<< HEAD
     
     some_weights = np.ones(10)
+=======
 
-    svm_pe = SVM(weights=some_weights,
-                 clk=1,
-                #  rtl_sim=False,
-                 save_visualization=False)
-    
+    some_weights = np.ones(5)
+>>>>>>> 5d327b273fd3525bfb87053a67ee0d8b79e53096
+
+    svm_pe = SVM(
+        weights=some_weights,
+        clk=1,
+        #  rtl_sim=False,
+        save_visualization=False)
+
     thr_pe = THR(lower_bound=0,
                  upper_bound=1,
                  clk=1,
@@ -45,7 +55,7 @@ def test_pwxc_basic() -> None:
 
     # connect PEs
     input_pe.add_output(fft_pe)
-    
+
     fft_pe.add_input(input_pe)
     fft_pe.add_output(svm_pe)
 
