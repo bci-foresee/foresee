@@ -11,7 +11,7 @@ def test_pwxc_basic() -> None:
     # input signal window
     input_fs = 400
     # input_channels = 16
-    input_channels = 1 # 1 for demonstration (speed)
+    input_channels = 2 # 1 for demonstration (speed)
     input_samples = 8192
 
     input_signal = generate_signal(frequencies=[10, 20, 40],
@@ -29,7 +29,7 @@ def test_pwxc_basic() -> None:
                  rtl_sim=False,
                  save_visualization=False)
     
-    some_weights = np.ones(5)
+    some_weights = np.ones(10)
 
     svm_pe = SVM(weights=some_weights,
                  clk=1,
@@ -65,4 +65,11 @@ def test_pwxc_basic() -> None:
         )
     print()
     print(f"assert test case not implemented yet, output:\n {output}")
+    print()
+    
+    for element in elements:
+        for key, value in element.simulation_data.items():
+            print(f"{element.name}.{key} = {value}")
+        print()
+
     assert 1 == 1

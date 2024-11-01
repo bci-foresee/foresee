@@ -30,7 +30,7 @@ class ProcessingElement:
         self.rtl_sim = rtl_sim
 
         if rtl_power_estimation:
-            if clk == 0:
+            if clk <= 0:
                 raise ValueError(
                     "Please provide a clock frequency (PE.clk, in Hz) for the RTL simulation"
                 )
@@ -50,6 +50,21 @@ class ProcessingElement:
         # name the input and output buffers - used for the verilog simulation
         self.input_buffer = "input_buffer.txt"
         self.output_buffer = "output_buffer.txt"
+
+        self.simulation_data = {
+            "name": self.name,
+            "input_dimensions": None,
+            "output_dimensions": None,
+            "output_data": None,
+            "power_dict": None,
+            "latency": None,
+            "simulation_type": None
+        }
+
+        if self.rtl_sim:
+            self.simulation_data["simulation_type"] = "RTL"
+        else:
+            self.simulation_data["simulation_type"] = "Python"
 
     # add inputs to the processing element
     def add_input(self, node: 'ProcessingElement') -> None:
@@ -154,6 +169,8 @@ class ProcessingElement:
                 'Percentage': percentage
             }
 
+        self.simulation_data["power_dict"] = power_data['Total']
+
         return power_data
 
     # necessary method to run the processing element
@@ -168,6 +185,9 @@ class ProcessingElement:
 
         # load input data
         input_data = self.load_inputs()
+
+        # store input dimensions for sim_data
+        self.simulation_data["input_dimensions"] = np.array(input_data).shape
 
         # loading inputs changes directory, so reset
         # Get the top-level directory of the Git repo
@@ -188,6 +208,10 @@ class ProcessingElement:
             output = self.compute(input=input_data)
 
         print(f"{self.name} input.shape: {np.array(input_data).shape} output.shape: {np.array(output).shape}")
+
+        # store output dimensions for sim_data
+        self.simulation_data["output_dimensions"] = np.array(output).shape
+        self.simulation_data["output_data"] = output
 
         # vizualise
         if self.save_visualization:
