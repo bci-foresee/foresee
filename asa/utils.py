@@ -1,10 +1,10 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from asa.parent import ProcessingElement
+from asa.processing_element import ProcessingElement
 
 from signals.parent import Window
-from pipelines.parent import Pipeline
+from pipelines.pipeline import Pipeline
 
 
 def create_testing_pipeline(test_pe: ProcessingElement,

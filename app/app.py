@@ -1,7 +1,10 @@
+import sys
+
+sys.path.append("./")
+
 from flask import Flask, jsonify, render_template, request
 import os
-import visualize
-import visualize.visualize
+from visualize.visualize import plot_visualizations
 import json
 
 app = Flask(__name__)
@@ -11,11 +14,6 @@ app.config['STATIC_FOLDER'] = 'static'
 @app.route("/")
 def index():
     return render_template("index.html")
-
-
-@app.route("/test")
-def test():
-    return render_template("test.html")
 
 
 @app.route('/pipeline', methods=['POST'])
@@ -35,9 +33,8 @@ def create_pipeline():
 
 @app.route('/create/nodes.json')
 def get_create_nodes_data():
-    with open(
-            '/workspaces/aloha-verilog/app/static/pipelines/create/nodes.json',
-            'r') as f:
+    with open('/workspaces/aloha-verilog/pipelines/create/nodes.json',
+              'r') as f:
         data = json.load(f)
     return jsonify(data)
 
@@ -46,9 +43,8 @@ def get_create_nodes_data():
 def update_create_nodes_data():
     new_node_data = request.get_json()
 
-    with open(
-            '/workspaces/aloha-verilog/app/static/pipelines/create/nodes.json',
-            'w') as f:
+    with open('/workspaces/aloha-verilog/pipelines/create/nodes.json',
+              'w') as f:
         json.dump(new_node_data, f, indent=4)
 
     return jsonify({'message': 'Node added successfully'})
@@ -56,9 +52,8 @@ def update_create_nodes_data():
 
 @app.route('/create/edges.json')
 def get_create_edges_data():
-    with open(
-            '/workspaces/aloha-verilog/app/static/pipelines/create/edges.json',
-            'r') as f:
+    with open('/workspaces/aloha-verilog/pipelines/create/edges.json',
+              'r') as f:
         data = json.load(f)
     return jsonify(data)
 
@@ -67,9 +62,8 @@ def get_create_edges_data():
 def update_create_edges_data():
     new_edges_data = request.get_json()
 
-    with open(
-            '/workspaces/aloha-verilog/app/static/pipelines/create/edges.json',
-            'w') as f:
+    with open('/workspaces/aloha-verilog/pipelines/create/edges.json',
+              'w') as f:
         json.dump(new_edges_data, f, indent=4)
 
     return jsonify({'message': 'Node added successfully'})
@@ -77,9 +71,7 @@ def update_create_edges_data():
 
 @app.route('/pe.json')
 def get_pe_data():
-    with open(
-            '/workspaces/aloha-verilog/app/static/processing_elements/pe.json',
-            'r') as f:
+    with open('/workspaces/aloha-verilog/asa/pe.json', 'r') as f:
         data = json.load(f)
     return jsonify(data)
 
@@ -100,13 +92,11 @@ def save_new_pipeline():
     # TODO: write function that reads the nodes and edges and creates the pipeline.py file accordingly.
 
     # Reset edges and nodes after pipeline has been saved.
-    with open(
-            '/workspaces/aloha-verilog/app/static/pipelines/create/edges.json',
-            'w') as f:
+    with open('/workspaces/aloha-verilog/pipelines/create/edges.json',
+              'w') as f:
         json.dump([], f, indent=4)
-    with open(
-            '/workspaces/aloha-verilog/app/static/pipelines/create/nodes.json',
-            'w') as f:
+    with open('/workspaces/aloha-verilog/pipelines/create/nodes.json',
+              'w') as f:
         json.dump([{
             'color': 'red',
             'id': 'loader',
@@ -147,12 +137,12 @@ def output():
     # Create visualizations based on selected options
     # visualize_filename = os.path.join('data', f"{pipeline}_{num_runs}.csv")
     # TODO(btrevisan): Find ways to optimize data organization here.
-    visualize_filename = "/workspaces/aloha-verilog/app/visualize/input_csv/dummy_accuracy.csv"
-    visualize.visualize.plot_visualizations(visualize_filename,
-                                            accuracy=accuracy_selected,
-                                            time=latency_selected,
-                                            power=power_selected,
-                                            custom=custom_selected)
+    visualize_filename = "/workspaces/aloha-verilog/visualize/input_csv/dummy_accuracy.csv"
+    plot_visualizations(visualize_filename,
+                        accuracy=accuracy_selected,
+                        time=latency_selected,
+                        power=power_selected,
+                        custom=custom_selected)
 
     return render_template('output.html',
                            accuracy_selected=accuracy_selected,

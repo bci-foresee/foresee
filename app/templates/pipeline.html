@@ -11,7 +11,7 @@
   <h3 id="selectedPipeline">{{selected_pipeline}} Pipeline</h3>
 
   <div id="pipelineImageDiv">
-    <iframe src="{{ url_for('static', filename='pipelines/' + selected_pipeline + '/visualizations/pipeline.svg') }}" width="800" height="400">
+    <iframe src="{{ url_for('static', filename='images/' + selected_pipeline + '/pipeline_vis/pipeline.svg') }}" width="800" height="400">
       <div style="display: flex; align-items: center; justify-content: center;">
         <svg width="100%" height="100%"></svg>
       </div>
@@ -23,9 +23,9 @@
 
   <div class="carousel-container">
     <div class="carousel-images">
-      <img class="carousel-image" src="{{ url_for('static', filename='output_plots/accuracy_plot.png') }}">
-      <img class="carousel-image" src="{{ url_for('static', filename='output_plots/time_plot.png') }}">
-      <img class="carousel-image" src="{{ url_for('static', filename='output_plots/power_plot.png') }}">
+      <img class="carousel-image" src="{{ url_for('static', filename='images/sandbox/latest_plots/accuracy_plot.png') }}">
+      <img class="carousel-image" src="{{ url_for('static', filename='images/sandbox/latest_plots/time_plot.png') }}">
+      <img class="carousel-image" src="{{ url_for('static', filename='images/sandbox/latest_plots/power_plot.png') }}">
       </div>
   </div> 
 
