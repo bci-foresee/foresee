@@ -1,0 +1,10 @@
+strict digraph "" {
+	graph [rankdir=LR];
+	Loader	[fillcolor=red,
+		shape=square,
+		style=filled];
+	FFT	[fillcolor=blue,
+		shape=circle,
+		style=filled];
+	Loader -> FFT;
+}
