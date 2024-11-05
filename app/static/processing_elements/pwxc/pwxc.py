@@ -57,7 +57,7 @@ class PWXC(ProcessingElement):
         correlations = np.array(correlations)
         self.correlations = correlations
         return correlations
-    
+
     def get_tooltip(self):
         tooltip_text = f"{self.name}\n"
         tooltip_text += f"Clock Frequency: {self.clk}\n"

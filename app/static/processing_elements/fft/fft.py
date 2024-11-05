@@ -172,7 +172,7 @@ class FFT(ProcessingElement):
         self.fft_outputs = np.array(fft_outputs)
 
         return fft_power_features
-    
+
     def get_tooltip(self):
         tooltip_text = f"{self.name}\n"
         tooltip_text += f"Clock Frequency: {self.clk}\n"

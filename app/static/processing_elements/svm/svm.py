@@ -53,7 +53,7 @@ class SVM(ProcessingElement):
         for i in range(len(features)):
             acc += self.weights[i] * features[i]
         return acc
-    
+
     def get_tooltip(self):
         tooltip_text = f"{self.name}\n"
         tooltip_text += f"Clock Frequency: {self.clk}\n"

@@ -83,7 +83,7 @@ class THR(ProcessingElement):
             output_file=self.output_buffer)
 
         return verilog_result
-    
+
     def get_tooltip(self):
         tooltip_text = f"{self.name}\n"
         tooltip_text += f"Clock Frequency: {self.clk}\n"

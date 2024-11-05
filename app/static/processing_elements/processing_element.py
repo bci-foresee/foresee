@@ -51,7 +51,7 @@ class ProcessingElement:
         # name the input and output buffers - used for the verilog simulation
         self.input_buffer = "input_buffer.txt"
         self.output_buffer = "output_buffer.txt"
-    
+
     def get_tooltip(self):
         tooltip_text = f"{self.name}\n"
         tooltip_text += f"Clock Frequency: {self.clk}\n"

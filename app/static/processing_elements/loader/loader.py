@@ -42,7 +42,7 @@ class LOADER(ProcessingElement):
     # loader is special case where inputs are not provided by PEs
     def compute(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
         return input
-    
+
     def get_tooltip(self):
         tooltip_text = f"{self.name}\n"
         tooltip_text += f"Clock Frequency: {self.clk}\n"

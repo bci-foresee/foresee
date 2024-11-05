@@ -99,7 +99,7 @@ class BBF(ProcessingElement):
         bbf_power_features = np.array(bbf_power_features)
         self.bbf_power_features = bbf_power_features
         return bbf_power_features
-    
+
     def get_tooltip(self):
         tooltip_text = f"{self.name}\n"
         tooltip_text += f"Clock Frequency: {self.clk}\n"

@@ -12,9 +12,11 @@ app.config['STATIC_FOLDER'] = 'static'
 def index():
     return render_template("index.html")
 
+
 @app.route("/test")
 def test():
     return render_template("test.html")
+
 
 @app.route('/pipeline', methods=['POST'])
 def pipeline():
@@ -30,54 +32,67 @@ def pipeline():
 def create_pipeline():
     return render_template('create_pipeline.html')
 
+
 @app.route('/create/nodes.json')
 def get_create_nodes_data():
-    with open('/workspaces/aloha-verilog/app/static/pipelines/create/nodes.json', 'r') as f:
+    with open(
+            '/workspaces/aloha-verilog/app/static/pipelines/create/nodes.json',
+            'r') as f:
         data = json.load(f)
     return jsonify(data)
 
 
 @app.route('/create/update_nodes', methods=['POST'])
 def update_create_nodes_data():
-  new_node_data = request.get_json()
+    new_node_data = request.get_json()
 
-  with open('/workspaces/aloha-verilog/app/static/pipelines/create/nodes.json', 'w') as f:
+    with open(
+            '/workspaces/aloha-verilog/app/static/pipelines/create/nodes.json',
+            'w') as f:
         json.dump(new_node_data, f, indent=4)
 
-  return jsonify({'message': 'Node added successfully'})
+    return jsonify({'message': 'Node added successfully'})
 
 
 @app.route('/create/edges.json')
 def get_create_edges_data():
-    with open('/workspaces/aloha-verilog/app/static/pipelines/create/edges.json', 'r') as f:
+    with open(
+            '/workspaces/aloha-verilog/app/static/pipelines/create/edges.json',
+            'r') as f:
         data = json.load(f)
     return jsonify(data)
 
 
 @app.route('/create/update_edges', methods=['POST'])
 def update_create_edges_data():
-  new_edges_data = request.get_json()
+    new_edges_data = request.get_json()
 
-  with open('/workspaces/aloha-verilog/app/static/pipelines/create/edges.json', 'w') as f:
+    with open(
+            '/workspaces/aloha-verilog/app/static/pipelines/create/edges.json',
+            'w') as f:
         json.dump(new_edges_data, f, indent=4)
 
-  return jsonify({'message': 'Node added successfully'})
+    return jsonify({'message': 'Node added successfully'})
+
 
 @app.route('/pe.json')
 def get_pe_data():
-    with open('/workspaces/aloha-verilog/app/static/processing_elements/pe.json', 'r') as f:
+    with open(
+            '/workspaces/aloha-verilog/app/static/processing_elements/pe.json',
+            'r') as f:
         data = json.load(f)
     return jsonify(data)
 
+
 @app.route('/create_pipeline', methods=['POST'])
 def save_new_pipeline():
-  new_pipeline_data = request.get_json()
+    new_pipeline_data = request.get_json()
 
     # Create pipeline directory
     # Reset the nodes and edges in the pipeline creator canvas
-    # Make sure that the new pipeline is good to go   
+    # Make sure that the new pipeline is good to go
 
-  return jsonify({'message': 'Pipeline added successfully'})
+    return jsonify({'message': 'Pipeline added successfully'})
 
 
 @app.route('/output', methods=['POST'])

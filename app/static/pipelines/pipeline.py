@@ -16,7 +16,7 @@ class Pipeline:
     def __init__(self, input_window: Window) -> None:
         self.elements: list[ProcessingElement] = []
         self.input_window = input_window
-        self.visualization = pygraphviz.AGraph(directed=True, rankdir = 'LR')
+        self.visualization = pygraphviz.AGraph(directed=True, rankdir='LR')
 
     def add_elements(self, nodes: list[ProcessingElement]) -> None:
         self.elements += nodes
@@ -29,7 +29,11 @@ class Pipeline:
                 shape = "square"
                 fillcolor = "red"
             tooltip_text = pe.get_tooltip()
-            self.visualization.add_node(pe.name, shape=shape, style="filled", fillcolor=fillcolor, tooltip=tooltip_text)
+            self.visualization.add_node(pe.name,
+                                        shape=shape,
+                                        style="filled",
+                                        fillcolor=fillcolor,
+                                        tooltip=tooltip_text)
 
     def add_edge(self, from_node: ProcessingElement,
                  to_node: ProcessingElement) -> None:
