@@ -88,21 +88,35 @@ def get_pe_data():
 def save_new_pipeline():
     new_pipeline_data = request.get_json()
 
-    new_pipeline_directory = "/workspaces/aloha-verilog/app/static/pipelines/" + new_pipeline_data["name"]
+    new_pipeline_directory = "/workspaces/aloha-verilog/app/static/pipelines/" + new_pipeline_data[
+        "name"]
 
     try:
         os.makedirs(new_pipeline_directory)
         print(f"Directory '{new_pipeline_directory}' created successfully.")
     except OSError as error:
         print(f"Error creating directory: {error}")
-    
+
     # TODO: write function that reads the nodes and edges and creates the pipeline.py file accordingly.
 
     # Reset edges and nodes after pipeline has been saved.
-    with open('/workspaces/aloha-verilog/app/static/pipelines/create/edges.json', 'w') as f:
+    with open(
+            '/workspaces/aloha-verilog/app/static/pipelines/create/edges.json',
+            'w') as f:
         json.dump([], f, indent=4)
-    with open('/workspaces/aloha-verilog/app/static/pipelines/create/nodes.json', 'w') as f:
-        json.dump([{'color': 'red', 'id': 'loader', 'label': 'Loader', 'layer': 1, 'x': 50, 'y': 200}], f, indent=4)
+    with open(
+            '/workspaces/aloha-verilog/app/static/pipelines/create/nodes.json',
+            'w') as f:
+        json.dump([{
+            'color': 'red',
+            'id': 'loader',
+            'label': 'Loader',
+            'layer': 1,
+            'x': 50,
+            'y': 200
+        }],
+                  f,
+                  indent=4)
 
     return jsonify({'message': 'Pipeline added successfully'})
 
