@@ -173,6 +173,16 @@ class FFT(ProcessingElement):
 
         return fft_power_features
 
+    def get_tooltip(self):
+        tooltip_text = f"{self.name}\n"
+        tooltip_text += f"Clock Frequency: {self.clk}\n"
+        tooltip_text += f"Run Power Estimation: {self.rtl_power_estimation}\n"
+        tooltip_text += f"RTL Simulation: {self.rtl_sim}\n"
+        tooltip_text += f"Points: {self.points}\n"
+        tooltip_text += f"Sample Frequency: {self.sample_freq}\n"
+        tooltip_text += f"Berger Bands: {self.berger_bands}"
+        return tooltip_text
+
     def visualize(self) -> None:
         # Ensure the directory exists
         output_dir = 'plots'

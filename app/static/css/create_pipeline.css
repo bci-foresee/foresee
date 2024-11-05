@@ -1,0 +1,29 @@
+#pipeline-name-label {
+    display: inline-block;
+    text-align: right;
+}
+
+#pipeline-creator {
+    width: 600px;
+    height: 400px;
+    border: 1px solid navy;
+}
+
+.context-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid navy;
+    padding: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.context-menu div {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.context-menu hr {
+    margin: 5px 0;
+    border: none;
+    border-top: 1px solid navy;
+}

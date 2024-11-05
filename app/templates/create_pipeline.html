@@ -3,11 +3,29 @@
 <head>
   <title>SCALO Simulator</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
-  <script src="{{ url_for('static', filename='js/create_pipeline.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/create_pipeline.css') }}">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
   <h1>SCALO Simulator</h1>
 
-  <h1>TODO: NOT IMPLEMENTED</h1>
+  <h3>Use the canvas below to create your pipeline</h3>
+
+  <div id="pipeline-creator"></div>
+
+  <label id="pipeline-name-label" for="pipeline-name">Pipeline Name:</label>
+  <input type="text" id="pipeline-name">
+
+  <button id="pipeline-save">Save Pipeline</button>
+  
+  <h3>Help</h3>
+  <p>
+    Right-click to add new PEs. Drag a PE out to delete it from your pipeline.
+    To add an edge to a PE, double click on it and then click on the
+    destination PE. To see, see or edit a PE's attributes, hover your mouse
+    over it. When you are ready click save.
+  </p>
+
+  <script src="{{ url_for('static', filename='js/create_pipeline.js') }}"></script>
 </body>
 </html>

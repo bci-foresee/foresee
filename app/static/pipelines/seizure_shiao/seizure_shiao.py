@@ -11,7 +11,6 @@ from app.static.processing_elements.loader.loader import LOADER
 from app.static.pipelines.pipeline import Pipeline
 import numpy as np
 from signals.parent import Window
-from asa import SVM, FFT, THR, LOADER
 
 
 # define the pipeline to test the fft PE

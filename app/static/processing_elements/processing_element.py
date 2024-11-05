@@ -52,6 +52,13 @@ class ProcessingElement:
         self.input_buffer = "input_buffer.txt"
         self.output_buffer = "output_buffer.txt"
 
+    def get_tooltip(self):
+        tooltip_text = f"{self.name}\n"
+        tooltip_text += f"Clock Frequency: {self.clk}\n"
+        tooltip_text += f"Run Power Estimation: {self.rtl_power_estimation}\n"
+        tooltip_text += f"RTL Simulation: {self.rtl_sim}"
+        return tooltip_text
+
     # add inputs to the processing element
     def add_input(self, node: 'ProcessingElement') -> None:
         if node not in self.inputs:

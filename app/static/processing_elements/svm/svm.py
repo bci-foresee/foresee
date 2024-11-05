@@ -54,6 +54,14 @@ class SVM(ProcessingElement):
             acc += self.weights[i] * features[i]
         return acc
 
+    def get_tooltip(self):
+        tooltip_text = f"{self.name}\n"
+        tooltip_text += f"Clock Frequency: {self.clk}\n"
+        tooltip_text += f"Run Power Estimation: {self.rtl_power_estimation}\n"
+        tooltip_text += f"RTL Simulation: {self.rtl_sim}\n"
+        tooltip_text += f"Weights: {self.weights}"
+        return tooltip_text
+
     def visualize(self) -> None:
         # nothing to visualise for SVM
         pass
