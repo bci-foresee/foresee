@@ -1,4 +1,4 @@
-from pipelines.parent import Pipeline
+from pipelines.pipeline import Pipeline
 from signals.parent import Window
 from asa import FFT, LOADER
 

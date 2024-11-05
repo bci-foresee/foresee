@@ -1,4 +1,4 @@
-from pipelines.parent import Pipeline
+from pipelines.pipeline import Pipeline
 from pipelines import Shiao_Pipe
 from asa.utils import Window
 
