@@ -3,6 +3,8 @@
         "color": "red",
         "id": "loader",
         "label": "Loader",
-        "layer": 1
+        "layer": 1,
+        "x": 50,
+        "y": 200
     }
 ]

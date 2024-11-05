@@ -100,7 +100,7 @@ document.getElementById("pipeline-save").addEventListener("click", () => {
       return;
   }
 
-  fetch('/create_pipeline', {
+  fetch('/save_new_pipeline', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -196,8 +196,8 @@ function initializeSimulation() {
     simulation = d3.forceSimulation(filteredNodes)
         .force("link", d3.forceLink().id(d => d.id).links(edges))
         .force("charge", d3.forceManyBody().strength(-100))
-        .force("x", d3.forceX().x(d => d.layer * 150))
-        .force("y", d3.forceY(300));
+        .force("x", d3.forceX().x(d => d.layer == 1 ? 50 : d.layer * 150 ))
+        .force("y", d3.forceY(200));
 
     simulation.on("tick", () => {
         nodeElements
