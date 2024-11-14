@@ -93,16 +93,11 @@ def channel_freq_plot(model: StorageModel, result_type: ResultType):
 # runs example graphs
 def main():
     model = StorageModel(
-        read_frequency=0,
-        write_frequency=30000 * 150,
-        read_size=0,
+        read_frequency=4000,
+        write_frequency=13,
+        read_size=16,
         write_size=2,
-        cell_type=CellType.RRAM,
-        process_node=22,
-        opt_target=OpTarget.ReadDynamicEnergy,
-        word_width=16,
-        capacity=1,
-        bits_per_cell=1,
+        cell_type=CellType.STT,
     )
     model.run()
     channel_freq_plot(model, ResultType.TOTAL_POWER)
@@ -110,10 +105,11 @@ def main():
     mem_type_comparison(model, ResultType.TOTAL_WRITE_LATENCY)
     mem_type_comparison(model, ResultType.LIFE_EXPECTANCY)
     mem_type_comparison(model, ResultType.AREA)
-
+    
     #model.cleanup()
 
     return
+
 
 
 if __name__ == "__main__":
