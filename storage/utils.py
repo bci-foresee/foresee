@@ -74,7 +74,6 @@ class ResultType(Enum):
     TOTAL_DYNAMIC_READ_ENERGY = "Total Dynamic Read Energy (mJ)"
     TOTAL_DYNAMIC_WRITE_ENERGY = "Total Dynamic Write Energy (mJ)"
     TOTAL_ENERGY = "Total Dynamic Energy (mJ)"
-    TOTAL_READ_ENERGY = "Total Dynamic Energy (mJ)"
     TOTAL_READ_LATENCY = "Total Read Latency (ms)"
     TOTAL_WRITE_LATENCY = "Total Write Latency (ms)"
     TOTAL_LATENCY = "Total Latency (ms)"
