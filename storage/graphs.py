@@ -105,11 +105,10 @@ def main():
     mem_type_comparison(model, ResultType.TOTAL_WRITE_LATENCY)
     mem_type_comparison(model, ResultType.LIFE_EXPECTANCY)
     mem_type_comparison(model, ResultType.AREA)
-    
+
     #model.cleanup()
 
     return
-
 
 
 if __name__ == "__main__":
