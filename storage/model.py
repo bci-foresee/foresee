@@ -34,19 +34,17 @@ class StorageModel:
     A class to model storage performance from various workload and cell configurations.
     """
 
-    def __init__(
-            self,
-            cell_type: CellType,
-            total_reads: int,
-            total_writes: int,
-            read_size: int,
-            write_size: int,
-            word_width: int = 16,
-            process_node:
-        int = 22,
-            opt_target: OpTarget = OpTarget.ReadLatency,
-            capacity: int = 1,
-            bits_per_cell: int = 1):
+    def __init__(self,
+                 cell_type: CellType,
+                 total_reads: int,
+                 total_writes: int,
+                 read_size: int,
+                 write_size: int,
+                 word_width: int = 16,
+                 process_node: int = 22,
+                 opt_target: OpTarget = OpTarget.ReadLatency,
+                 capacity: int = 1,
+                 bits_per_cell: int = 1):
         self.nvm_explorer_path = Path(
             __file__).resolve().parent / "nvmexplorer"
         self.config = {
@@ -237,12 +235,12 @@ class StorageModel:
 # runs example model
 def main():
     model = StorageModel(
-            cell_type=CellType.PCM,
-            total_reads=1000,
-            total_writes=1000,
-            read_size=64,
-            write_size=64,
-        )
+        cell_type=CellType.PCM,
+        total_reads=1000,
+        total_writes=1000,
+        read_size=64,
+        write_size=64,
+    )
 
     model.run()
     model.print_summary()
@@ -254,7 +252,7 @@ def main():
     print(f"Total power (mW): {model.get_result(ResultType.TOTAL_POWER)}")
     print(f"Total energy (mJ): {model.get_result(ResultType.TOTAL_ENERGY)}")
     print(f"Total latency (ms): {model.get_result(ResultType.TOTAL_LATENCY)}")
-    
+
     # model.cleanup()
     return
 
