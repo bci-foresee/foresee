@@ -26,6 +26,7 @@ class Mode(Enum):
 
 
 class Flash:
+
     def __init__(
         self,
         name: str,
@@ -68,9 +69,8 @@ class Flash:
         self.plane_size_b = self.block_size_b * self.blocks_per_plane
         self.die_size_b = self.plane_size_b * self.planes_per_die
         self.chip_size_b = self.die_size_b * self.dies_per_chip
-        self.nvm_size_b = (
-            self.chip_size_b * self.chips_per_channel * self.channels_per_nvm
-        )
+        self.nvm_size_b = (self.chip_size_b * self.chips_per_channel *
+                           self.channels_per_nvm)
 
         self.context = kwargs
 
@@ -106,8 +106,8 @@ class Flash:
                 new_key = key + "_" + self.get_next_mode(self.mode)
                 if new_key not in self.context:
                     new_key = (
-                        key + "_" + self.get_next_mode(self.get_next_mode(self.mode))
-                    )
+                        key + "_" +
+                        self.get_next_mode(self.get_next_mode(self.mode)))
                     if new_key not in self.context:
                         print("Key does not exist!", new_key)
                         assert False
@@ -116,7 +116,8 @@ class Flash:
     # Plane Bandwidth
     def plane_bandwidth_bits_s(self, op: OpType):
         if op == OpType.ERASE:
-            return 1 / self.plane_op_latency_s(op) * self.block_size_b * BITS_PER_B
+            return 1 / self.plane_op_latency_s(
+                op) * self.block_size_b * BITS_PER_B
         return 1 / self.plane_op_latency_s(op) * self.page_size_b * BITS_PER_B
 
     def plane_bandwidth_b_s(self, op: OpType):
@@ -173,44 +174,35 @@ class Flash:
         """
         Assumes a single die is operational and the other dies are idle
         """
-        return (
-            self.die_io_idle_power_w()
-            + self.die_array_op_power_w(op)
-            + (self.dies_per_chip - 1)
-            * (self.die_io_idle_power_w() + self.die_array_idle_power_w())
-        )
+        return (self.die_io_idle_power_w() + self.die_array_op_power_w(op) +
+                (self.dies_per_chip - 1) *
+                (self.die_io_idle_power_w() + self.die_array_idle_power_w()))
 
     def chip_io_power_w(self):
         """
         Assumes a single die is performing I/O and the other dies are idle
         """
-        return (
-            self.die_array_idle_power_w()
-            + self.die_io_burst_power_w()
-            + (self.dies_per_chip - 1)
-            * (self.die_io_idle_power_w() + self.die_array_idle_power_w())
-        )
+        return (self.die_array_idle_power_w() + self.die_io_burst_power_w() +
+                (self.dies_per_chip - 1) *
+                (self.die_io_idle_power_w() + self.die_array_idle_power_w()))
 
     def chip_idle_power_w(self):
-        return (
-            self.die_io_idle_power_w() + self.die_array_idle_power_w()
-        ) * self.dies_per_chip
+        return (self.die_io_idle_power_w() +
+                self.die_array_idle_power_w()) * self.dies_per_chip
 
     def chip_standby_power_w(self):
         """
         Adds up the standby power (from both supply voltages) for all dies in a chip
         """
-        return (
-            self.die_io_standby_power_w() + self.die_array_standby_power_w()
-        ) * self.dies_per_chip
+        return (self.die_io_standby_power_w() +
+                self.die_array_standby_power_w()) * self.dies_per_chip
 
     def chip_leakage_power_w(self):
         """
         Adds up the leakage power (from both supply voltages) for all dies in a chip
         """
-        return (
-            self.die_io_leakage_power_w() + self.die_array_leakage_power_w()
-        ) * self.dies_per_chip
+        return (self.die_io_leakage_power_w() +
+                self.die_array_leakage_power_w()) * self.dies_per_chip
 
     # Die Power
     def die_array_op_current_a(self, op: OpType):
@@ -261,9 +253,8 @@ class Flash:
 
     def die_io_burst_power_w(self):
         if self.nvsim:
-            return self.get_context(
-                "die_io_power_ratio_to_read"
-            ) * self.die_array_op_power_w(OpType.READ)
+            return self.get_context("die_io_power_ratio_to_read"
+                                    ) * self.die_array_op_power_w(OpType.READ)
         vdd_io_v = self.channel_supply_voltage_v()
         return self.die_io_burst_current_a() * vdd_io_v
 
@@ -297,10 +288,10 @@ class Flash:
     # Channel Bandwidth
     def channel_bandwidth_bits_s(self):
         if self.channel_is_ddr:
-            return (
-                2 * (self.channel_frequency_mhz * HZ_PER_MHZ) * self.channel_width_bits
-            )
-        return (self.channel_frequency_mhz * HZ_PER_MHZ) * self.channel_width_bits
+            return (2 * (self.channel_frequency_mhz * HZ_PER_MHZ) *
+                    self.channel_width_bits)
+        return (self.channel_frequency_mhz *
+                HZ_PER_MHZ) * self.channel_width_bits
 
     def channel_bandwidth_b_s(self):
         return self.channel_bandwidth_bits_s() / BITS_PER_B
@@ -337,18 +328,17 @@ class Flash:
             return self.plane_op_latency_s(op)
 
         if parallel:
-            return (
-                self.plane_page_latency_s(op)
-                + self.channel_page_latency_s() * self.planes_per_channel
-            )
+            return (self.plane_page_latency_s(op) +
+                    self.channel_page_latency_s() * self.planes_per_channel)
         return self.plane_page_latency_s(op) + self.channel_page_latency_s()
 
     def total_op_latency_ms(self, op: OpType, parallel: bool = False):
         return self.total_op_latency_s(op, parallel) * 1000
 
-    def total_schedule_latency_s(
-        self, num_reads: int, num_writes: int, parallel: bool = False
-    ):
+    def total_schedule_latency_s(self,
+                                 num_reads: int,
+                                 num_writes: int,
+                                 parallel: bool = False):
         total_read_latency_s = self.total_op_latency_s(OpType.READ, parallel)
         total_write_latency_s = self.total_op_latency_s(OpType.WRITE, parallel)
         return total_read_latency_s * num_reads + total_write_latency_s * num_writes
@@ -364,11 +354,8 @@ class Flash:
         if op == OpType.ERASE:  # TODO
             assert False
         if parallel:
-            return (
-                self.total_op_s(op, parallel)
-                * self.page_size_mb
-                * self.planes_per_channel
-            )
+            return (self.total_op_s(op, parallel) * self.page_size_mb *
+                    self.planes_per_channel)
         return self.total_op_s(op, parallel) * self.page_size_mb
 
     # Total Power
@@ -378,37 +365,37 @@ class Flash:
         Assumes I/O is for a full page
         """
         if full_chip:
-            io_energy_j = self.chip_io_power_w() * self.channel_page_latency_s()
-            op_energy_j = self.chip_op_power_w(op) * self.plane_op_latency_s(op)
+            io_energy_j = self.chip_io_power_w() * self.channel_page_latency_s(
+            )
+            op_energy_j = self.chip_op_power_w(op) * self.plane_op_latency_s(
+                op)
         else:
-            io_energy_j = self.die_io_burst_power_w() * self.channel_page_latency_s()
-            op_energy_j = self.die_array_op_power_w(op) * self.plane_op_latency_s(op)
+            io_energy_j = self.die_io_burst_power_w(
+            ) * self.channel_page_latency_s()
+            op_energy_j = self.die_array_op_power_w(
+                op) * self.plane_op_latency_s(op)
 
-        total_latency_s = self.channel_page_latency_s() + self.plane_op_latency_s(op)
+        total_latency_s = self.channel_page_latency_s(
+        ) + self.plane_op_latency_s(op)
         return (io_energy_j + op_energy_j) / total_latency_s
 
-    def total_op_power_bytes_w(
-        self, op: OpType, bytes_transferred: int, full_chip: bool = True
-    ):
+    def total_op_power_bytes_w(self,
+                               op: OpType,
+                               bytes_transferred: int,
+                               full_chip: bool = True):
         if full_chip:
-            io_energy_j = (
-                self.chip_io_power_w()
-                * self.channel_byte_latency_s()
-                * bytes_transferred
-            )
-            op_energy_j = self.chip_op_power_w(op) * self.plane_op_latency_s(op)
+            io_energy_j = (self.chip_io_power_w() *
+                           self.channel_byte_latency_s() * bytes_transferred)
+            op_energy_j = self.chip_op_power_w(op) * self.plane_op_latency_s(
+                op)
         else:
-            io_energy_j = (
-                self.die_io_burst_power_w()
-                * self.channel_byte_latency_s()
-                * bytes_transferred
-            )
-            op_energy_j = self.die_array_op_power_w(op) * self.plane_op_latency_s(op)
+            io_energy_j = (self.die_io_burst_power_w() *
+                           self.channel_byte_latency_s() * bytes_transferred)
+            op_energy_j = self.die_array_op_power_w(
+                op) * self.plane_op_latency_s(op)
 
-        total_latency_s = (
-            self.channel_byte_latency_s() * bytes_transferred
-            + self.plane_op_latency_s(op)
-        )
+        total_latency_s = (self.channel_byte_latency_s() * bytes_transferred +
+                           self.plane_op_latency_s(op))
         return (io_energy_j + op_energy_j) / total_latency_s
 
     def total_standby_power_w(self):
@@ -437,17 +424,13 @@ class Flash:
         """
         total_read_latency_s = self.total_op_latency_s(OpType.READ, parallel)
         total_write_latency_s = self.total_op_latency_s(OpType.WRITE, parallel)
-        total_latency_s = (
-            total_read_latency_s * num_reads + total_write_latency_s * num_writes
-        )
+        total_latency_s = (total_read_latency_s * num_reads +
+                           total_write_latency_s * num_writes)
 
-        total_read_energy_j = num_reads * (
-            self.total_op_power_page_w(OpType.READ, full_chip) * total_read_latency_s
-        )
-        total_write_energy_j = num_writes * (
-            self.total_op_power_page_w(OpType.WRITE, full_chip) * total_write_latency_s
-        )
-        total_op_power_w = (
-            total_read_energy_j + total_write_energy_j
-        ) / total_latency_s
+        total_read_energy_j = num_reads * (self.total_op_power_page_w(
+            OpType.READ, full_chip) * total_read_latency_s)
+        total_write_energy_j = num_writes * (self.total_op_power_page_w(
+            OpType.WRITE, full_chip) * total_write_latency_s)
+        total_op_power_w = (total_read_energy_j +
+                            total_write_energy_j) / total_latency_s
         return total_op_power_w
