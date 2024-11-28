@@ -34,27 +34,25 @@ class StorageModel:
     A class to model storage performance from various workload and cell configurations.
     """
 
-    def __init__(
-            self,
-            read_frequency: int,
-            write_frequency: int,
-            read_size: int,
-            write_size: int,
-            cell_type: CellType,
-            word_width: int = 16,
-            process_node:
-        int = 22,  #TODO: figure out what this does / why it doesn't trigger new output file
-            opt_target: OpTarget = OpTarget.ReadLatency,
-            capacity: int = 1,
-            bits_per_cell: int = 1):
+    def __init__(self,
+                 cell_type: CellType,
+                 total_reads: int,
+                 total_writes: int,
+                 read_size: int,
+                 write_size: int,
+                 word_width: int = 16,
+                 process_node: int = 22,
+                 opt_target: OpTarget = OpTarget.ReadLatency,
+                 capacity: int = 1,
+                 bits_per_cell: int = 1):
         self.nvm_explorer_path = Path(
             __file__).resolve().parent / "nvmexplorer"
         self.config = {
             "experiment": {
-                "read_frequency":
-                read_frequency,
-                "write_frequency":
-                write_frequency,
+                "total_reads":
+                total_reads,
+                "total_writes":
+                total_writes,
                 "read_size":
                 read_size,
                 "write_size":
@@ -82,7 +80,6 @@ class StorageModel:
 
     def run(self):
         '''Runs model in nvmexplorer.'''
-        print("Running model...")
         # check if nvsim executable exists
         nvsim_path = self.nvm_explorer_path / "nvmexplorer_src" / "nvsim_src" / "nvsim"
         if not nvsim_path.exists():
@@ -111,11 +108,11 @@ class StorageModel:
                 cwd=self.
                 nvm_explorer_path  # Set the child directory as the working directory
             )
-            print("Run Output:", result.stdout)
         except subprocess.CalledProcessError as e:
             print("Error running run.py:", e.stderr)
 
         # read outputs from nvm_explorer
+        print(result.stdout)
         self.read_output()
         self.add_lifetime_data()
 
@@ -124,7 +121,6 @@ class StorageModel:
 
         with self.config_file_path.open('w') as file:
             json.dump(self.config, file, indent=4)
-        print(f"Configuration saved to {self.config_file_path}")
 
     def read_output(self):
         '''Extracts data from nvmexplorer's output directory'''
@@ -234,3 +230,32 @@ class StorageModel:
 
         print("Cleanup complete.")
         return
+
+
+# runs example model
+def main():
+    model = StorageModel(
+        cell_type=CellType.PCM,
+        total_reads=1000,
+        total_writes=1000,
+        read_size=64,
+        write_size=64,
+    )
+
+    model.run()
+    model.print_summary()
+
+    # get specific results
+    print(f"\n\nRead Accesses: {model.get_result(ResultType.READ_ACCESSES)}")
+    print(f"Write Accesses: {model.get_result(ResultType.WRITE_ACCESSES)}")
+    print(f"Total latency (ms): {model.get_result(ResultType.TOTAL_LATENCY)}")
+    print(f"Total power (mW): {model.get_result(ResultType.TOTAL_POWER)}")
+    print(f"Total energy (mJ): {model.get_result(ResultType.TOTAL_ENERGY)}")
+    print(f"Total latency (ms): {model.get_result(ResultType.TOTAL_LATENCY)}")
+
+    # model.cleanup()
+    return
+
+
+if __name__ == "__main__":
+    main()

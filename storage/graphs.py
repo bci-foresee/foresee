@@ -93,16 +93,11 @@ def channel_freq_plot(model: StorageModel, result_type: ResultType):
 # runs example graphs
 def main():
     model = StorageModel(
-        read_frequency=0,
-        write_frequency=30000 * 150,
-        read_size=0,
-        write_size=2,
-        cell_type=CellType.RRAM,
-        process_node=22,
-        opt_target=OpTarget.ReadDynamicEnergy,
-        word_width=16,
-        capacity=1,
-        bits_per_cell=1,
+        cell_type=CellType.PCM,
+        total_reads=1000,
+        total_writes=1000,
+        read_size=64,
+        write_size=64,
     )
     model.run()
     channel_freq_plot(model, ResultType.TOTAL_POWER)
