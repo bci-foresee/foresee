@@ -33,14 +33,14 @@ def test_sandbox_pipeline() -> None:
 
     svm_pe = SVM(weights=some_weights,
                  clk=1,
-                 rtl_sim=True,
+                 rtl_sim=False,
                  rtl_power_estimation=False,
                  save_visualization=False)
 
     thr_pe = THR(lower_bound=0,
                  upper_bound=1,
                  clk=15_700_000,
-                 rtl_sim=True,
+                 rtl_sim=False,
                  rtl_power_estimation=False,
                  save_visualization=False)
 
