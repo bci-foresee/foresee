@@ -1,7 +1,11 @@
-from flask import Flask, render_template, request
+import sys
+
+sys.path.append("./")
+
+from flask import Flask, jsonify, render_template, request
 import os
-import visualize
-import visualize.visualize
+from visualize.visualize import plot_visualizations
+import json
 
 app = Flask(__name__)
 app.config['STATIC_FOLDER'] = 'static'
@@ -25,6 +29,86 @@ def pipeline():
 @app.route('/create_pipeline', methods=['POST'])
 def create_pipeline():
     return render_template('create_pipeline.html')
+
+
+@app.route('/create/nodes.json')
+def get_create_nodes_data():
+    with open('/workspaces/aloha-verilog/pipelines/create/nodes.json',
+              'r') as f:
+        data = json.load(f)
+    return jsonify(data)
+
+
+@app.route('/create/update_nodes', methods=['POST'])
+def update_create_nodes_data():
+    new_node_data = request.get_json()
+
+    with open('/workspaces/aloha-verilog/pipelines/create/nodes.json',
+              'w') as f:
+        json.dump(new_node_data, f, indent=4)
+
+    return jsonify({'message': 'Node added successfully'})
+
+
+@app.route('/create/edges.json')
+def get_create_edges_data():
+    with open('/workspaces/aloha-verilog/pipelines/create/edges.json',
+              'r') as f:
+        data = json.load(f)
+    return jsonify(data)
+
+
+@app.route('/create/update_edges', methods=['POST'])
+def update_create_edges_data():
+    new_edges_data = request.get_json()
+
+    with open('/workspaces/aloha-verilog/pipelines/create/edges.json',
+              'w') as f:
+        json.dump(new_edges_data, f, indent=4)
+
+    return jsonify({'message': 'Node added successfully'})
+
+
+@app.route('/pe.json')
+def get_pe_data():
+    with open('/workspaces/aloha-verilog/asa/pe.json', 'r') as f:
+        data = json.load(f)
+    return jsonify(data)
+
+
+@app.route('/save_new_pipeline', methods=['POST'])
+def save_new_pipeline():
+    new_pipeline_data = request.get_json()
+
+    new_pipeline_directory = "/workspaces/aloha-verilog/app/static/pipelines/" + new_pipeline_data[
+        "name"]
+
+    try:
+        os.makedirs(new_pipeline_directory)
+        print(f"Directory '{new_pipeline_directory}' created successfully.")
+    except OSError as error:
+        print(f"Error creating directory: {error}")
+
+    # TODO: write function that reads the nodes and edges and creates the pipeline.py file accordingly.
+
+    # Reset edges and nodes after pipeline has been saved.
+    with open('/workspaces/aloha-verilog/pipelines/create/edges.json',
+              'w') as f:
+        json.dump([], f, indent=4)
+    with open('/workspaces/aloha-verilog/pipelines/create/nodes.json',
+              'w') as f:
+        json.dump([{
+            'color': 'red',
+            'id': 'loader',
+            'label': 'Loader',
+            'layer': 1,
+            'x': 50,
+            'y': 200
+        }],
+                  f,
+                  indent=4)
+
+    return jsonify({'message': 'Pipeline added successfully'})
 
 
 @app.route('/output', methods=['POST'])
@@ -53,12 +137,12 @@ def output():
     # Create visualizations based on selected options
     # visualize_filename = os.path.join('data', f"{pipeline}_{num_runs}.csv")
     # TODO(btrevisan): Find ways to optimize data organization here.
-    visualize_filename = "/workspaces/aloha-verilog/app/visualize/input_csv/dummy_accuracy.csv"
-    visualize.visualize.plot_visualizations(visualize_filename,
-                                            accuracy=accuracy_selected,
-                                            time=latency_selected,
-                                            power=power_selected,
-                                            custom=custom_selected)
+    visualize_filename = "/workspaces/aloha-verilog/visualize/input_csv/dummy_accuracy.csv"
+    plot_visualizations(visualize_filename,
+                        accuracy=accuracy_selected,
+                        time=latency_selected,
+                        power=power_selected,
+                        custom=custom_selected)
 
     return render_template('output.html',
                            accuracy_selected=accuracy_selected,
