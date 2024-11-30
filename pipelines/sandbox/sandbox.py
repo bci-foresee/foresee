@@ -10,14 +10,13 @@ import numpy as np
 from numpy.typing import NDArray
 import matplotlib.pyplot as plt
 
-
 class Sandbox_Pipe(Pipeline):
+
+    def __init__(self, input_window: Window):
 
     name = "Sandbox"
 
     def __init__(self, input_window: Window):
-
-        super().__init__(input_window=input_window)
 
         self.loader = LOADER(input=input_window.load_signal(),
                              save_visualization=True)

@@ -48,8 +48,8 @@ module thr_tb; //adder testbench
 
    initial begin
       // Create a VCD file for waveform analysis
-      $dumpfile("sim.vcd"); // Specify the name of the dump file
-      $dumpvars(0, thr_tb); // Dump all variables in the testbench
+      // $dumpfile("sim.vcd"); // Specify the name of the dump file
+      // $dumpvars(0, thr_tb); // Dump all variables in the testbench
       $display("Starting simulation...");
 
       //open i/o files
