@@ -1,0 +1,6 @@
+{
+    "name": "SCALO Simulator",
+    "containerEnv": {
+        "PROJECT_ROOT": "/workspaces/aloha-verilog"
+    }
+}
