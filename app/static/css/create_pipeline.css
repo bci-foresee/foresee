@@ -27,3 +27,18 @@
     border: none;
     border-top: 1px solid navy;
 }
+
+.pipeline-controls {
+    margin: 20px 0;
+}
+
+.pipeline-controls-buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+.selected-source {
+    stroke: #ff4444;
+    stroke-width: 3px;
+}
+
