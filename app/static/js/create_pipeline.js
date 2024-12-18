@@ -56,6 +56,8 @@ initializePipelineCreator(width, height);
 
 // Double click node to highlight it 
 currentSvg.on("dblclick", (event) => {
+    if (event.target.tagName !== 'circle') return;
+    
     var clickedNode = d3.select(event.target).datum();
     if (clickedNode) {
         // Remove highlight from any previously selected node
@@ -200,6 +202,36 @@ function initializePipelineCreator(width, height) {
         .attr("width", width)
         .attr("height", height);
 
+    width = window.innerWidth;
+    height = window.innerHeight;
+
+    // Grid pattern
+    const gridSize = 50;
+    const numHorizontalLines = Math.ceil(height / gridSize);
+    const numVerticalLines = Math.ceil(width / gridSize);
+
+    const grid = currentSvg.append("g")
+        .attr("class", "grid");
+    
+    for (let i = 0; i <= numVerticalLines; i++) {
+        grid.append("line")
+            .attr("x1", i * gridSize)
+            .attr("y1", 0)
+            .attr("x2", i * gridSize)
+            .attr("y2", height);
+    }
+
+    for (let i = 0; i <= numHorizontalLines; i++) {
+        grid.append("line")
+            .attr("x1", 0)
+            .attr("y1", i * gridSize)
+            .attr("x2", width)
+            .attr("y2", i * gridSize);
+    }
+
+    currentSvg.append("g").attr("class", "edges-container");
+    currentSvg.append("g").attr("class", "nodes-container");
+
     fetch('/create/nodes.json')
         .then(response => response.json())
         .then(data => {
@@ -222,7 +254,7 @@ function initializePipelineCreator(width, height) {
 }
 
 function createNodes() {
-    nodeElements = currentSvg.selectAll(".node")
+    nodeElements = currentSvg.select(".nodes-container").selectAll(".node")
         .data(nodes, d => d.id)
         .enter()
         .append("g")
@@ -234,7 +266,7 @@ function createNodes() {
         );
 
     nodeElements.append("circle")
-        .attr("r", 10)
+        .attr("r", 15)
         .attr("fill", d => d.color);
 
     nodeElements.append("text")
@@ -248,7 +280,7 @@ function createNodes() {
 }
 
 function createEdges() {
-    edgeElements = currentSvg.selectAll(".link")
+    edgeElements = currentSvg.select(".edges-container").selectAll(".link")
         .data(edges, d => `${d.source.id || d.source}-${d.target.id || d.target}`)
         .enter()
         .append("line")
@@ -271,8 +303,13 @@ function initializeSimulation() {
     simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink().id(d => d.id).links(edges))
         .force("charge", d3.forceManyBody().strength(-100))
-        .force("x", d3.forceX().x(d => d.layer == 1 ? 50 : d.layer * 150 ))
-        .force("y", d3.forceY(200));
+        .force("x", d3.forceX().x(d => {
+            const centerX = width / 2;
+            const maxLayer = Math.max(...nodes.map(n => n.layer));
+            const offset = (maxLayer - 1) * 75;
+            return centerX - offset + (d.layer - 1) * 150;
+        }).strength(0.5))
+        .force("y", d3.forceY(height / 2).strength(0.3));
 
     simulation.on("tick", () => {
         nodeElements
@@ -369,7 +406,8 @@ function updateVisualization() {
                     console.log('Edges updates successfully');
 
                     // Rebind nodes
-                    nodeElements = currentSvg.selectAll(".node").data(nodes, d => d.id);
+                    nodeElements = currentSvg.select(".nodes-container").selectAll(".node")
+                        .data(nodes, d => d.id);
 
                     // Remove old nodes
                     nodeElements.exit().remove();
@@ -384,7 +422,7 @@ function updateVisualization() {
                         );
 
                     nodeEnter.append("circle")
-                        .attr("r", 10)
+                        .attr("r", 15)
                         .attr("fill", d => d.color);
 
                     nodeEnter.append("text")
@@ -395,7 +433,7 @@ function updateVisualization() {
                     nodeElements = nodeEnter.merge(nodeElements);
 
                     // Rebind edges
-                    edgeElements = currentSvg.selectAll(".link")
+                    edgeElements = currentSvg.select(".edges-container").selectAll(".link")
                         .data(edges, d => {
                             const sourceId = d.source.id ? d.source.id : d.source;
                             const targetId = d.target.id ? d.target.id : d.target;
@@ -433,3 +471,24 @@ function updateVisualization() {
         console.error('Error:', error);
     });
 }
+
+// Window resize handler
+window.addEventListener('resize', () => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    
+    currentSvg
+        .attr("width", width)
+        .attr("height", height);
+        
+    // TODO: these simulation bounds don't include the header.
+    simulation.force("x", d3.forceX().x(d => {
+        const centerX = width / 2;
+        const maxLayer = Math.max(...nodes.map(n => n.layer));
+        const offset = (maxLayer - 1) * 75;
+        return centerX - offset + (d.layer - 1) * 150;
+    }).strength(0.5))
+    .force("y", d3.forceY(height / 2).strength(0.3));
+    
+    simulation.alpha(1).restart();
+});
