@@ -8,6 +8,7 @@ from numpy.typing import NDArray
 # from app.static.processing_elements.processing_element import ProcessingElement
 from asa.processing_element import ProcessingElement
 
+
 class SVM(ProcessingElement):
     """
     Support Vector Machine (SVM)
@@ -57,7 +58,7 @@ class SVM(ProcessingElement):
         for i in range(len(input)):
             acc += self.weights[i] * input[i]
         return acc
-    
+
     def compute_verilog(self, input: NDArray[np.float32]) -> np.int64:
         """
         Computes the dot product using the Verilog 'svm' module with external weights.

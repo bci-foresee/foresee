@@ -12,6 +12,7 @@ import os
 # from app.static.processing_elements.processing_element import ProcessingElement
 from asa.processing_element import ProcessingElement
 
+
 class FFT(ProcessingElement):
     """
     Performs the Discrete Fourier Transform (DFT) using the Fast Fourier 
