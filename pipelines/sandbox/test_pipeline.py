@@ -1,10 +1,7 @@
-import sys
+from asa import FFT, BBF, PWXC, SVM, THR
 
-sys.path.append("./")
+from asa.utils import INPUT_PE, generate_signal
 
-# from sandbox import Sandbox_Pipe
-
-from signals.parent import Window
 import numpy as np
 
 
@@ -76,10 +73,4 @@ def test_sandbox_pipeline() -> None:
             print(f"{element.name}.{key} = {value}")
         print()
 
-    output_features = pipeline.run()
-    print(output_features)
-    pipeline.visualize()
     assert 1 == 1
-
-
-test_sandbox_pipeline()

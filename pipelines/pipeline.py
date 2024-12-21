@@ -1,10 +1,11 @@
 import sys
-import pygraphviz
+# import pygraphviz
 import subprocess
 
 sys.path.append("./")
 
-from app.static.processing_elements.processing_element import ProcessingElement
+# from app.static.processing_elements.processing_element import ProcessingElement
+from asa.processing_element import ProcessingElement
 from signals.parent import Window
 import networkx as nx
 import matplotlib.pyplot as plt

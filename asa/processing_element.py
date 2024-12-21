@@ -3,11 +3,16 @@ This file defines the base class for all hardware components
 """
 # TODO(btrevisan): create a function that gives the detailed information for the pe and allow for edits
 # TODO(btrevisan): reorganize the app and directories. keep command linge stuff
+"""
+This file defines the base class for all hardware components
+"""
+
 import subprocess
 import re
 import numpy as np
 import struct
 import os
+
 from numpy.typing import NDArray
 
 
@@ -24,14 +29,13 @@ class ProcessingElement:
         self.name = name
 
         # clock frequency
-        #  TODO btrevisan : add to the plot
         self.clk = clk
 
         # False means run python implementation, True means run verilog implementation
         self.rtl_sim = rtl_sim
 
         if rtl_power_estimation:
-            if clk == 0:
+            if clk <= 0:
                 raise ValueError(
                     "Please provide a clock frequency (PE.clk, in Hz) for the RTL simulation"
                 )
@@ -52,12 +56,22 @@ class ProcessingElement:
         self.input_buffer = "input_buffer.txt"
         self.output_buffer = "output_buffer.txt"
 
-    def get_tooltip(self):
-        tooltip_text = f"{self.name}\n"
-        tooltip_text += f"Clock Frequency: {self.clk}\n"
-        tooltip_text += f"Run Power Estimation: {self.rtl_power_estimation}\n"
-        tooltip_text += f"RTL Simulation: {self.rtl_sim}"
-        return tooltip_text
+        self.simulation_data = {
+            "name": self.name,
+            "simulation_type": None,
+            "input_dimensions": None,
+            "output_dimensions": None,
+            "output_data": None,
+            "power_dict": None,
+            "clock_frequency": None,
+            "latency": None # this can be calculated using clock frequency and latency (in cycles) of the PE
+        }
+
+        if self.rtl_sim:
+            self.simulation_data["simulation_type"] = "RTL"
+            self.simulation_data["clock_frequency"] = self.clk
+        else:
+            self.simulation_data["simulation_type"] = "Python"
 
     # add inputs to the processing element
     def add_input(self, node: 'ProcessingElement') -> None:
@@ -162,6 +176,8 @@ class ProcessingElement:
                 'Percentage': percentage
             }
 
+        self.simulation_data["power_dict"] = power_data['Total']
+
         return power_data
 
     # necessary method to run the processing element
@@ -176,6 +192,19 @@ class ProcessingElement:
 
         # load input data
         input_data = self.load_inputs()
+
+        # store input dimensions for sim_data
+        self.simulation_data["input_dimensions"] = np.array(input_data).shape
+
+        # loading inputs changes directory, so reset
+        # Get the top-level directory of the Git repo
+        top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                                       capture_output=True,
+                                       text=True).stdout.strip()
+
+        # Change the directory in Python
+        os.chdir(f"{top_level_dir}/asa/{self.name.lower()}")
+
         # validate dimensions
         self.dimension_validate(input=input_data)
         # compute
@@ -184,6 +213,14 @@ class ProcessingElement:
                 input=input_data)  # replace with verilog compute
         else:
             output = self.compute(input=input_data)
+
+        print(
+            f"{self.name} input.shape: {np.array(input_data).shape} output.shape: {np.array(output).shape}"
+        )
+
+        # store output dimensions for sim_data
+        self.simulation_data["output_dimensions"] = np.array(output).shape
+        self.simulation_data["output_data"] = output
 
         # vizualise
         if self.save_visualization:
@@ -203,7 +240,7 @@ class ProcessingElement:
     def dimension_validate(self):
         raise NotImplementedError("run method not implemented")
 
-    # necessary method to calculate processing egraphviz -Vlement's computation
+    # necessary method to calculate processing element's computation
     def compute(self):
         raise NotImplementedError("run method not implemented")
 
@@ -212,8 +249,8 @@ class ProcessingElement:
         raise NotImplementedError("run method not implemented")
 
     # necessary method to validate the dimensions of the input data
-    def visualize(self, graph):
-        return graph.add_node(self.name)
+    def vizualise(self):
+        raise NotImplementedError("run method not implemented")
 
     def create_yosys_synth_file(self, verilog_file, process_library):
         # function that creates a yosys synthesis script

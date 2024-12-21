@@ -5,7 +5,8 @@ sys.path.append("./")
 import numpy as np
 from numpy.typing import NDArray
 
-from app.static.processing_elements.processing_element import ProcessingElement
+# from app.static.processing_elements.processing_element import ProcessingElement
+from asa.processing_element import ProcessingElement
 import matplotlib.pyplot as plt
 import seaborn as sns
 

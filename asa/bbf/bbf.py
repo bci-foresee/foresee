@@ -4,7 +4,8 @@ sys.path.append("./")
 
 import numpy as np
 from numpy.typing import NDArray
-from app.static.processing_elements.processing_element import ProcessingElement
+# from app.static.processing_elements.processing_element import ProcessingElement
+from asa.processing_element import ProcessingElement
 from typing import List, Tuple
 from scipy.signal import butter, filtfilt
 import os

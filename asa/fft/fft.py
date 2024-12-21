@@ -9,8 +9,8 @@ from numpy.typing import NDArray
 from typing import List, Tuple
 
 import os
-from app.static.processing_elements.processing_element import ProcessingElement
-
+# from app.static.processing_elements.processing_element import ProcessingElement
+from asa.processing_element import ProcessingElement
 
 class FFT(ProcessingElement):
     """
