@@ -9,6 +9,7 @@ import numpy as np
 def test_thr_basic() -> None:
 
     input_val = 50
+    input_val = np.array([50])
 
     input_pe = INPUT_PE(input=input_val, clk=0)
 

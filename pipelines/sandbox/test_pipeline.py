@@ -40,8 +40,8 @@ def test_sandbox_pipeline() -> None:
     thr_pe = THR(lower_bound=0,
                  upper_bound=1,
                  clk=15_700_000,
-                 rtl_sim=False,
-                 rtl_power_estimation=False,
+                 rtl_sim=True,
+                 rtl_power_estimation=True,
                  save_visualization=False)
 
     # connect PEs

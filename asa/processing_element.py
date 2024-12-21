@@ -312,7 +312,7 @@ class ProcessingElement:
         {comment_sw}set_power_activity -input -activity {switching_activity}
         # for example when a certain port will never toggle:
         # set_power_activity -input_port reset -activity 0.0
-        read_power_activities -vcd sim.vcd
+        # read_power_activities -vcd sim.vcd
 
         # debug statement
         {comment_db}check_setup -verbose
