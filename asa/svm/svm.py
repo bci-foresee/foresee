@@ -35,7 +35,8 @@ class SVM(ProcessingElement):
         input_data = []
         for PE in input_PEs:
             input_data.append(
-                PE.run().flatten()
+                # PE.run().flatten()
+                PE.simulation_data['output_data'].flatten()
             )  # flatten because output of each PE is going to have multiple channels
 
         # concatenate input data

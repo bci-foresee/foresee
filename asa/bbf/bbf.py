@@ -36,7 +36,10 @@ class BBF(ProcessingElement):
         # concatenate input data from input PEs
         input_data = []
         for PE in input_PEs:
-            input_data.append(PE.run())
+            input_data.append(
+                # PE.run()
+                PE.simulation_data['output_data']
+                )
         # concatenate input data
         input_data = np.concatenate(input_data, axis=0)
         return input_data

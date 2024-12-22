@@ -39,10 +39,15 @@ class THR(ProcessingElement):
         input_PEs = self.inputs
         # concatenate input data from input PEs
         input_data = []
+        # for PE in input_PEs:
+        #     input_data.append(
+        #         PE.run()
+        #     )  # flatten because output of each PE is going to have multiple channels
+
         for PE in input_PEs:
             input_data.append(
-                PE.run()
-            )  # flatten because output of each PE is going to have multiple channels
+                PE.simulation_data['output_data']
+            )
 
         # concatenate input data
         # input_data = np.concatenate(input_data, axis=0)
