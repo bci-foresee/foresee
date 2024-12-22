@@ -41,8 +41,7 @@ class PWXC(ProcessingElement):
         for PE in input_PEs:
             input_data.append(
                 # PE.run()
-                PE.simulation_data['output_data']
-                )
+                PE.simulation_data['output_data'])
 
         # concatenate input data
         input_data = np.concatenate(input_data, axis=0)
