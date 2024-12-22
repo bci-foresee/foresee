@@ -22,10 +22,15 @@ class PWXC(ProcessingElement):
     def __init__(self,
                  n_channels: int,
                  clk: int = 0,
-                 save_visualization: bool = False) -> None:
+                 save_visualization: bool = False,
+                 rtl_sim: bool = False,
+                 rtl_power_estimation: bool = False) -> None:
+
         super().__init__(name=self.name,
                          clk=clk,
-                         save_visualization=save_visualization)
+                         save_visualization=save_visualization,
+                         rtl_sim=rtl_sim,
+                         rtl_power_estimation=rtl_power_estimation)
 
         self.num_channels = n_channels
 

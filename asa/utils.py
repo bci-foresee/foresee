@@ -49,7 +49,7 @@ class INPUT_PE(ProcessingElement):
 
     def __init__(self, input: NDArray[np.float32], clk: int = 0) -> None:
         super().__init__(name=self.name, clk=clk, save_visualization=False)
-        self.input = input
+        self.input = np.array(input)
 
     def run(self) -> NDArray[np.float32]:
         input = self.input

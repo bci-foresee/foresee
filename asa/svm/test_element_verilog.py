@@ -27,9 +27,16 @@ def test_pwxc_basic() -> None:
     svm_pe.add_input(input_pe)
 
     # run end PE which recursively runs all previous PEs
-    output = svm_pe.run()
+    # output = svm_pe.run()
 
     elements = [input_pe, svm_pe]
+
+    # elements = [input_pe, fft_pe]
+
+    for pe in elements:
+        pe.run()
+
+    output = elements[-1].simulation_data['output_data']
 
     for element in elements:
         print(

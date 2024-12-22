@@ -34,9 +34,14 @@ def test_fft_basic() -> None:
     fft_pe.add_input(input_pe)
 
     # run end PE which recursively runs all previous PEs
-    output = fft_pe.run()
+    # output = fft_pe.run()
 
     elements = [input_pe, fft_pe]
+
+    for pe in elements:
+        pe.run()
+
+    output = elements[-1].simulation_data['output_data']
 
     for element in elements:
         print(

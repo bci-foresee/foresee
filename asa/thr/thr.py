@@ -54,7 +54,7 @@ class THR(ProcessingElement):
         return np.array(input_data)
 
     def dimension_validate(self, input: NDArray[np.float32]) -> None:
-        self.input_dimension = input.shape
+        self.input_dimension = np.array(input).shape
 
         self.input_val_size = len(input)
 
