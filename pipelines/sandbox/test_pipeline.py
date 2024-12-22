@@ -57,7 +57,7 @@ def test_sandbox_pipeline() -> None:
 
     # run end PE which recursively runs all previous PEs
     # output = thr_pe.run()
-    
+
     # for element in elements, run
 
     elements = [input_pe, fft_pe, svm_pe, thr_pe]
@@ -71,7 +71,7 @@ def test_sandbox_pipeline() -> None:
         print(
             f"Element: {element.name}, visualisation generated: {element.save_visualization}"
         )
-    
+
     print()
     print(f"assert test case not implemented yet, output:\n {output}")
     print()
