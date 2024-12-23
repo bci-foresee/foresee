@@ -2,125 +2,93 @@
 
 module svm_testbench;
 
-    // Parameters
-    parameter N = 10;  // Size of the input array
-
-    // Inputs to the module
+    // Clock
     reg clk = 0;
-    reg reset = 0;
-    reg valid_in = 0;
-    reg [N*32 -1 :0] input_array_flat;
-    reg [N*32 -1 :0] weights_flat;
+    always #10 clk = ~clk;  // 50MHz clock
 
-    // Outputs from the module
-    wire [63:0] acc;
-    wire valid_out;
+    // We'll assume we have 10 inputs/weights for the new SVM module
+    // (Matching the new `svm_10` definition)
+    reg signed [31:0] a0, a1, a2, a3, a4, a5, a6, a7, a8, a9;
+    reg signed [31:0] x0, x1, x2, x3, x4, x5, x6, x7, x8, x9;
+    wire signed [63:0] y;
 
-    // Helper variables
-    integer i;
-    integer buffer_in, buffer_weights, buffer_out, r;
+    // Arrays for file reading
+    reg [31:0] input_data   [0:9];
+    reg [31:0] weights_data [0:9];
 
-    // Clock generation (adjust the period as needed)
-    always #10 clk = ~clk;  // 50MHz clock frequency
+    // File handling
+    integer buffer_in, buffer_weights, buffer_out;
+    integer r, i;
 
-    // Instantiate the svm module
-    svm #(N) svm_inst (
+    // Instantiate the new SVM module
+    svm svm_inst (
         .clk(clk),
-        .reset(reset),
-        .valid_in(valid_in),
-        .input_array_flat(input_array_flat),
-        .weights_flat(weights_flat),
-        .acc(acc),
-        .valid_out(valid_out)
+        .a0(a0), .a1(a1), .a2(a2), .a3(a3), .a4(a4),
+        .a5(a5), .a6(a6), .a7(a7), .a8(a8), .a9(a9),
+        .x0(x0), .x1(x1), .x2(x2), .x3(x3), .x4(x4),
+        .x5(x5), .x6(x6), .x7(x7), .x8(x8), .x9(x9),
+        .y(y)
     );
 
-    // Arrays to hold input data and weights
-    reg [31:0] input_data [0:N-1];
-    reg [31:0] weights_data [0:N-1];
-
     initial begin
-        // Create a VCD file for waveform analysis (optional)
-        // $dumpfile("sim.vcd");
-        // $dumpvars(0, svm_testbench);
-
         $display("Starting simulation...");
 
-        // Open input and output files
-        buffer_in = $fopen("input_data.txt", "r");
+        // Open files
+        buffer_in      = $fopen("input_data.txt", "r");
         buffer_weights = $fopen("weights_data.txt", "r");
-        buffer_out = $fopen("output_result.txt", "w");
+        buffer_out     = $fopen("output_result.txt", "w");
 
-        // Check if files are opened successfully
         if (buffer_in == 0 || buffer_weights == 0) begin
-            $display("Failed to open input or weights file.");
+            $display("Could not open input or weights file.");
             $finish;
         end
 
         // Read input data into array
-        $display("Reading input data...");
-        for (i = 0; i < N; i = i + 1) begin
+        for (i = 0; i < 10; i = i + 1) begin
             r = $fscanf(buffer_in, "%h\n", input_data[i]);
             if (r == 0) begin
                 $display("Error reading input_data.txt at line %0d", i+1);
                 $finish;
             end
         end
-
-        // Close input file
         $fclose(buffer_in);
 
         // Read weights data into array
-        $display("Reading weights data...");
-        for (i = 0; i < N; i = i + 1) begin
+        for (i = 0; i < 10; i = i + 1) begin
             r = $fscanf(buffer_weights, "%h\n", weights_data[i]);
             if (r == 0) begin
                 $display("Error reading weights_data.txt at line %0d", i+1);
                 $finish;
             end
         end
-
-        // Close weights file
         $fclose(buffer_weights);
 
-        $display("Input data and weights read successfully.");
+        $display("Files read successfully.");
 
-        // Reset the module
-        @(posedge clk) reset <= 1;
-        @(posedge clk) #1;
-        reset <= 0;
+        // Initialize regs to 0 first
+        a0=0; a1=0; a2=0; a3=0; a4=0; a5=0; a6=0; a7=0; a8=0; a9=0;
+        x0=0; x1=0; x2=0; x3=0; x4=0; x5=0; x6=0; x7=0; x8=0; x9=0;
 
-        $display("Module reset.");
+        // Wait a few cycles
+        repeat(5) @(posedge clk);
 
-        // Pack input_data into input_array_flat using shifts
-        input_array_flat = {N*32{1'b0}};  // Initialize to zero
-        for (i = 0; i < N; i = i + 1) begin
-            input_array_flat = input_array_flat | (input_data[i] << (i * 32));
-        end
+        // Assign weights_data to a0..a9, input_data to x0..x9
+        a0 = weights_data[0]; a1 = weights_data[1]; a2 = weights_data[2];
+        a3 = weights_data[3]; a4 = weights_data[4]; a5 = weights_data[5];
+        a6 = weights_data[6]; a7 = weights_data[7]; a8 = weights_data[8];
+        a9 = weights_data[9];
 
-        // Pack weights_data into weights_flat using shifts
-        weights_flat = {N*32{1'b0}};  // Initialize to zero
-        for (i = 0; i < N; i = i + 1) begin
-            weights_flat = weights_flat | (weights_data[i] << (i * 32));
-        end
+        x0 = input_data[0];  x1 = input_data[1];  x2 = input_data[2];
+        x3 = input_data[3];  x4 = input_data[4];  x5 = input_data[5];
+        x6 = input_data[6];  x7 = input_data[7];  x8 = input_data[8];
+        x9 = input_data[9];
 
-        // Start computation
-        @(posedge clk) valid_in <= 1;
-        @(posedge clk) #1;
-        valid_in <= 0;
+        $display("Starting SVM computation...");
+        // Wait a few clock cycles so the multiplication/summation can settle
+        repeat(5) @(posedge clk);
 
-        $display("SVM computation started.");
-
-        // Wait for computation to complete
-        wait(valid_out == 1);
-        @(posedge clk) #1;
-
-        $display("SVM computation completed.");
-
-        // Write the result to the output file
-        $display("Writing result to output file...");
-        $fdisplay(buffer_out, "%d", acc);
-
-        // Close the output file
+        $display("Computation finished. y = %d", y);
+        $fdisplay(buffer_out, "%d", y);
         $fclose(buffer_out);
 
         $display("Simulation complete.");
