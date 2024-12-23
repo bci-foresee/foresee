@@ -10,6 +10,7 @@ import json
 app = Flask(__name__)
 app.config['STATIC_FOLDER'] = 'static'
 
+BASE_DIR = os.getenv('PROJECT_ROOT', os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 @app.route("/")
 def index():
@@ -33,8 +34,7 @@ def create_pipeline():
 
 @app.route('/create/nodes.json')
 def get_create_nodes_data():
-    with open('/workspaces/aloha-verilog/pipelines/create/nodes.json',
-              'r') as f:
+    with open(os.path.join(BASE_DIR, 'pipelines', 'create', 'nodes.json'), 'r') as f:
         data = json.load(f)
     return jsonify(data)
 
@@ -43,8 +43,7 @@ def get_create_nodes_data():
 def update_create_nodes_data():
     new_node_data = request.get_json()
 
-    with open('/workspaces/aloha-verilog/pipelines/create/nodes.json',
-              'w') as f:
+    with open(os.path.join(BASE_DIR, 'pipelines', 'create', 'nodes.json'), 'w') as f:
         json.dump(new_node_data, f, indent=4)
 
     return jsonify({'message': 'Node added successfully'})
@@ -52,8 +51,7 @@ def update_create_nodes_data():
 
 @app.route('/create/edges.json')
 def get_create_edges_data():
-    with open('/workspaces/aloha-verilog/pipelines/create/edges.json',
-              'r') as f:
+    with open(os.path.join(BASE_DIR, 'pipelines', 'create', 'edges.json'), 'r') as f:
         data = json.load(f)
     return jsonify(data)
 
@@ -62,8 +60,7 @@ def get_create_edges_data():
 def update_create_edges_data():
     new_edges_data = request.get_json()
 
-    with open('/workspaces/aloha-verilog/pipelines/create/edges.json',
-              'w') as f:
+    with open(os.path.join(BASE_DIR, 'pipelines', 'create', 'edges.json'), 'w') as f:
         json.dump(new_edges_data, f, indent=4)
 
     return jsonify({'message': 'Node added successfully'})
@@ -71,7 +68,7 @@ def update_create_edges_data():
 
 @app.route('/pe.json')
 def get_pe_data():
-    with open('/workspaces/aloha-verilog/asa/pe.json', 'r') as f:
+    with open(os.path.join(BASE_DIR, 'asa', 'pe.json'), 'r') as f:
         data = json.load(f)
     return jsonify(data)
 
@@ -80,8 +77,7 @@ def get_pe_data():
 def save_new_pipeline():
     new_pipeline_data = request.get_json()
 
-    new_pipeline_directory = "/workspaces/aloha-verilog/app/static/pipelines/" + new_pipeline_data[
-        "name"]
+    new_pipeline_directory = os.path.join(BASE_DIR, 'app', 'static', 'pipelines', new_pipeline_data["name"])
 
     try:
         os.makedirs(new_pipeline_directory)
@@ -92,11 +88,9 @@ def save_new_pipeline():
     # TODO: write function that reads the nodes and edges and creates the pipeline.py file accordingly.
 
     # Reset edges and nodes after pipeline has been saved.
-    with open('/workspaces/aloha-verilog/pipelines/create/edges.json',
-              'w') as f:
+    with open(os.path.join(BASE_DIR, 'pipelines', 'create', 'edges.json'), 'w') as f:
         json.dump([], f, indent=4)
-    with open('/workspaces/aloha-verilog/pipelines/create/nodes.json',
-              'w') as f:
+    with open(os.path.join(BASE_DIR, 'pipelines', 'create', 'nodes.json'), 'w') as f:
         json.dump([{
             'color': 'red',
             'id': 'loader',
@@ -104,9 +98,7 @@ def save_new_pipeline():
             'layer': 1,
             'x': 50,
             'y': 200
-        }],
-                  f,
-                  indent=4)
+        }], f, indent=4)
 
     return jsonify({'message': 'Pipeline added successfully'})
 
@@ -137,7 +129,7 @@ def output():
     # Create visualizations based on selected options
     # visualize_filename = os.path.join('data', f"{pipeline}_{num_runs}.csv")
     # TODO(btrevisan): Find ways to optimize data organization here.
-    visualize_filename = "/workspaces/aloha-verilog/visualize/input_csv/dummy_accuracy.csv"
+    visualize_filename = os.path.join(BASE_DIR, "visualize", "input_csv", "dummy_accuracy.csv")
     plot_visualizations(visualize_filename,
                         accuracy=accuracy_selected,
                         time=latency_selected,
