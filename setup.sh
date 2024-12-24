@@ -47,3 +47,5 @@ cd ../../..
 # yosys
 sudo apt-get install yosys
 yosys -V
+
+# need to add networkx and pygraphviz
