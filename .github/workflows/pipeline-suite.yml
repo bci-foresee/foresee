@@ -24,6 +24,17 @@ jobs:
         conda config --set always_yes yes --set changeps1 no
         conda update -q conda
         conda info -a  # Useful for debugging any issues with conda
+    
+    - name: Sudo Update
+      run: |
+        sudo apt-get update
+        sudo apt-get install graphviz libgraphviz-dev pkg-config
+
+    - name: Iverilog Install
+      run: | 
+        sudo apt update
+        sudo apt install iverilog
+        iverilog -v
 
     - name: Create conda environment
       run: |

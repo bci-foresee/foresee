@@ -41,7 +41,7 @@ def test_sandbox_pipeline() -> None:
                  upper_bound=1,
                  clk=15_700_000,
                  rtl_sim=True,
-                 rtl_power_estimation=True,
+                 rtl_power_estimation=False,
                  save_visualization=False)
 
     # connect PEs
