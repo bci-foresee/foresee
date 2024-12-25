@@ -25,16 +25,17 @@ jobs:
         conda update -q conda
         conda info -a  # Useful for debugging any issues with conda
 
-    - name: Create environment
+    - name: Sudo Update
       run: |
-        ./setup.sh
-    
-    # - name: Create conda environment
-    #   run: |
-    #     source $HOME/miniconda/bin/activate
-    #     conda env create -f environment.yaml
-    #     conda activate scalo_sim
-    #     conda env list  # List environments to confirm activation
+        sudo apt-get update
+        sudo apt-get install graphviz libgraphviz-dev pkg-config
+
+    - name: Create conda environment
+      run: |
+        source $HOME/miniconda/bin/activate
+        conda env create -f environment.yaml
+        conda activate scalo_sim
+        conda env list  # List environments to confirm activation
 
     - name: Run tests
       run: |
