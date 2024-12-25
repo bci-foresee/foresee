@@ -1,4 +1,4 @@
-name: PE RTL Power tests
+name: PE RTL Power tests (currently disabled)
 
 on: [push, pull_request]
 
