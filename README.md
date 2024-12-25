@@ -6,7 +6,7 @@
 
 ![PE Verilog Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/PE-verilog-suite.yml/badge.svg)
 
-![PE RTL Power Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/PE-rtl-power-suite.yml/badge.svg)
+<!-- ![PE RTL Power Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/PE-rtl-power-suite.yml/badge.svg) -->
 
 ![Pipeline Tests](https://github.com/ysarch-lab/aloha-verilog/actions/workflows/pipeline-suite.yml/badge.svg)
 
