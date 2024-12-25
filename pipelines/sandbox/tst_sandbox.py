@@ -7,7 +7,6 @@
 # from signals.parent import Window
 # import numpy as np
 
-
 # # run the pipeline to test the element
 # def test_sandbox_pipeline() -> None:
 
@@ -80,6 +79,5 @@
 #     print(output_features)
 #     pipeline.visualize()
 #     assert 1 == 1
-
 
 # test_sandbox_pipeline()
