@@ -14,7 +14,7 @@ class Sandbox_Pipe(Pipeline):
 
     def __init__(self, input_window: Window):
 
-    name = "Sandbox"
+        name = "Sandbox"
 
     def __init__(self, input_window: Window):
 
