@@ -1,11 +1,6 @@
 # init 
 git init
 
-# Conda set up
-conda env create -f environment.yaml
-conda activate scalo_sim
-conda list
-
 # iverilog/vvp
 sudo apt update
 sudo apt install iverilog
@@ -14,6 +9,15 @@ iverilog -v
 # power estimation
 sudo apt-get update
 sudo apt-get install flex libeigen3-dev autoconf automake
+
+#pygraphviz
+sudo apt-get update
+sudo apt-get install graphviz libgraphviz-dev pkg-config
+
+# Conda set up
+conda env create -f environment.yaml
+conda activate scalo_sim
+conda list
 
 # setting up submodules
 git rm -rf external/
@@ -47,5 +51,3 @@ cd ../../..
 # yosys
 sudo apt-get install yosys
 yosys -V
-
-# need to add networkx and pygraphviz
