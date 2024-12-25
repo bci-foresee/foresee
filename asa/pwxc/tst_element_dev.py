@@ -4,8 +4,8 @@ from asa.utils import INPUT_PE, generate_signal
 
 import numpy as np
 
-
 # NO VERILOG IMPLEMENTATION YET
+
 
 # run the pipeline to test the element
 def test_pwxc_basic() -> None:
