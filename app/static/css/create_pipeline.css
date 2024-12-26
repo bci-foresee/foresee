@@ -11,13 +11,12 @@ body {
     right: 0;
     padding: 10px 20px;
     background: rgba(255, 255, 255, 0.95);
-    z-index: 1000;
+    z-index: 1100;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header h1 {
     margin: 0;
-    color: #333;
 }
 
 #pipeline-creator {
@@ -66,10 +65,25 @@ body {
     z-index: 100;
 }
 
+#pipeline-name-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+#pipeline-name {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
 .pipeline-controls-buttons {
     display: flex;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 .selected-source {
@@ -116,5 +130,109 @@ body {
 
 .help-tooltip:hover .tooltip-content {
     display: block;
+}
+
+.pe-config-panel {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translate(100%, -50%);
+    width: 200px;
+    max-height: 50vh;
+    background: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+    z-index: 900;
+    overflow: hidden;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+.pe-config-panel.active {
+    transform: translate(0, -50%);
+}
+
+.pe-config-panel h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pe-config-panel .form-content {
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.pe-config-panel .form-group {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.pe-config-panel label {
+    display: block;
+    margin-bottom: 3px;
+    font-weight: bold;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pe-config-panel input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    height: 22px;
+    padding: 2px 4px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 12px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pe-config-panel .buttons {
+    margin-top: 12px;
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.pe-config-panel button {
+    display: block;
+    line-height: 20pt;
+    padding: 0 10px;
+    background: #286dc0;
+    letter-spacing: 1px;
+    transition: 0.2s all ease-in-out;
+    outline: none;
+    border: 1px solid black;
+    box-shadow: 2px 2px 1px 1px #00356b, 2px 2px 1px 2px black;
+    font-size: 14px;
+    margin: 0;
+    flex: 1;
+    cursor: pointer;
+}
+
+.pe-config-panel button:hover {
+    background: black;
+    color: white;
+    border: 1px solid black;
+}
+
+.pe-config-panel .save-btn,
+.pe-config-panel .close-btn {
+    background: #286dc0;
+    color: white;
 }
 

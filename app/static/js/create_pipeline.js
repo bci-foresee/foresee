@@ -37,7 +37,7 @@ var baseNodes = [
     {
         "color": "black",
         "id": "node_1",
-        "label": "bbf",
+        "label": "BBF",
         "layer": 2,
         "x": 244,
         "y": 350,
@@ -52,6 +52,9 @@ var baseEdges = [
     }
 ];
 
+var configPanel;
+var selectedNode;
+
 initializePipelineCreator(width, height);
 
 // Double click node to highlight it 
@@ -60,19 +63,20 @@ currentSvg.on("dblclick", (event) => {
     
     var clickedNode = d3.select(event.target).datum();
     if (clickedNode) {
-        // Remove highlight from any previously selected node
-        currentSvg.selectAll("circle").classed("selected-source", false);
-        
-        sourceNodeSelected = true;
-        selectedSourceNode = clickedNode;
-        // Add highlight to newly selected node
-        d3.select(event.target).classed("selected-source", true);
-        console.log("Source node selected:", clickedNode.id);
-    } else {
-        sourceNodeSelected = false;
-        selectedSourceNode = null;
-        // Remove all highlights
-        currentSvg.selectAll("circle").classed("selected-source", false);
+        if (sourceNodeSelected) {
+            // If a source node is already selected, clear the selection
+            sourceNodeSelected = false;
+            selectedSourceNode = null;
+            currentSvg.selectAll("circle").classed("selected-source", false);
+            closeConfigPanel();
+        } else {
+            // Select this node as source and show config panel
+            sourceNodeSelected = true;
+            selectedSourceNode = clickedNode;
+            currentSvg.selectAll("circle").classed("selected-source", false);
+            d3.select(event.target).classed("selected-source", true);
+            showConfigPanel(clickedNode);
+        }
     }
 });
 
@@ -132,7 +136,7 @@ currentSvg.on("contextmenu", (event) => {
 
     pes.forEach((pe, index) => {
         const peItem = document.createElement("div");
-        peItem.textContent = pe.name;
+        peItem.textContent = pe.acronym;
         peItem.addEventListener("click", () => {
             addNode(peItem.textContent, event);
             peMenu.remove();
@@ -359,6 +363,15 @@ function addNode(nodeType, event) {
     const [sx, sy] = d3.pointer(event, currentSvg.node());
     const x = Math.max(0, Math.min(width - 50, sx));
     const y = Math.max(0, Math.min(height - 50, sy));
+    
+    const peConfig = pes.find(pe => pe.acronym === nodeType);
+    const defaultConfig = {};
+    
+    if (peConfig) {
+        peConfig.configOptions.forEach(option => {
+            defaultConfig[option.acronym] = option.default;
+        });
+    }
 
     const newNode = {
         id: `node_${nodes.length}`,
@@ -366,8 +379,10 @@ function addNode(nodeType, event) {
         color: "black",
         layer: 1,
         x: x,
-        y: y
+        y: y,
+        config: defaultConfig
     };
+    
     nodes.push(newNode);
     updateVisualization();
 }
@@ -492,3 +507,67 @@ window.addEventListener('resize', () => {
     
     simulation.alpha(1).restart();
 });
+
+function initializeConfigPanel() {
+    const panel = document.createElement('div');
+    panel.className = 'pe-config-panel';
+    document.body.appendChild(panel);
+    return panel;
+}
+
+function showConfigPanel(node) {
+    const panel = document.querySelector('.pe-config-panel');
+    const peConfig = pes.find(pe => pe.acronym === node.label);
+    
+    if (!peConfig) return;
+    
+    selectedNode = node;
+    
+    // Update panel title
+    panel.querySelector('.config-title').textContent = `${node.label} Configuration`;
+    
+    // Generate form fields
+    const formContent = panel.querySelector('.form-content');
+    formContent.innerHTML = peConfig.configOptions
+        .map(option => `
+            <div class="form-group">
+                <label for="config-${option.name}">${option.label}:</label>
+                <input type="${option.type}" 
+                       id="config-${option.name}" 
+                       value="${node.config?.[option.name] ?? option.default}">
+            </div>
+        `).join('');
+    
+    // Add event listeners
+    panel.querySelector('.save-btn').onclick = saveConfig;
+    panel.querySelector('.close-btn').onclick = closeConfigPanel;
+    
+    panel.classList.add('active');
+}
+
+function saveConfig() {
+    if (!selectedNode) return;
+    
+    const peConfig = pes.find(pe => pe.acronym === selectedNode.label);
+    if (!peConfig) return;
+    
+    const config = {};
+    
+    peConfig.configOptions.forEach(option => {
+        const input = document.getElementById(`config-${option.acronym}`);
+        if (option.type === 'number') {
+            config[option.acronym] = parseInt(input.value);
+        } else {
+            config[option.acronym] = input.value;
+        }
+    });
+    
+    // Update the node's configuration
+    selectedNode.config = config;
+    closeConfigPanel();
+}
+
+function closeConfigPanel() {
+    document.querySelector('.pe-config-panel').classList.remove('active');
+    selectedNode = null;
+}

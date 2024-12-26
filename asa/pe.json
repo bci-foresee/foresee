@@ -1,17 +1,80 @@
 [
     {
-        "name": "bbf"
+        "name": "Butterworth Bandpass Filter",
+        "acronym": "BBF",
+        "configOptions": [
+            {
+                "name": "clk",
+                "type": "number",
+                "label": "Clock Frequency",
+                "default": 0
+            }
+        ]
     },
     {
-        "name": "fft"
+        "name": "Fast Fourier Transform",
+        "acronym": "FFT",
+        "configOptions": [
+            {
+                "name": "clk",
+                "type": "number",
+                "label": "Clock Frequency",
+                "default": 0
+            },
+            {
+                "name": "n_samples",
+                "type": "number",
+                "label": "Number of Samples",
+                "default": 8192
+            },
+            {
+                "name": "fs",
+                "type": "number",
+                "label": "Sampling Frequency",
+                "default": 2048
+            },
+            {
+                "name": "berger_bands",
+                "type": "text",
+                "label": "Berger Bands (JSON format)",
+                "default": "[[0,4], [4,8], [8,13], [13,30], [30,100]]"
+            }
+        ]
     },
     {
-        "name": "pwxc"
+        "name": "Pairwise Cross-Correlation",
+        "acronym": "PWXC",
+        "configOptions": [
+            {
+                "name": "clk",
+                "type": "number",
+                "label": "Clock Frequency",
+                "default": 0
+            }
+        ]
     },
     {
-        "name": "svm"
+        "name": "Support Vector Machine",
+        "acronym": "SVM",
+        "configOptions": [
+            {
+                "name": "clk",
+                "type": "number",
+                "label": "Clock Frequency",
+                "default": 0
+            }
+        ]
     },
     {
-        "name": "thr"
+        "name": "Threshold Detection",
+        "acronym": "THR",
+        "configOptions": [
+            {
+                "name": "clk",
+                "type": "number",
+                "label": "Clock Frequency",
+                "default": 0
+            }
+        ]
     }
 ]
