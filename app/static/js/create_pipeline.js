@@ -37,7 +37,7 @@ var baseNodes = [
     {
         "color": "black",
         "id": "node_1",
-        "label": "bbf",
+        "label": "BBF",
         "layer": 2,
         "x": 244,
         "y": 350,
@@ -52,6 +52,9 @@ var baseEdges = [
     }
 ];
 
+var configPanel;
+var selectedNode;
+
 initializePipelineCreator(width, height);
 
 // Double click node to highlight it 
@@ -60,19 +63,18 @@ currentSvg.on("dblclick", (event) => {
     
     var clickedNode = d3.select(event.target).datum();
     if (clickedNode) {
-        // Remove highlight from any previously selected node
-        currentSvg.selectAll("circle").classed("selected-source", false);
-        
-        sourceNodeSelected = true;
-        selectedSourceNode = clickedNode;
-        // Add highlight to newly selected node
-        d3.select(event.target).classed("selected-source", true);
-        console.log("Source node selected:", clickedNode.id);
-    } else {
-        sourceNodeSelected = false;
-        selectedSourceNode = null;
-        // Remove all highlights
-        currentSvg.selectAll("circle").classed("selected-source", false);
+        if (sourceNodeSelected) {
+            sourceNodeSelected = false;
+            selectedSourceNode = null;
+            currentSvg.selectAll("circle").classed("selected-source", false);
+            closeConfigPanel();
+        } else {
+            sourceNodeSelected = true;
+            selectedSourceNode = clickedNode;
+            currentSvg.selectAll("circle").classed("selected-source", false);
+            d3.select(event.target).classed("selected-source", true);
+            showConfigPanel(clickedNode);
+        }
     }
 });
 
@@ -132,7 +134,7 @@ currentSvg.on("contextmenu", (event) => {
 
     pes.forEach((pe, index) => {
         const peItem = document.createElement("div");
-        peItem.textContent = pe.name;
+        peItem.textContent = pe.acronym;
         peItem.addEventListener("click", () => {
             addNode(peItem.textContent, event);
             peMenu.remove();
@@ -207,27 +209,7 @@ function initializePipelineCreator(width, height) {
 
     // Grid pattern
     const gridSize = 50;
-    const numHorizontalLines = Math.ceil(height / gridSize);
-    const numVerticalLines = Math.ceil(width / gridSize);
-
-    const grid = currentSvg.append("g")
-        .attr("class", "grid");
-    
-    for (let i = 0; i <= numVerticalLines; i++) {
-        grid.append("line")
-            .attr("x1", i * gridSize)
-            .attr("y1", 0)
-            .attr("x2", i * gridSize)
-            .attr("y2", height);
-    }
-
-    for (let i = 0; i <= numHorizontalLines; i++) {
-        grid.append("line")
-            .attr("x1", 0)
-            .attr("y1", i * gridSize)
-            .attr("x2", width)
-            .attr("y2", i * gridSize);
-    }
+    createGrid(width, height, gridSize);
 
     currentSvg.append("g").attr("class", "edges-container");
     currentSvg.append("g").attr("class", "nodes-container");
@@ -251,6 +233,32 @@ function initializePipelineCreator(width, height) {
         .catch(error => {
             console.error('Error fetching JSON:', error);
         });
+}
+
+function createGrid(width, height, gridSize) {
+    const numHorizontalLines = Math.ceil(height / gridSize);
+    const numVerticalLines = Math.ceil(width / gridSize);
+
+    currentSvg.select(".grid").remove();
+
+    const grid = currentSvg.insert("g", ":first-child")
+        .attr("class", "grid");
+    
+    for (let i = 0; i <= numVerticalLines; i++) {
+        grid.append("line")
+            .attr("x1", i * gridSize)
+            .attr("y1", 0)
+            .attr("x2", i * gridSize)
+            .attr("y2", height);
+    }
+
+    for (let i = 0; i <= numHorizontalLines; i++) {
+        grid.append("line")
+            .attr("x1", 0)
+            .attr("y1", i * gridSize)
+            .attr("x2", width)
+            .attr("y2", i * gridSize);
+    }
 }
 
 function createNodes() {
@@ -359,6 +367,15 @@ function addNode(nodeType, event) {
     const [sx, sy] = d3.pointer(event, currentSvg.node());
     const x = Math.max(0, Math.min(width - 50, sx));
     const y = Math.max(0, Math.min(height - 50, sy));
+    
+    const peConfig = pes.find(pe => pe.acronym === nodeType);
+    const defaultConfig = {};
+    
+    if (peConfig) {
+        peConfig.configOptions.forEach(option => {
+            defaultConfig[option.acronym] = option.default;
+        });
+    }
 
     const newNode = {
         id: `node_${nodes.length}`,
@@ -366,8 +383,10 @@ function addNode(nodeType, event) {
         color: "black",
         layer: 1,
         x: x,
-        y: y
+        y: y,
+        config: defaultConfig
     };
+    
     nodes.push(newNode);
     updateVisualization();
 }
@@ -480,6 +499,9 @@ window.addEventListener('resize', () => {
     currentSvg
         .attr("width", width)
         .attr("height", height);
+    
+    // Update grid
+    createGrid(width, height, 50);
         
     // TODO: these simulation bounds don't include the header.
     simulation.force("x", d3.forceX().x(d => {
@@ -492,3 +514,66 @@ window.addEventListener('resize', () => {
     
     simulation.alpha(1).restart();
 });
+
+function initializeConfigPanel() {
+    const panel = document.createElement('div');
+    panel.className = 'pe-config-panel';
+    document.body.appendChild(panel);
+    return panel;
+}
+
+function showConfigPanel(node) {
+    const panel = document.querySelector('.pe-config-panel');
+    const peConfig = pes.find(pe => pe.acronym === node.label);
+    
+    if (!peConfig) return;
+    
+    selectedNode = node;
+    
+    panel.querySelector('.config-title').textContent = `${node.label} Configuration`;
+    
+    const formContent = panel.querySelector('.form-content');
+    formContent.innerHTML = peConfig.configOptions
+        .map(option => `
+            <div class="form-group">
+                <label for="config-${option.name}">${option.label}:</label>
+                <input type="${option.type}" 
+                       id="config-${option.name}" 
+                       value="${node.config?.[option.name] ?? option.default}">
+            </div>
+        `).join('');
+    
+    panel.querySelector('.save-btn').onclick = saveConfig;
+    panel.querySelector('.close-btn').onclick = closeConfigPanel;
+    
+    panel.classList.add('active');
+}
+
+function saveConfig() {
+    if (!selectedNode) return;
+    
+    const peConfig = pes.find(pe => pe.acronym === selectedNode.label);
+    if (!peConfig) return;
+    
+    const config = {};
+    
+    peConfig.configOptions.forEach(option => {
+        const input = document.getElementById(`config-${option.acronym}`);
+        if (option.type === 'number') {
+            config[option.acronym] = parseInt(input.value);
+        } else {
+            config[option.acronym] = input.value;
+        }
+    });
+    
+    selectedNode.config = config;
+    closeConfigPanel();
+}
+
+function closeConfigPanel() {
+    document.querySelector('.pe-config-panel').classList.remove('active');
+    currentSvg.selectAll("circle").classed("selected-source", false);
+    sourceNodeSelected = false;
+    selectedSourceNode = null;
+    selectedNode = null;
+}
