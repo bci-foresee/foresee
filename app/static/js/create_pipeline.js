@@ -64,13 +64,11 @@ currentSvg.on("dblclick", (event) => {
     var clickedNode = d3.select(event.target).datum();
     if (clickedNode) {
         if (sourceNodeSelected) {
-            // If a source node is already selected, clear the selection
             sourceNodeSelected = false;
             selectedSourceNode = null;
             currentSvg.selectAll("circle").classed("selected-source", false);
             closeConfigPanel();
         } else {
-            // Select this node as source and show config panel
             sourceNodeSelected = true;
             selectedSourceNode = clickedNode;
             currentSvg.selectAll("circle").classed("selected-source", false);
@@ -211,27 +209,7 @@ function initializePipelineCreator(width, height) {
 
     // Grid pattern
     const gridSize = 50;
-    const numHorizontalLines = Math.ceil(height / gridSize);
-    const numVerticalLines = Math.ceil(width / gridSize);
-
-    const grid = currentSvg.append("g")
-        .attr("class", "grid");
-    
-    for (let i = 0; i <= numVerticalLines; i++) {
-        grid.append("line")
-            .attr("x1", i * gridSize)
-            .attr("y1", 0)
-            .attr("x2", i * gridSize)
-            .attr("y2", height);
-    }
-
-    for (let i = 0; i <= numHorizontalLines; i++) {
-        grid.append("line")
-            .attr("x1", 0)
-            .attr("y1", i * gridSize)
-            .attr("x2", width)
-            .attr("y2", i * gridSize);
-    }
+    createGrid(width, height, gridSize);
 
     currentSvg.append("g").attr("class", "edges-container");
     currentSvg.append("g").attr("class", "nodes-container");
@@ -255,6 +233,32 @@ function initializePipelineCreator(width, height) {
         .catch(error => {
             console.error('Error fetching JSON:', error);
         });
+}
+
+function createGrid(width, height, gridSize) {
+    const numHorizontalLines = Math.ceil(height / gridSize);
+    const numVerticalLines = Math.ceil(width / gridSize);
+
+    currentSvg.select(".grid").remove();
+
+    const grid = currentSvg.insert("g", ":first-child")
+        .attr("class", "grid");
+    
+    for (let i = 0; i <= numVerticalLines; i++) {
+        grid.append("line")
+            .attr("x1", i * gridSize)
+            .attr("y1", 0)
+            .attr("x2", i * gridSize)
+            .attr("y2", height);
+    }
+
+    for (let i = 0; i <= numHorizontalLines; i++) {
+        grid.append("line")
+            .attr("x1", 0)
+            .attr("y1", i * gridSize)
+            .attr("x2", width)
+            .attr("y2", i * gridSize);
+    }
 }
 
 function createNodes() {
@@ -495,6 +499,9 @@ window.addEventListener('resize', () => {
     currentSvg
         .attr("width", width)
         .attr("height", height);
+    
+    // Update grid
+    createGrid(width, height, 50);
         
     // TODO: these simulation bounds don't include the header.
     simulation.force("x", d3.forceX().x(d => {
@@ -523,10 +530,8 @@ function showConfigPanel(node) {
     
     selectedNode = node;
     
-    // Update panel title
     panel.querySelector('.config-title').textContent = `${node.label} Configuration`;
     
-    // Generate form fields
     const formContent = panel.querySelector('.form-content');
     formContent.innerHTML = peConfig.configOptions
         .map(option => `
@@ -538,7 +543,6 @@ function showConfigPanel(node) {
             </div>
         `).join('');
     
-    // Add event listeners
     panel.querySelector('.save-btn').onclick = saveConfig;
     panel.querySelector('.close-btn').onclick = closeConfigPanel;
     
@@ -562,12 +566,14 @@ function saveConfig() {
         }
     });
     
-    // Update the node's configuration
     selectedNode.config = config;
     closeConfigPanel();
 }
 
 function closeConfigPanel() {
     document.querySelector('.pe-config-panel').classList.remove('active');
+    currentSvg.selectAll("circle").classed("selected-source", false);
+    sourceNodeSelected = false;
+    selectedSourceNode = null;
     selectedNode = null;
 }
