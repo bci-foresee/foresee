@@ -6,6 +6,7 @@ from flask import Flask, jsonify, render_template, request
 import os
 from visualize.visualize import plot_visualizations
 import json
+import pandas as pd
 
 app = Flask(__name__)
 app.config['STATIC_FOLDER'] = 'static'
@@ -179,6 +180,17 @@ def output():
                            latency_selected=latency_selected,
                            power_selected=power_selected,
                            custom_selected=custom_selected)
+
+
+@app.route("/dummy_data")
+def get_dummy_data():
+    try:
+        df = pd.read_csv(
+            os.path.join(BASE_DIR, 'app', 'dummy_data', 'pipeline_output.csv'))
+        dummy_data = df.to_dict(orient="records")
+        return jsonify(dummy_data)
+    except FileNotFoundError:
+        return jsonify({"error": "CSV file not found"}), 404
 
 
 if __name__ == "__main__":
