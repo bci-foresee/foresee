@@ -157,14 +157,17 @@ def output():
                            power_selected=power_selected,
                            custom_selected=custom_selected)
 
+
 @app.route("/dummy_data")
 def get_dummy_data():
     try:
-        df = pd.read_csv(os.path.join(BASE_DIR, 'app', 'dummy_data', 'pipeline_output.csv'))
+        df = pd.read_csv(
+            os.path.join(BASE_DIR, 'app', 'dummy_data', 'pipeline_output.csv'))
         dummy_data = df.to_dict(orient="records")
         return jsonify(dummy_data)
     except FileNotFoundError:
         return jsonify({"error": "CSV file not found"}), 404
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
