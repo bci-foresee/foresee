@@ -3,7 +3,9 @@
 <head>
   <title>SCALO Simulator</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pipeline.css') }}">
   <script src="{{ url_for('static', filename='js/pipeline.js') }}"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
   <a href="/"><h1>SCALO Simulator</h1></a>
@@ -12,17 +14,26 @@
 
   <h3>Latest Visualizations</h3>
 
-  <div class="carousel-container">
-    <div class="carousel-images">
-      <img class="carousel-image" src="{{ url_for('static', filename='images/' + selected_pipeline + '/latest_plots/accuracy_plot.png') }}">
-      <img class="carousel-image" src="{{ url_for('static', filename='images/' + selected_pipeline + '/latest_plots/time_plot.png') }}">
-      <img class="carousel-image" src="{{ url_for('static', filename='images/' + selected_pipeline + '/latest_plots/power_plot.png') }}">
-      </div>
-  </div> 
+  <div class="latestVisContainer">
+    <div class="latestVis">
+        <h2>Accuracy</h2>
+        <div id="latestAccuracyVis"></div>
+    </div>
+    <div class="latestVis">
+        <h2>Latency</h2>
+        <div id="latestLatencyVis"></div>
+    </div>
+    <div class="latestVis">
+        <h2>Power</h2>
+        <div id="latestPowerVis"></div>
+    </div>
+  </div>
+
+  <div class="tooltip"></div>
 
   <h3>Run More Experiments</h3>
 
-  <div class="simulatorDiv" id="simulateFormDiv">
+  <!-- <div class="simulatorDiv" id="simulateFormDiv">
     <form id="simulateForm" action="/output" method="POST">
       <input placeholder="Number of runs" required="" type="number" name="numberRuns"/><br>
 
@@ -54,6 +65,8 @@
       </div>
       <button type="submit">SIMULATE</button>
     </form>
-  </div>
+  </div> -->
+
+  <script src="{{ url_for('static', filename='js/pipeline.js') }}"></script>
 </body>
 </html>

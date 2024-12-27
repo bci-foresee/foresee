@@ -1,0 +1,5 @@
+PE,Accuracy,Latency,Power
+Loader,99,30,200
+FFT,80,35,230
+SVM,90,28,300
+THR,93,33,100
