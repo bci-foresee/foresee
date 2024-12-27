@@ -81,6 +81,30 @@ def get_pe_data():
     return jsonify(data)
 
 
+@app.route('/pipeline/<pipeline_name>/d3/nodes')
+def get_pipeline_nodes(pipeline_name):
+    try:
+        pipeline_path = os.path.join(BASE_DIR, 'pipelines', pipeline_name,
+                                     'd3', 'nodes.json')
+        with open(pipeline_path, 'r') as f:
+            data = json.load(f)
+        return jsonify(data)
+    except FileNotFoundError:
+        return jsonify([])
+
+
+@app.route('/pipeline/<pipeline_name>/d3/edges')
+def get_pipeline_edges(pipeline_name):
+    try:
+        pipeline_path = os.path.join(BASE_DIR, 'pipelines', pipeline_name,
+                                     'd3', 'edges.json')
+        with open(pipeline_path, 'r') as f:
+            data = json.load(f)
+        return jsonify(data)
+    except FileNotFoundError:
+        return jsonify([])
+
+
 @app.route('/save_new_pipeline', methods=['POST'])
 def save_new_pipeline():
     new_pipeline_data = request.get_json()

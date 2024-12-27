@@ -1,0 +1,14 @@
+[
+    {
+        "source": "input_pe",
+        "target": "fft"
+    },
+    {
+        "source": "fft",
+        "target": "svm"
+    },
+    {
+        "source": "svm",
+        "target": "thr"
+    }
+]

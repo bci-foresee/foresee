@@ -1,0 +1,34 @@
+[
+    {
+        "id": "input_pe",
+        "label": "Input",
+        "color": "red",
+        "layer": 1,
+        "x": 50,
+        "y": 200
+    },
+    {
+        "id": "fft",
+        "label": "FFT",
+        "color": "black",
+        "layer": 2,
+        "x": 250,
+        "y": 200
+    },
+    {
+        "id": "svm",
+        "label": "SVM",
+        "color": "black",
+        "layer": 3,
+        "x": 450,
+        "y": 200
+    },
+    {
+        "id": "thr",
+        "label": "THR",
+        "color": "black",
+        "layer": 4,
+        "x": 650,
+        "y": 200
+    }
+]
