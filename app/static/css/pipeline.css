@@ -1,0 +1,24 @@
+#pipeline-viewer {
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+#pipeline-viewer .grid line {
+    stroke: #ddd;
+    stroke-width: 1px;
+}
+
+#pipeline-viewer .node circle {
+    stroke: #fff;
+    stroke-width: 2px;
+}
+
+#pipeline-viewer .node text {
+    font-size: 12px;
+    font-family: sans-serif;
+}
+
+#pipeline-viewer .link {
+    stroke-opacity: 0.6;
+} 

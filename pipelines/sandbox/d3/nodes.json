@@ -1,0 +1,18 @@
+[
+    {
+        "id": "loader",
+        "label": "Loader",
+        "color": "red",
+        "layer": 1,
+        "x": 50,
+        "y": 200
+    },
+    {
+        "id": "fft",
+        "label": "FFT",
+        "color": "black",
+        "layer": 2,
+        "x": 250,
+        "y": 200
+    }
+]

@@ -5,6 +5,8 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/create_pipeline.css') }}">
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="{{ url_for('static', filename='js/pipeline_visualization.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/create_pipeline.js') }}"></script>
 </head>
 <body>
   <div class="header">
@@ -40,7 +42,5 @@
       <button class="close-btn">Close</button>
     </div>
   </div>
-
-  <script src="{{ url_for('static', filename='js/create_pipeline.js') }}"></script>
 </body>
 </html>
