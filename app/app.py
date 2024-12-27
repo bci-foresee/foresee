@@ -14,6 +14,7 @@ BASE_DIR = os.getenv(
     'PROJECT_ROOT',
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -82,7 +83,8 @@ def get_pe_data():
 @app.route('/pipeline/<pipeline_name>/d3/nodes')
 def get_pipeline_nodes(pipeline_name):
     try:
-        pipeline_path = os.path.join(BASE_DIR, 'pipelines', pipeline_name, 'd3', 'nodes.json')
+        pipeline_path = os.path.join(BASE_DIR, 'pipelines', pipeline_name,
+                                     'd3', 'nodes.json')
         with open(pipeline_path, 'r') as f:
             data = json.load(f)
         return jsonify(data)
@@ -93,7 +95,8 @@ def get_pipeline_nodes(pipeline_name):
 @app.route('/pipeline/<pipeline_name>/d3/edges')
 def get_pipeline_edges(pipeline_name):
     try:
-        pipeline_path = os.path.join(BASE_DIR, 'pipelines', pipeline_name, 'd3', 'edges.json')
+        pipeline_path = os.path.join(BASE_DIR, 'pipelines', pipeline_name,
+                                     'd3', 'edges.json')
         with open(pipeline_path, 'r') as f:
             data = json.load(f)
         return jsonify(data)
