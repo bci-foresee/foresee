@@ -22,7 +22,7 @@ def test_pwxc_basic() -> None:
     #                                n_samples=input_samples)
 
     input_signal = np.zeros((input_channels, input_samples))
-    
+
     #convert numpy array to int only
     # input_signal = input_signal.astype(int)
 

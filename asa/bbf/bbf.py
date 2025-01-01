@@ -101,7 +101,7 @@ class BBF(ProcessingElement):
 
         bbf_power_features = np.array(bbf_power_features)
         self.bbf_power_features = bbf_power_features
-        
+
         # self.simulation_data
 
         return bbf_power_features

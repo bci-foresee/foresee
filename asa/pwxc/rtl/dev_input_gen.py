@@ -1,6 +1,10 @@
 import numpy as np
 
-def generate_input_buffers(x_data, y_data, x_filename="input_x_buffer.txt", y_filename="input_y_buffer.txt"):
+
+def generate_input_buffers(x_data,
+                           y_data,
+                           x_filename="input_x_buffer.txt",
+                           y_filename="input_y_buffer.txt"):
     """Generates input buffers for the Verilog testbench.
 
     Args:
@@ -24,6 +28,7 @@ def generate_input_buffers(x_data, y_data, x_filename="input_x_buffer.txt", y_fi
             x_file.write(f"{x:04x}\n")  # Write as hexadecimal
             y_file.write(f"{y:04x}\n")  # Write as hexadecimal
 
+
 # Example usage (Constant inputs):
 x_const = np.full(8192, 5, dtype=np.int16)
 y_const = np.full(8192, 3, dtype=np.int16)
@@ -32,7 +37,9 @@ y_const = np.full(8192, 3, dtype=np.int16)
 # Example usage (Sine wave autocorrelation):
 amplitude = 1000
 period = 100
-x_sine = np.array([int(np.sin(2 * np.pi * i / period) * amplitude) for i in range(8192)], dtype=np.int16)
+x_sine = np.array(
+    [int(np.sin(2 * np.pi * i / period) * amplitude) for i in range(8192)],
+    dtype=np.int16)
 y_sine = x_sine.copy()  # For autocorrelation
 # generate_input_buffers(x_sine, y_sine)
 
@@ -46,9 +53,9 @@ generate_input_buffers(x_seq_padded, y_seq_padded)
 
 # Example usage (Impulse):
 
-x_impulse = np.zeros(8192, dtype = np.int16)
+x_impulse = np.zeros(8192, dtype=np.int16)
 x_impulse[0] = 1
-y_impulse = np.zeros(8192, dtype = np.int16)
+y_impulse = np.zeros(8192, dtype=np.int16)
 
 # generate_input_buffers(x_impulse, y_impulse)
 

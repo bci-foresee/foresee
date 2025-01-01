@@ -31,12 +31,12 @@ def test_sandbox_pipeline() -> None:
     #     super().__init__(name=self.name,
     #                      clk=clk,
     #                      save_visualization=save_visualization)
-        
+
     bbf_pe = BBF(fs=input_fs,
-                 berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80,180)],
+                 berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80),
+                               (80, 180)],
                  clk=1,
                  save_visualization=False)
-    
 
     # pwxc
     #  def __init__(self,
@@ -52,13 +52,11 @@ def test_sandbox_pipeline() -> None:
     #                      rtl_sim=rtl_sim,
     #                      rtl_power_estimation=rtl_power_estimation)
 
-
     pwxc_pe = PWXC(n_channels=input_channels,
                    clk=1,
                    save_visualization=False,
                    rtl_sim=False,
                    rtl_power_estimation=False)
-    
 
     # input_pe.run()
     # bbf_pe.run()
@@ -67,13 +65,14 @@ def test_sandbox_pipeline() -> None:
     # make PWXC work for 2 channel correlation
     # repeat
 
-    # 
+    #
 
     # check output dimensions
     # print(f"BBF output shape: {bbf_pe.simulation_data['output_data'].shape}")
     # print(f"PWXC output shape: {pwxc_pe.simulation_data['output_data'].shape}")
 
-    fft_pe = FFT(berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80,180)],
+    fft_pe = FFT(berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80),
+                               (80, 180)],
                  n_samples=input_samples,
                  fs=input_fs,
                  clk=1,

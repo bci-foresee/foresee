@@ -22,15 +22,17 @@ def test_pwxc_basic() -> None:
     #                                n_samples=input_samples)
 
     input_signal = np.zeros((input_channels, input_samples))
-    
+
     #convert numpy array to int only
     # input_signal = input_signal.astype(int)
 
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
-    pwxc_pe = PWXC(n_channels=2, clk=1, rtl_sim=True,
-                    rtl_power_estimation=True,
-                    save_visualization=False)
+    pwxc_pe = PWXC(n_channels=2,
+                   clk=1,
+                   rtl_sim=True,
+                   rtl_power_estimation=True,
+                   save_visualization=False)
 
     # connect PEs
     input_pe.add_output(pwxc_pe)
