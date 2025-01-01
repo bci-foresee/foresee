@@ -11,7 +11,7 @@ def test_sandbox_pipeline() -> None:
     # input signal window
     input_fs = 400
     # input_channels = 16
-    input_channels = 2  # 1 for demonstration (speed)
+    input_channels = 16  # 1 for demonstration (speed)
     input_samples = 8192
 
     input_signal = generate_signal(frequencies=[10, 20, 40],
@@ -22,14 +22,65 @@ def test_sandbox_pipeline() -> None:
 
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
-    fft_pe = FFT(berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80)],
+    # bbf
+    # def __init__(self,
+    #              fs: int,
+    #              berger_bands: List[Tuple[int, int]],
+    #              clk: int = 0,
+    #              save_visualization: bool = False) -> None:
+    #     super().__init__(name=self.name,
+    #                      clk=clk,
+    #                      save_visualization=save_visualization)
+        
+    bbf_pe = BBF(fs=input_fs,
+                 berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80,180)],
+                 clk=1,
+                 save_visualization=False)
+    
+
+    # pwxc
+    #  def __init__(self,
+    #              n_channels: int,
+    #              clk: int = 0,
+    #              save_visualization: bool = False,
+    #              rtl_sim: bool = False,
+    #              rtl_power_estimation: bool = False) -> None:
+
+    #     super().__init__(name=self.name,
+    #                      clk=clk,
+    #                      save_visualization=save_visualization,
+    #                      rtl_sim=rtl_sim,
+    #                      rtl_power_estimation=rtl_power_estimation)
+
+
+    pwxc_pe = PWXC(n_channels=input_channels,
+                   clk=1,
+                   save_visualization=False,
+                   rtl_sim=False,
+                   rtl_power_estimation=False)
+    
+
+    # input_pe.run()
+    # bbf_pe.run()
+    # pwxc_pe.run()
+
+    # make PWXC work for 2 channel correlation
+    # repeat
+
+    # 
+
+    # check output dimensions
+    # print(f"BBF output shape: {bbf_pe.simulation_data['output_data'].shape}")
+    # print(f"PWXC output shape: {pwxc_pe.simulation_data['output_data'].shape}")
+
+    fft_pe = FFT(berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80,180)],
                  n_samples=input_samples,
                  fs=input_fs,
                  clk=1,
                  rtl_sim=False,
                  save_visualization=False)
 
-    some_weights = np.ones(10)
+    some_weights = np.ones(312)
 
     svm_pe = SVM(weights=some_weights,
                  clk=1,
@@ -47,10 +98,19 @@ def test_sandbox_pipeline() -> None:
     # connect PEs
     input_pe.add_output(fft_pe)
 
+    bbf_pe.add_input(input_pe)
+    bbf_pe.add_output(svm_pe)
+
+    pwxc_pe.add_input(input_pe)
+    pwxc_pe.add_output(svm_pe)
+
     fft_pe.add_input(input_pe)
     fft_pe.add_output(svm_pe)
 
     svm_pe.add_input(fft_pe)
+    svm_pe.add_input(pwxc_pe)
+    svm_pe.add_input(bbf_pe)
+
     svm_pe.add_output(thr_pe)
 
     thr_pe.add_input(svm_pe)
@@ -60,7 +120,7 @@ def test_sandbox_pipeline() -> None:
 
     # for element in elements, run
 
-    elements = [input_pe, fft_pe, svm_pe, thr_pe]
+    elements = [input_pe, bbf_pe, pwxc_pe, fft_pe, svm_pe, thr_pe]
 
     for pe in elements:
         pe.run()

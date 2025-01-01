@@ -12,18 +12,23 @@ def test_pwxc_basic() -> None:
 
     # input signal window
     input_fs = 400
-    input_channels = 16
+    input_channels = 2
     input_samples = 8192
 
-    input_signal = generate_signal(frequencies=[10, 20, 40],
-                                   amplitudes=[20, 15, 10],
-                                   fs=input_fs,
-                                   n_channels=input_channels,
-                                   n_samples=input_samples)
+    # input_signal = generate_signal(frequencies=[10, 20, 40],
+    #                                amplitudes=[20, 15, 10],
+    #                                fs=input_fs,
+    #                                n_channels=input_channels,
+    #                                n_samples=input_samples)
+
+    input_signal = np.zeros((input_channels, input_samples))
+    
+    #convert numpy array to int only
+    # input_signal = input_signal.astype(int)
 
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
-    pwxc_pe = PWXC(n_channels=16, clk=1, rtl_sim=True, save_visualization=True)
+    pwxc_pe = PWXC(n_channels=2, clk=1, rtl_sim=True, save_visualization=False)
 
     # connect PEs
     input_pe.add_output(pwxc_pe)

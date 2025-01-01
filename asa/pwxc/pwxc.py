@@ -65,6 +65,46 @@ class PWXC(ProcessingElement):
         correlations = np.array(correlations)
         self.correlations = correlations
         return correlations
+    
+    def compute_verilog(self,
+                        input: NDArray[np.float32]) -> NDArray[np.float32]:
+
+        # do if statements to choose between verilog implementations (ie how many points) here
+        verilog_file = "pwxc"
+        correlations = []
+
+        input = input.astype(int)
+
+        print("-------------- input shape --------------")
+        print(input.shape)
+
+        # need to do this for every single signal correlation
+
+        for i in range(self.num_channels):
+            for j in range(i + 1, self.num_channels):
+                
+                with open("input_x_buffer.txt", 'w') as file:
+                    for k in range(8192):
+                        # writing into the buffer in signed hex format
+                        file.write(f"{self.int_to_signedHex(input[i][k])}\n")
+                
+                with open("input_y_buffer.txt", 'w') as file:
+                    for k in range(8192):
+                        # writing into the buffer in signed hex format
+                        file.write(f"{self.int_to_signedHex(input[j][k])}\n")
+
+                
+                verilog_result = self.run_verilog_simulation(
+                    PE_name=self.name,
+                    verilog_file=verilog_file,
+                    output_file=self.output_buffer)
+
+
+                correlations.append(verilog_result[0]) # need as val, conv to arr later
+
+        correlations = np.array(correlations)
+        self.correlations = correlations
+        return correlations
 
     def get_tooltip(self):
         tooltip_text = f"{self.name}\n"
