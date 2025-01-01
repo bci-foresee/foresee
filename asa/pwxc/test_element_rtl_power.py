@@ -46,14 +46,12 @@ def test_pwxc_basic() -> None:
     for pe in elements:
         pe.run()
 
-
     power_dict = elements[-1].simulation_data["power_dict"]
 
     print(elements[-1].rtl_module_runs)
 
     for key, value in power_dict.items():
         print(f"{key}: {value}")
-
 
     output = elements[-1].simulation_data['output_data']
 

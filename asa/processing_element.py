@@ -45,7 +45,6 @@ class ProcessingElement:
         # False means do not run power estimation, True means run power estimation
         self.rtl_power_estimation = rtl_power_estimation
 
-
         # how many times this rtl module was ran.
         # this is important for power estimation
         # ie if we did 16 idential runs of the same module, we can multiply the power by 16
@@ -126,7 +125,7 @@ class ProcessingElement:
                 line_numbers = [int(word, base=16) for word in line.split()]
                 numbers.extend(line_numbers)
 
-        self.rtl_module_runs += 1 # how many times this rtl module was run. We don't need to power estimate more than once
+        self.rtl_module_runs += 1  # how many times this rtl module was run. We don't need to power estimate more than once
 
         # Convert the list of numbers to a numpy array
         return np.array(numbers)
@@ -220,7 +219,7 @@ class ProcessingElement:
         if self.rtl_sim:
             output = self.compute_verilog(
                 input=input_data)  # replace with verilog compute
-            
+
             # run power estimation once, multiply by number of rtl runs
 
             # power estimation
@@ -236,9 +235,8 @@ class ProcessingElement:
                     # self.simulation_data["power_dict"][key] = value * self.rtl_module_runs
                     # self.simulation_data["power_dict"]
                     if key != 'Percentage':
-                        self.simulation_data["power_dict"][key] = value * self.rtl_module_runs
-
-
+                        self.simulation_data["power_dict"][
+                            key] = value * self.rtl_module_runs
 
         else:
             output = self.compute(input=input_data)

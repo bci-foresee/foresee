@@ -46,7 +46,6 @@ def test_thr_basic() -> None:
     for key, value in power_dict.items():
         print(f"{key}: {value}")
 
-
     print()
     print(f"assert test case not implemented yet, output:\n {output}")
     assert 1 == 1
