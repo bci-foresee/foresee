@@ -28,7 +28,7 @@ def test_pwxc_basic() -> None:
 
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
-    pwxc_pe = PWXC(n_channels=2,
+    pwxc_pe = PWXC(n_channels=input_channels,
                    clk=1,
                    rtl_sim=True,
                    rtl_power_estimation=True,
@@ -45,6 +45,15 @@ def test_pwxc_basic() -> None:
 
     for pe in elements:
         pe.run()
+
+
+    power_dict = elements[-1].simulation_data["power_dict"]
+
+    print(elements[-1].rtl_module_runs)
+
+    for key, value in power_dict.items():
+        print(f"{key}: {value}")
+
 
     output = elements[-1].simulation_data['output_data']
 
