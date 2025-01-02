@@ -1,0 +1,22 @@
+[
+    {
+        "color": "red",
+        "id": "loader",
+        "label": "Loader",
+        "layer": 1,
+        "x": 50,
+        "y": 200,
+        "fx": null,
+        "fy": null
+    },
+    {
+        "color": "black",
+        "id": "node_1",
+        "label": "BBF",
+        "layer": 2,
+        "x": 244,
+        "y": 350,
+        "fx": null,
+        "fy": null
+    }
+] 
