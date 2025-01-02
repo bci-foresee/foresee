@@ -53,7 +53,7 @@ module pwxc_testbench;
         // Open input and output files
         buffer_x_in = $fopen("input_x_buffer.txt", "r");
         buffer_y_in = $fopen("input_y_buffer.txt", "r");
-        buffer_out = $fopen("output_result.txt", "w");
+        buffer_out = $fopen("output_buffer.txt", "w");
 
         // Check if files are opened successfully
         if (buffer_x_in == 0 || buffer_y_in == 0) begin
@@ -116,8 +116,8 @@ module pwxc_testbench;
             x_in <= x_data[addr];
             y_in <= y_data[addr];
         end else begin
-            x_in <= 0;
-            y_in <= 0;
+            x_in <= x_data[0];
+            y_in <= y_data[0];
         end
       //   $display("addr = %d, x_in = %d, y_in = %d", addr, x_in, y_in);
     end

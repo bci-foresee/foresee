@@ -38,6 +38,14 @@ def test_thr_basic() -> None:
         print(
             f"Element: {element.name}, visualisation generated: {element.save_visualization}"
         )
+
+    power_dict = elements[-1].simulation_data["power_dict"]
+
+    print(elements[-1].rtl_module_runs)
+
+    for key, value in power_dict.items():
+        print(f"{key}: {value}")
+
     print()
     print(f"assert test case not implemented yet, output:\n {output}")
     assert 1 == 1

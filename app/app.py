@@ -109,40 +109,56 @@ def get_pipeline_edges(pipeline_name):
         return jsonify([])
 
 
+# TODO: edges are not being saved correctly
 @app.route('/save_new_pipeline', methods=['POST'])
 def save_new_pipeline():
     new_pipeline_data = request.get_json()
 
-    new_pipeline_directory = os.path.join(BASE_DIR, 'app', 'static',
-                                          'pipelines',
-                                          new_pipeline_data["name"])
+    if not new_pipeline_data or "name" not in new_pipeline_data:
+        return jsonify({'error': 'Pipeline name is required'}), 400
+
+    # Sanitize pipeline name
+    pipeline_name = new_pipeline_data["name"].lower().replace(' ', '_')
+    new_pipeline_data["name"] = pipeline_name
+
+    new_pipeline_directory = os.path.join(BASE_DIR, 'pipelines', pipeline_name)
+
+    # Ensure parent directory exists
+    parent_dir = os.path.join(BASE_DIR, 'pipelines')
+    if not os.path.exists(parent_dir):
+        try:
+            os.makedirs(parent_dir)
+        except OSError as error:
+            return jsonify(
+                {'error':
+                 f'Failed to create parent directory: {str(error)}'}), 500
 
     try:
-        os.makedirs(new_pipeline_directory)
-        print(f"Directory '{new_pipeline_directory}' created successfully.")
+        if not os.path.exists(new_pipeline_directory):
+            os.makedirs(new_pipeline_directory)
+
+        # Create d3 subdirectory for nodes and edges
+        d3_directory = os.path.join(new_pipeline_directory, 'd3')
+        if not os.path.exists(d3_directory):
+            os.makedirs(d3_directory)
+
+        # Save nodes and edges to the d3 directory
+        nodes_file = os.path.join(d3_directory, 'nodes.json')
+        edges_file = os.path.join(d3_directory, 'edges.json')
+
+        with open(nodes_file, 'w') as f:
+            json.dump(new_pipeline_data["nodes"], f, indent=4)
+
+        with open(edges_file, 'w') as f:
+            json.dump(new_pipeline_data["edges"], f, indent=4)
+
     except OSError as error:
-        print(f"Error creating directory: {error}")
+        return jsonify({'error': str(error)}), 500
 
-    # TODO: write function that reads the nodes and edges and creates the pipeline.py file accordingly.
-
-    # Reset edges and nodes after pipeline has been saved.
-    with open(os.path.join(BASE_DIR, 'pipelines', 'create', 'edges.json'),
-              'w') as f:
-        json.dump([], f, indent=4)
-    with open(os.path.join(BASE_DIR, 'pipelines', 'create', 'nodes.json'),
-              'w') as f:
-        json.dump([{
-            'color': 'red',
-            'id': 'loader',
-            'label': 'Loader',
-            'layer': 1,
-            'x': 50,
-            'y': 200
-        }],
-                  f,
-                  indent=4)
-
-    return jsonify({'message': 'Pipeline added successfully'})
+    return jsonify({
+        'message': 'Pipeline added successfully',
+        'name': new_pipeline_data["name"]
+    })
 
 
 @app.route('/output', methods=['POST'])
@@ -312,6 +328,47 @@ def run_pipeline():
 
     return jsonify({'message': 'Pipeline run successfully'})
 
+@app.route('/available_pipelines')
+def get_available_pipelines():
+    pipelines_dir = os.path.join(BASE_DIR, 'pipelines')
+    pipelines = []
+
+    try:
+        for item in os.listdir(pipelines_dir):
+            if item in [
+                    'create', '__pycache__', '__init__.py', 'README.md',
+                    'pipeline.py'
+            ]:
+                continue
+
+            full_path = os.path.join(pipelines_dir, item)
+            # Only include if it's a directory and has a d3 subfolder
+            if os.path.isdir(full_path) and os.path.exists(
+                    os.path.join(full_path, 'd3')):
+                pipelines.append(item)
+
+    except OSError as error:
+        return jsonify([])
+
+    return jsonify(pipelines)
+
+
+@app.route('/create_default/nodes.json')
+def get_create_default_nodes_data():
+    with open(
+            os.path.join(BASE_DIR, 'pipelines', 'create_default',
+                         'nodes.json'), 'r') as f:
+        data = json.load(f)
+    return jsonify(data)
+
+
+@app.route('/create_default/edges.json')
+def get_create_default_edges_data():
+    with open(
+            os.path.join(BASE_DIR, 'pipelines', 'create_default',
+                         'edges.json'), 'r') as f:
+        data = json.load(f)
+    return jsonify(data)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
