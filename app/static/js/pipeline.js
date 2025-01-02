@@ -4,6 +4,44 @@ document.addEventListener("DOMContentLoaded", function() {
     textElement.textContent = textContent;
 });
 
+pipelineName = document.getElementById("selectedPipeline").textContent.replace(" Pipeline", "");
+
+document.getElementById("rerun-pipeline").addEventListener("click", () => {
+    // Get name of pipeline.
+    Promise.all([
+        fetch(`/pipeline/${pipelineName}/d3/nodes`).then(response => response.json()),
+        fetch(`/pipeline/${pipelineName}/d3/edges`).then(response => response.json())
+    ])
+    .then(([nodes, edges]) => {
+        // Call run on this pipeline.
+        fetch('/run_pipeline', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                name: pipelineName,
+                nodes: nodes,
+                edges: edges
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Pipeline run successfully');
+                // location.reload();
+            } else {
+                console.error('Error running pipeline:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    })
+    .catch(error => {
+        console.error('Error loading pipeline data:', error);
+    });
+});
+
 // Makes the customPath option visible if selected.
 document.addEventListener("DOMContentLoaded", function() {
     const customElement = document.getElementById("custom");
@@ -22,7 +60,22 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-fetch('/dummy_data')
+// Promise.all([
+//     fetch(`/pipeline/${pipelineName}/d3/nodes`).then(response => response.json()),
+//     fetch(`/pipeline/${pipelineName}/d3/edges`).then(response => response.json())
+// ])
+// .then(([nodes, edges]) => {
+//     pipelineVisualization.setData(
+//         nodes?.length > 0 ? nodes : defaultNodes,
+//         edges?.length > 0 ? edges : defaultEdges
+//     );
+// })
+// .catch(error => {
+//     console.error('Error loading pipeline data:', error);
+//     pipelineVisualization.setData(defaultNodes, defaultEdges);
+// });
+
+fetch(`/pipeline/${pipelineName}/d3/output_data`)
     .then(response => {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

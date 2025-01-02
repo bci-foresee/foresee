@@ -17,6 +17,10 @@
 
   <div id="pipeline-viewer" style="width: 100%; height: 400px; margin: 20px 0;"></div>
 
+  <div class="buttons">
+    <button id="rerun-pipeline">Rerun</button>
+  </div>
+
   <h3>Latest Visualizations</h3>
 
   <div class="latestVisContainer">
@@ -35,42 +39,6 @@
   </div>
 
   <div class="tooltip"></div>
-
-  <h3>Run More Experiments</h3>
-
-  <!-- <div class="simulatorDiv" id="simulateFormDiv">
-    <form id="simulateForm" action="/output" method="POST">
-      <input placeholder="Number of runs" required="" type="number" name="numberRuns"/><br>
-
-      <div>
-        <h4>Visualization Options</h4>
-        <div>
-          <br>
-          <label for="accuracy" class="visualizationOptions">Accuracy</label>
-          <input type="checkbox" name="accuracy" value="accuracy" id="accuracy">
-          <br>
-
-          <label for="latency" class="visualizationOptions">Latency</label>
-          <input type="checkbox" name="latency" value="latency" id="latency">
-          <br>
-
-          <label for="power" class="visualizationOptions">Power</label>
-          <input type="checkbox" name="power" value="power" id="power">
-          <br>
-
-          <label for="custom" class="visualizationOptions">Custom</label>
-          <input type="checkbox" name="custom" value="custom" id="custom">
-          <br>
-
-          <div id="customPath" name="customPath" style="display: none;">
-            <label for="customPathInput">Custom Function Path</label>
-            <input type="text" id="customPathInput" name="customPathInput">
-          </div>
-        </div>
-      </div>
-      <button type="submit">SIMULATE</button>
-    </form>
-  </div> -->
 
   <script src="{{ url_for('static', filename='js/pipeline.js') }}"></script>
 </body>
