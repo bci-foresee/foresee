@@ -195,12 +195,14 @@ def get_dummy_data():
         return jsonify(dummy_data)
     except FileNotFoundError:
         return jsonify({"error": "CSV file not found"}), 404
-    
+
+
 @app.route('/pipeline/<pipeline_name>/d3/output_data')
 def get_pipeline_data(pipeline_name):
     try:
         df = pd.read_csv(
-            os.path.join(BASE_DIR, 'pipelines', pipeline_name, 'd3', 'output_data.csv'))
+            os.path.join(BASE_DIR, 'pipelines', pipeline_name, 'd3',
+                         'output_data.csv'))
         dummy_data = df.to_dict(orient="records")
         return jsonify(dummy_data)
     except FileNotFoundError:
@@ -209,8 +211,9 @@ def get_pipeline_data(pipeline_name):
         dummy_data = df.to_dict(orient="records")
         return jsonify(dummy_data)
 
+
 # Add call that puts the pipeline together and runs it.
-@app.route("/run_pipeline", methods=['POST']) 
+@app.route("/run_pipeline", methods=['POST'])
 def run_pipeline():
     pipeline_data = request.get_json()
 
@@ -220,13 +223,13 @@ def run_pipeline():
     input_samples = 8192
 
     input_signal = generate_signal(frequencies=[10, 20, 40],
-                                    amplitudes=[20, 15, 10],
-                                    fs=input_fs,
-                                    n_channels=input_channels,
-                                    n_samples=input_samples)
+                                   amplitudes=[20, 15, 10],
+                                   fs=input_fs,
+                                   n_channels=input_channels,
+                                   n_samples=input_samples)
 
     # TODO: once the PEs are set up correctly with all of their inputs set, fix this to be more scalable.
-    
+
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
     fft_pe = FFT(berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80)],
@@ -268,18 +271,27 @@ def run_pipeline():
     for element in elements:
         element_simulation_data = dict(element.simulation_data.items())
         print(element_simulation_data)
-        accuracy_value = np.mean(np.array(element_simulation_data['output_data']))
+        accuracy_value = np.mean(
+            np.array(element_simulation_data['output_data']))
         latency_value = element_simulation_data['latency']
-        power_value = np.mean(np.array(element_simulation_data['power_dict'])) if element_simulation_data['power_dict'] is not None else 0
-        accuracy =  accuracy_value if accuracy_value is not None else 0
+        power_value = np.mean(
+            np.array(element_simulation_data['power_dict'])
+        ) if element_simulation_data['power_dict'] is not None else 0
+        accuracy = accuracy_value if accuracy_value is not None else 0
         latency = latency_value if latency_value is not None else 0
         power = power_value if power_value is not None else 0
-        element_output = {"PE": element_simulation_data['name'], "Accuracy": accuracy, "Latency": latency, "Power": power}
+        element_output = {
+            "PE": element_simulation_data['name'],
+            "Accuracy": accuracy,
+            "Latency": latency,
+            "Power": power
+        }
         output_data.append(element_output)
 
     # Save output
-    filename = os.path.join(BASE_DIR, "pipelines", pipeline_data['name'], "d3", "output_data.csv")
-    
+    filename = os.path.join(BASE_DIR, "pipelines", pipeline_data['name'], "d3",
+                            "output_data.csv")
+
     fieldnames = ["PE", "Accuracy", "Latency", "Power"]
 
     try:
@@ -291,7 +303,7 @@ def run_pipeline():
 
         print(f"CSV file '{filename}' created successfully.")
 
-    except (ValueError, TypeError) as e: #Catch data format errors
+    except (ValueError, TypeError) as e:  #Catch data format errors
         print(f"Error with input data: {e}")
         raise
     except OSError as e:
@@ -299,6 +311,7 @@ def run_pipeline():
         raise
 
     return jsonify({'message': 'Pipeline run successfully'})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
