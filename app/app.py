@@ -328,6 +328,7 @@ def run_pipeline():
 
     return jsonify({'message': 'Pipeline run successfully'})
 
+
 @app.route('/available_pipelines')
 def get_available_pipelines():
     pipelines_dir = os.path.join(BASE_DIR, 'pipelines')
@@ -369,6 +370,7 @@ def get_create_default_edges_data():
                          'edges.json'), 'r') as f:
         data = json.load(f)
     return jsonify(data)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
