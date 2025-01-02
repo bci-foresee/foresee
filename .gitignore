@@ -22,3 +22,9 @@
 **/*.tcl
 **/*.vvp
 # external/*
+
+# Pipeline exclusions - only allow specific pipelines
+pipelines/*
+!pipelines/create_default/
+!pipelines/seizure/
+!pipelines/sandbox/

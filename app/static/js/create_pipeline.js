@@ -186,30 +186,44 @@ function setupEventHandlers() {
             })
         })
         .then(response => {
-            if (response.ok) {
-                console.log('Pipeline created successfully');
-                location.reload();
-            } else {
-                console.error('Error creating pipeline:', response.statusText);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Pipeline created successfully');
+            alert('Pipeline saved successfully!');
         })
         .catch(error => {
             console.error('Error:', error);
+            alert('Failed to save pipeline. Please try again.');
         });
     });
 
     // Reset pipeline
     document.getElementById("pipeline-reset").addEventListener("click", () => {
-        pipelineVisualization.setData(
-            JSON.parse(JSON.stringify(baseNodes)),
-            JSON.parse(JSON.stringify(baseEdges))
-        );
-        
-        document.getElementById("pipeline-name").value = "";
-        
-        sourceNodeSelected = false;
-        selectedSourceNode = null;
-        svg.selectAll("circle").classed("selected-source", false);
+        fetch('/create_default/nodes.json')
+            .then(response => response.json())
+            .then(nodes => {
+                fetch('/create_default/edges.json')
+                    .then(response => response.json())
+                    .then(edges => {
+                        pipelineVisualization.setData(nodes, edges);
+                        document.getElementById("pipeline-name").value = "";
+                        sourceNodeSelected = false;
+                        selectedSourceNode = null;
+                        svg.selectAll("circle").classed("selected-source", false);
+                        // Update the working state files after reset
+                        updateVisualization();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching edges:', error);
+                    });
+            })
+            .catch(error => {
+                console.error('Error fetching nodes:', error);
+            });
     });
 
     // Handle window resize
