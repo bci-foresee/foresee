@@ -6,8 +6,20 @@
             {
                 "name": "clk",
                 "type": "number",
-                "label": "Clock Frequency",
-                "default": 0
+                "label": "Clock Frequency (Hz)",
+                "default": 100000000
+            },
+            {
+                "name": "fs",
+                "type": "number",
+                "label": "Sampling Frequency (Hz)",
+                "default": 2048
+            },
+            {
+                "name": "berger_bands",
+                "type": "text",
+                "label": "Berger Bands (Hz ranges in JSON format)",
+                "default": "[[0,4], [4,8], [8,13], [13,30], [30,100]]"
             }
         ]
     },
@@ -18,8 +30,8 @@
             {
                 "name": "clk",
                 "type": "number",
-                "label": "Clock Frequency",
-                "default": 0
+                "label": "Clock Frequency (Hz)",
+                "default": 100000000
             },
             {
                 "name": "n_samples",
@@ -30,13 +42,13 @@
             {
                 "name": "fs",
                 "type": "number",
-                "label": "Sampling Frequency",
+                "label": "Sampling Frequency (Hz)",
                 "default": 2048
             },
             {
                 "name": "berger_bands",
                 "type": "text",
-                "label": "Berger Bands (JSON format)",
+                "label": "Berger Bands (Hz ranges in JSON format)",
                 "default": "[[0,4], [4,8], [8,13], [13,30], [30,100]]"
             }
         ]
@@ -48,8 +60,14 @@
             {
                 "name": "clk",
                 "type": "number",
-                "label": "Clock Frequency",
-                "default": 0
+                "label": "Clock Frequency (Hz)",
+                "default": 100000000
+            },
+            {
+                "name": "n_channels",
+                "type": "number",
+                "label": "Number of Channels",
+                "default": 2
             }
         ]
     },
@@ -60,8 +78,14 @@
             {
                 "name": "clk",
                 "type": "number",
-                "label": "Clock Frequency",
-                "default": 0
+                "label": "Clock Frequency (Hz)",
+                "default": 100000000
+            },
+            {
+                "name": "weights",
+                "type": "text",
+                "label": "Weight Vector (JSON array format)",
+                "default": "[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]"
             }
         ]
     },
@@ -72,8 +96,20 @@
             {
                 "name": "clk",
                 "type": "number",
-                "label": "Clock Frequency",
+                "label": "Clock Frequency (Hz)",
+                "default": 100000000
+            },
+            {
+                "name": "lower_bound",
+                "type": "number",
+                "label": "Lower Threshold Bound",
                 "default": 0
+            },
+            {
+                "name": "upper_bound",
+                "type": "number",
+                "label": "Upper Threshold Bound",
+                "default": 1
             }
         ]
     }

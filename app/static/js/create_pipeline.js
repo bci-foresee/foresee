@@ -174,6 +174,11 @@ function setupEventHandlers() {
             return;
         }
 
+        const edgesData = pipelineVisualization.edges.map(edge => ({
+            source: edge.source.id ? edge.source.id : edge.source,
+            target: edge.target.id ? edge.target.id : edge.target
+        }));
+
         fetch('/save_new_pipeline', {
             method: 'POST',
             headers: {
@@ -182,7 +187,7 @@ function setupEventHandlers() {
             body: JSON.stringify({ 
                 name: pipelineName,
                 nodes: pipelineVisualization.nodes,
-                edges: pipelineVisualization.edges
+                edges: edgesData
             })
         })
         .then(response => {
@@ -240,11 +245,15 @@ function addNode(nodeType, event) {
     const y = Math.max(0, Math.min(pipelineVisualization.height - 50, sy));
     
     const peConfig = pes.find(pe => pe.acronym === nodeType);
-    const defaultConfig = {};
+    const config = {};
     
     if (peConfig) {
         peConfig.configOptions.forEach(option => {
-            defaultConfig[option.acronym] = option.default;
+            if (option.type === 'number') {
+                config[option.name] = parseInt(option.default);
+            } else {
+                config[option.name] = option.default;
+            }
         });
     }
 
@@ -255,7 +264,7 @@ function addNode(nodeType, event) {
         layer: 1,
         x: x,
         y: y,
-        config: defaultConfig
+        config: config
     };
     
     pipelineVisualization.nodes.push(newNode);
@@ -349,11 +358,11 @@ function saveConfig() {
     const config = {};
     
     peConfig.configOptions.forEach(option => {
-        const input = document.getElementById(`config-${option.acronym}`);
+        const input = document.getElementById(`config-${option.name}`);
         if (option.type === 'number') {
-            config[option.acronym] = parseInt(input.value);
+            config[option.name] = parseInt(input.value);
         } else {
-            config[option.acronym] = input.value;
+            config[option.name] = input.value;
         }
     });
     
