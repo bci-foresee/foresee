@@ -92,6 +92,18 @@
                 "type": "text",
                 "label": "Berger Bands (Hz ranges in JSON format)",
                 "default": "[[0,4], [4,8], [8,13], [13,30], [30,100]]"
+            },
+            {
+                "name": "rtl_sim",
+                "type": "boolean",
+                "label": "RTL Simulation",
+                "default": false
+            },
+            {
+                "name": "rtl_power_estimation",
+                "type": "boolean",
+                "label": "RTL Power Estimation",
+                "default": false
             }
         ]
     },
@@ -110,6 +122,18 @@
                 "type": "number",
                 "label": "Number of Channels",
                 "default": 2
+            },
+            {
+                "name": "rtl_sim",
+                "type": "boolean",
+                "label": "RTL Simulation",
+                "default": false
+            },
+            {
+                "name": "rtl_power_estimation",
+                "type": "boolean",
+                "label": "RTL Power Estimation",
+                "default": false
             }
         ]
     },
@@ -128,6 +152,18 @@
                 "type": "text",
                 "label": "Weight Vector (JSON array format)",
                 "default": "[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]"
+            },
+            {
+                "name": "rtl_sim",
+                "type": "boolean",
+                "label": "RTL Simulation",
+                "default": false
+            },
+            {
+                "name": "rtl_power_estimation",
+                "type": "boolean",
+                "label": "RTL Power Estimation",
+                "default": false
             }
         ]
     },
@@ -152,6 +188,18 @@
                 "type": "number",
                 "label": "Upper Threshold Bound",
                 "default": 1
+            },
+            {
+                "name": "rtl_sim",
+                "type": "boolean",
+                "label": "RTL Simulation",
+                "default": false
+            },
+            {
+                "name": "rtl_power_estimation",
+                "type": "boolean",
+                "label": "RTL Power Estimation",
+                "default": false
             }
         ]
     }
