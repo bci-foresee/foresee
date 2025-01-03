@@ -1,6 +1,6 @@
 [
     {
-        "source": "loader",
+        "source": "input",
         "target": "node_1"
     }
 ]

@@ -3,26 +3,31 @@
         "color": "red",
         "fx": null,
         "fy": null,
-        "id": "loader",
-        "label": "Loader",
-        "layer": 1,
-        "x": 844.444646942269,
-        "y": 450.51336400915267,
+        "id": "input",
         "index": 0,
-        "vy": 0.20404818372021366,
-        "vx": 0.00852010061431514
+        "label": "Input",
+        "layer": 1,
+        "config": {
+            "clk": 0
+        },
+        "vx": 0,
+        "vy": 0
     },
     {
-        "color": "black",
-        "fx": null,
-        "fy": null,
         "id": "node_1",
-        "label": "bbf",
+        "label": "FFT",
+        "color": "black",
         "layer": 2,
-        "x": 1013.7322588466371,
-        "y": 470.35742777203274,
+        "config": {
+            "clk": 100000000,
+            "n_samples": 8192,
+            "fs": 2048,
+            "berger_bands": "[[0,4], [4,8], [8,13], [13,30], [30,100]]"
+        },
         "index": 1,
-        "vy": 0.1854533299724366,
-        "vx": 0.015655497491363943
+        "vy": 0,
+        "vx": 0,
+        "fx": null,
+        "fy": null
     }
 ]
