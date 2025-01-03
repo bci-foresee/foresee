@@ -1,34 +1,81 @@
 [
     {
-        "id": "input_pe",
-        "label": "Input",
         "color": "red",
+        "config": {
+            "amplitudes": "[[20, 15, 10]]",
+            "clk": 0,
+            "frequencies": "[[10, 20, 40]]",
+            "input_channels": 2,
+            "input_fs": 400,
+            "input_samples": 8192
+        },
+        "fx": null,
+        "fy": null,
+        "id": "input",
+        "index": 0,
+        "label": "Input",
         "layer": 1,
-        "x": 50,
-        "y": 200
+        "vx": -0.0013474509107666232,
+        "vy": 4.611295714452312e-09,
+        "x": 654.0785598468649,
+        "y": 415.4999997492828
     },
     {
-        "id": "fft",
-        "label": "FFT",
         "color": "black",
+        "config": {
+            "berger_bands": "[[0,4], [4,8], [8,13], [13,30], [30,100]]",
+            "clk": 100000000,
+            "fs": 2048,
+            "n_samples": 8192
+        },
+        "fx": null,
+        "fy": null,
+        "id": "node_1",
+        "index": 1,
+        "label": "FFT",
         "layer": 2,
-        "x": 250,
-        "y": 200
+        "vx": 0.001818167989160073,
+        "vy": 4.58665693595951e-09,
+        "x": 736.5558158863184,
+        "y": 415.49999975058057
     },
     {
-        "id": "svm",
+        "id": "node_2",
         "label": "SVM",
         "color": "black",
         "layer": 3,
-        "x": 450,
-        "y": 200
+        "x": 818.8295381091756,
+        "y": 415.4999997510974,
+        "config": {
+            "clk": 100000000,
+            "weights": "[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]",
+            "rtl_sim": false,
+            "rtl_power_estimation": false
+        },
+        "vx": -0.0018873573375368657,
+        "vy": 4.5780165636421886e-09,
+        "index": 2,
+        "fx": null,
+        "fy": null
     },
     {
-        "id": "thr",
+        "id": "node_3",
         "label": "THR",
         "color": "black",
         "layer": 4,
-        "x": 650,
-        "y": 200
+        "x": 580.2654849367415,
+        "y": 415.49999978837604,
+        "config": {
+            "clk": 100000000,
+            "lower_bound": 0,
+            "upper_bound": 1,
+            "rtl_sim": false,
+            "rtl_power_estimation": false
+        },
+        "vx": 0,
+        "vy": 0,
+        "index": 3,
+        "fx": null,
+        "fy": null
     }
 ]
