@@ -1,5 +1,47 @@
 [
     {
+        "name": "Input",
+        "acronym": "Input",
+        "configOptions": [
+            {
+                "name": "clk",
+                "type": "number",
+                "label": "Clock Frequency (Hz)",
+                "default": 0
+            },
+            {
+                "name": "input_fs",
+                "type": "number",
+                "label": "Input Signal Window",
+                "default": 400
+            },
+            {
+                "name": "input_channels",
+                "type": "number",
+                "label": "Input Channels",
+                "default": 2
+            },
+            {
+                "name": "input_samples",
+                "type": "number",
+                "label": "Input Samples",
+                "default": 8192
+            },
+            {
+                "name": "frequencies",
+                "type": "text",
+                "label": "Frequencies",
+                "default": "[[10, 20, 40]]"
+            },
+            {
+                "name": "amplitudes",
+                "type": "text",
+                "label": "Amplitudes",
+                "default": "[[20, 15, 10]]"
+            }
+        ]
+    },
+    {
         "name": "Butterworth Bandpass Filter",
         "acronym": "BBF",
         "configOptions": [
