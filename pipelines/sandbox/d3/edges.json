@@ -1,14 +1,14 @@
 [
     {
-        "source": "input_pe",
-        "target": "fft"
+        "source": "input",
+        "target": "node_1"
     },
     {
-        "source": "fft",
-        "target": "svm"
+        "source": "node_1",
+        "target": "node_2"
     },
     {
-        "source": "svm",
-        "target": "thr"
+        "source": "node_2",
+        "target": "node_3"
     }
 ]
