@@ -8,7 +8,12 @@
         "label": "Input",
         "layer": 1,
         "config": {
-            "clk": 0
+            "clk": 0,
+            "input_fs": 400,
+            "input_channels": 2,
+            "input_samples": 8192,
+            "frequencies": "[[10, 20, 40]]",
+            "amplitudes": "[[20, 15, 10]]"
         },
         "vx": 0,
         "vy": 0
