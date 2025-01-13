@@ -34,18 +34,19 @@ class StorageModel:
     A class to model storage performance from various workload and cell configurations.
     """
 
-    def __init__(self,
-                 cell_type: CellType,
-                 total_reads: int = 1,
-                 total_writes: int = 1,
-                 read_size: int = 0, #bytes
-                 write_size: int = 0, # bytes
-                 time_constraint: int = 1, # s
-                 word_width: int = 16, #bits
-                 process_node: int = 22,
-                 opt_target: OpTarget = OpTarget.ReadLatency,
-                 capacity: int = 1, #MB
-                 bits_per_cell: int = 1):
+    def __init__(
+            self,
+            cell_type: CellType,
+            total_reads: int = 1,
+            total_writes: int = 1,
+            read_size: int = 0,  #bytes
+            write_size: int = 0,  # bytes
+            time_constraint: int = 1,  # s
+            word_width: int = 16,  #bits
+            process_node: int = 22,
+            opt_target: OpTarget = OpTarget.ReadLatency,
+            capacity: int = 1,  #MB
+            bits_per_cell: int = 1):
         self.nvm_explorer_path = Path(
             __file__).resolve().parent / "nvmexplorer"
         self.config = {
@@ -177,7 +178,10 @@ class StorageModel:
 
     def get_results_path(self):
         cell_value, capacity, opt_target, bits_per_cell, word_width = self.get_config_vals(
-            ["cell_type", "capacity", "opt_target", "bits_per_cell", "word_width"])
+            [
+                "cell_type", "capacity", "opt_target", "bits_per_cell",
+                "word_width"
+            ])
         return self.nvm_explorer_path / "output" / "results" / f"{cell_value}_{capacity}MB_{opt_target}_{bits_per_cell}BPC_{word_width}b_default.csv"
 
     def add_lifetime_data(self):
@@ -236,8 +240,11 @@ class StorageModel:
     def delete_nvsim_output(self):
         '''Delete the nvsim output to ensure rerun.'''
         cell_value, capacity, opt_target, bits_per_cell, word_width = self.get_config_vals(
-            ["cell_type", "capacity", "opt_target", "bits_per_cell", "word_width"])
-        
+            [
+                "cell_type", "capacity", "opt_target", "bits_per_cell",
+                "word_width"
+            ])
+
         output_path = self.nvm_explorer_path / "output" / "nvsim_output" / f"{cell_value}_{capacity}MB_{opt_target}_{bits_per_cell}BPC_{word_width}b_default_nvsim_output.pkl"
         if output_path.exists():
             output_path.unlink()
@@ -246,14 +253,12 @@ class StorageModel:
 
 # runs example model
 def main():
-    model = StorageModel(
-        cell_type=CellType.STT, 
-        total_reads=1,
-        read_size=524611,
-        total_writes=1,
-        write_size=524612,
-        time_constraint=8192 / (30000*16)
-    )
+    model = StorageModel(cell_type=CellType.STT,
+                         total_reads=1,
+                         read_size=524611,
+                         total_writes=1,
+                         write_size=524612,
+                         time_constraint=8192 / (30000 * 16))
 
     model.run()
     model.print_summary()
