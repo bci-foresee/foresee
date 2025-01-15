@@ -48,4 +48,4 @@ def test_tkeo_basic() -> None:
     print(
         f"assert test case not implemented yet, output shape:\n {output.shape}"
     )
-    assert output.shape == (1, input_samples*input_channels)
+    assert output.shape == (input_channels, input_samples)

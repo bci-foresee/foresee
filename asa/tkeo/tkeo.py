@@ -35,9 +35,8 @@ class TKEO(ProcessingElement):
         input_data = []
         for PE in input_PEs:
             input_data.append(
-                # PE.run().flatten()
-                PE.simulation_data['output_data'].flatten()
-            )  # flatten because output of each PE is going to have multiple channels
+                # PE.run()
+                PE.simulation_data['output_data'])
 
         # concatenate input data
         input_data = np.concatenate(input_data, axis=0)
@@ -84,57 +83,62 @@ class TKEO(ProcessingElement):
         
         return output
 
-    def compute_verilog(self, input: NDArray[np.float32]) -> np.int64:
+    def compute_verilog(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
         """
-        Computes the dot product using the Verilog 'svm' module with external weights.
-
+        Compute TKEO using Verilog implementation
+        
         Args:
-            input (NDArray[np.float32]): The input vector for the SVM computation.
-            self.weights (NDArray[np.float32]): The weight vector for the SVM computation.
-
+            input: Input signals of shape (n_channels, n_samples)
+                  Each channel should have 8192 samples
+        
         Returns:
-            np.int64: The result of the dot product computation.
+            NDArray containing TKEO values for all channels
         """
+        if input.ndim == 1:
+            input = input.reshape(1, -1)
+            
+        n_channels, n_samples = input.shape
 
-        # Convert input and weights to appropriate integer types (e.g., int32)
-        input_int = input.astype(np.int32)
-        weights_int = self.weights.astype(np.int32)
+        assert n_samples == 8192, "Input must have 8192 samples per channel"
+        
+        verilog_file = "tkeo"  
+        tkeo_outputs = []
+        
+        for signal in input:
+            # Convert to integer representation
+            signal_int = signal.astype(np.int32)
+            
+            # Write input buffer - 8192 cycles for 8192 points
+            with open(self.input_buffer, 'w') as file:
+                for i in range(8192):
+                    # Write 1 sample per line (similar to FFT implementation)
+                    values = [
+                        signal_int[i]
+                    ]
+                    # Convert to hex and write to file
+                    hex_values = [self.int_to_signedHex(v) for v in values]
+                    file.write(" ".join(hex_values) + "\n")
+            
+            # Run Verilog simulation
+            tkeo_result = self.run_verilog_simulation(
+                PE_name=self.name,
+                verilog_file=verilog_file,
+                output_file=self.output_buffer
+            )
 
-        # Ensure the input arrays have the correct length
-        if input_int.size != 10:
-            raise ValueError(f"Input signal must be of length {10}.")
-        if weights_int.size != 10:
-            raise ValueError(f"Weight vector must be of length {10}.")
+            # temp
+            # tkeo_result = np.zeros(n_samples)
 
-        # Define file names for the input and output buffers
-        self.input_buffer = 'input_data.txt'
-        self.weights_buffer = 'weights_data.txt'
-        self.output_result = 'output_result.txt'
-
-        # Write input to "input_data.txt"
-        with open(self.input_buffer, 'w') as file_in:
-            for sample in input_int:
-                # Writing each sample as a signed hex string
-                file_in.write(f"{self.int_to_signedHex(sample)}\n")
-
-        # Write weights to "weights_data.txt"
-        with open(self.weights_buffer, 'w') as file_weights:
-            for weight in weights_int:
-                # Writing each weight as a signed hex string
-                file_weights.write(f"{self.int_to_signedHex(weight)}\n")
-
-        # Run the Verilog simulation
-        verilog_result = self.run_verilog_simulation(
-            PE_name=self.name,
-            verilog_file='svm',
-            output_file=self.output_result)
-
-        # The result is expected to be in decimal format, read and convert it
-        with open(self.output_result, 'r') as f:
-            result_str = f.readline().strip()
-            result_int = int(result_str, 10)  # Assuming decimal format
-
-        return np.array([result_int])
+            # zero pad tkeo_result to 8192
+            tkeo_result = np.pad(tkeo_result, (0, 8192 - len(tkeo_result)), 'constant')
+            
+            # Handle potential overflow
+            threshold = (2**31) - 1000
+            tkeo_result = np.where(tkeo_result > threshold, 0, tkeo_result)
+            
+            tkeo_outputs.append(tkeo_result)
+        
+        return np.array(tkeo_outputs)
 
     def get_tooltip(self):
         tooltip_text = f"{self.name}\n"
