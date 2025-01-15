@@ -124,11 +124,15 @@ def test_sandbox_pipeline() -> None:
     for pe in elements:
         pe.run()
 
-    output = thr_pe.simulation_data['output_data']
+    # output = thr_pe.simulation_data['output_data']
+    output = elements[-1].simulation_data['output_data']
 
-    # print("--------------------")
-    # print(output)
-    # print("--------------------")
+
+    output2 = elements[-1].simulation_data['output_dimensions']
+
+    print("--------------------")
+    print(output2)
+    print("--------------------")
 
     for element in elements:
         print(
