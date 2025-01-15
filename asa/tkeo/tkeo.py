@@ -11,12 +11,12 @@ from asa.processing_element import ProcessingElement
 
 class TKEO(ProcessingElement):
     """
-    Support Vector Machine (SVM)
+    Teager-Kaiser Energy Operator (TKEO)
     """
-    name = "SVM"
+    name = "TKEO"
 
     def __init__(self,
-                 weights: NDArray[np.float32],
+                 n_channels: int,
                  clk: int = 0,
                  rtl_sim: bool = False,
                  rtl_power_estimation: bool = False,
@@ -26,8 +26,8 @@ class TKEO(ProcessingElement):
                          rtl_sim=rtl_sim,
                          rtl_power_estimation=rtl_power_estimation,
                          save_visualization=save_visualization)
-
-        self.weights: NDArray[np.int32] = weights
+        
+        self.num_channels = n_channels
 
     def load_inputs(self) -> NDArray[np.float32]:
         input_PEs = self.inputs
@@ -46,19 +46,43 @@ class TKEO(ProcessingElement):
     def dimension_validate(self, input: NDArray[np.float32]) -> None:
         self.input_dimension = input.shape
 
-        self.input_val_size = len(input)
+        # self.input_val_size = len(input)
 
-        assert len(
-            self.weights
-        ) == self.input_val_size, f"Input size {self.input_val_size} does not match weights size {len(self.weights)}"
-
-    def compute(self, input: NDArray[np.int32]) -> float:
-        assert len(input) == len(self.weights)
-
-        acc: float = 0
-        for i in range(len(input)):
-            acc += self.weights[i] * input[i]
-        return acc
+        assert self.input_dimension == self.input_dimension, f"Input size {self.input_val_size} does not match weights size {len(self.weights)}"
+    
+    def compute(self, input: NDArray[np.float64]) -> NDArray[np.float64]:
+        """
+        Vectorized implementation of TKEO computation for multiple channels
+        
+        Args:
+            input: Input signal array of shape (n_channels, n_samples)
+                    where n_channels is the number of channels and
+                    n_samples is the number of samples per channel
+            
+        Returns:
+            NDArray containing TKEO values for all channels, shape (n_channels, n_samples)
+        """
+        # Ensure input is 2D array
+        if input.ndim == 1:
+            input = input.reshape(1, -1)
+        
+        # Convert input to float64 if it isn't already
+        input = input.astype(np.float64)
+        
+        # Get dimensions
+        n_channels, n_samples = input.shape
+        
+        # Initialize output array
+        output = np.zeros_like(input)
+        
+        # Compute main TKEO values using vectorized operations for all channels
+        output[:, 1:-1] = input[:, 1:-1]**2 - input[:, :-2] * input[:, 2:]
+        
+        # Handle edge cases for all channels
+        output[:, 0] = input[:, 0]**2 - input[:, 0] * input[:, 1]
+        output[:, -1] = input[:, -1]**2 - input[:, -2] * input[:, -1]
+        
+        return output
 
     def compute_verilog(self, input: NDArray[np.float32]) -> np.int64:
         """
