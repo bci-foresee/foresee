@@ -26,7 +26,7 @@ class TKEO(ProcessingElement):
                          rtl_sim=rtl_sim,
                          rtl_power_estimation=rtl_power_estimation,
                          save_visualization=save_visualization)
-        
+
         self.num_channels = n_channels
 
     def load_inputs(self) -> NDArray[np.float32]:
@@ -48,7 +48,7 @@ class TKEO(ProcessingElement):
         # self.input_val_size = len(input)
 
         assert self.input_dimension == self.input_dimension, f"Input size {self.input_val_size} does not match weights size {len(self.weights)}"
-    
+
     def compute(self, input: NDArray[np.float64]) -> NDArray[np.float64]:
         """
         Vectorized implementation of TKEO computation for multiple channels
@@ -64,23 +64,23 @@ class TKEO(ProcessingElement):
         # Ensure input is 2D array
         if input.ndim == 1:
             input = input.reshape(1, -1)
-        
+
         # Convert input to float64 if it isn't already
         input = input.astype(np.float64)
-        
+
         # Get dimensions
         n_channels, n_samples = input.shape
-        
+
         # Initialize output array
         output = np.zeros_like(input)
-        
+
         # Compute main TKEO values using vectorized operations for all channels
         output[:, 1:-1] = input[:, 1:-1]**2 - input[:, :-2] * input[:, 2:]
-        
+
         # Handle edge cases for all channels
         output[:, 0] = input[:, 0]**2 - input[:, 0] * input[:, 1]
         output[:, -1] = input[:, -1]**2 - input[:, -2] * input[:, -1]
-        
+
         return output
 
     def compute_verilog(self, input: NDArray[np.float32]) -> NDArray[np.float32]:

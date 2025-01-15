@@ -19,12 +19,11 @@ def test_tkeo_basic() -> None:
 
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
-    
     tkeo_pe = TKEO(n_channels=input_channels,
-                     clk=1,
-                     rtl_sim=False,
-                     rtl_power_estimation=False,
-                     save_visualization=False)
+                   clk=1,
+                   rtl_sim=False,
+                   rtl_power_estimation=False,
+                   save_visualization=False)
 
     # connect PEs
     input_pe.add_output(tkeo_pe)
@@ -48,4 +47,8 @@ def test_tkeo_basic() -> None:
     print(
         f"assert test case not implemented yet, output shape:\n {output.shape}"
     )
+<<<<<<< HEAD
     assert output.shape == (input_channels, input_samples)
+=======
+    assert output.shape == (1, input_samples * input_channels)
+>>>>>>> 423e1f6bc0a90e3bd7ebf0cfc4399537734bc30e
