@@ -127,7 +127,6 @@ def test_sandbox_pipeline() -> None:
     # output = thr_pe.simulation_data['output_data']
     output = elements[-1].simulation_data['output_data']
 
-
     output2 = elements[-1].simulation_data['output_dimensions']
 
     print("--------------------")
