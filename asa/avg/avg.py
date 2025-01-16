@@ -65,7 +65,8 @@ class AVG(ProcessingElement):
 
         return np.mean(input, axis=1)
 
-    def compute_verilog(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
+    def compute_verilog(self,
+                        input: NDArray[np.float32]) -> NDArray[np.float32]:
         """
         Compute average using Verilog implementation
         
@@ -78,34 +79,35 @@ class AVG(ProcessingElement):
         """
         if input.ndim == 1:
             input = input.reshape(1, -1)
-            
+
         n_channels, n_samples = input.shape
         assert n_samples == 8192, "Input must have 8192 samples per channel"
-        
+
         verilog_file = "avg"
         averages = []
-        
+
         for signal in input:
             # Convert to integer representation (16-bit)
             signal_int = signal.astype(np.int16)
-            
+
             # Write input buffer - one value per line
             with open(self.input_buffer, 'w') as file:
                 for sample in signal_int:
                     file.write(f"{self.int_to_signedHex(sample)}\n")
-            
+
             # Run Verilog simulation
             average_result = self.run_verilog_simulation(
                 PE_name=self.name,
                 verilog_file=verilog_file,
                 output_file=self.output_buffer)
-            
+
             # Handle potential overflow
             threshold = (2**31) - 1000
-            average_result = np.where(average_result > threshold, 0, average_result)
-            
+            average_result = np.where(average_result > threshold, 0,
+                                      average_result)
+
             averages.append(average_result[0])  # Just need the single value
-        
+
         return np.array(averages)
 
     def get_tooltip(self):
