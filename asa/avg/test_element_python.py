@@ -20,10 +20,10 @@ def test_avg_basic() -> None:
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
     avg_pe = AVG(n_channels=input_channels,
-                   clk=1,
-                   rtl_sim=False,
-                   rtl_power_estimation=False,
-                   save_visualization=False)
+                 clk=1,
+                 rtl_sim=False,
+                 rtl_power_estimation=False,
+                 save_visualization=False)
 
     # connect PEs
     input_pe.add_output(avg_pe)
