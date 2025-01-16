@@ -83,7 +83,8 @@ class TKEO(ProcessingElement):
 
         return output
 
-    def compute_verilog(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
+    def compute_verilog(self,
+                        input: NDArray[np.float32]) -> NDArray[np.float32]:
         """
         Compute TKEO using Verilog implementation
         
@@ -96,48 +97,46 @@ class TKEO(ProcessingElement):
         """
         if input.ndim == 1:
             input = input.reshape(1, -1)
-            
+
         n_channels, n_samples = input.shape
 
         assert n_samples == 8192, "Input must have 8192 samples per channel"
-        
-        verilog_file = "tkeo"  
+
+        verilog_file = "tkeo"
         tkeo_outputs = []
-        
+
         for signal in input:
             # Convert to integer representation
             signal_int = signal.astype(np.int32)
-            
+
             # Write input buffer - 8192 cycles for 8192 points
             with open(self.input_buffer, 'w') as file:
                 for i in range(8192):
                     # Write 1 sample per line (similar to FFT implementation)
-                    values = [
-                        signal_int[i]
-                    ]
+                    values = [signal_int[i]]
                     # Convert to hex and write to file
                     hex_values = [self.int_to_signedHex(v) for v in values]
                     file.write(" ".join(hex_values) + "\n")
-            
+
             # Run Verilog simulation
             tkeo_result = self.run_verilog_simulation(
                 PE_name=self.name,
                 verilog_file=verilog_file,
-                output_file=self.output_buffer
-            )
+                output_file=self.output_buffer)
 
             # temp
             # tkeo_result = np.zeros(n_samples)
 
             # zero pad tkeo_result to 8192
-            tkeo_result = np.pad(tkeo_result, (0, 8192 - len(tkeo_result)), 'constant')
-            
+            tkeo_result = np.pad(tkeo_result, (0, 8192 - len(tkeo_result)),
+                                 'constant')
+
             # Handle potential overflow
             threshold = (2**31) - 1000
             tkeo_result = np.where(tkeo_result > threshold, 0, tkeo_result)
-            
+
             tkeo_outputs.append(tkeo_result)
-        
+
         return np.array(tkeo_outputs)
 
     def get_tooltip(self):
