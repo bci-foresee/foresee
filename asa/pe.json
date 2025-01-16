@@ -62,6 +62,12 @@
                 "type": "text",
                 "label": "Berger Bands (Hz ranges in JSON format)",
                 "default": "[[0,4], [4,8], [8,13], [13,30], [30,100]]"
+            },
+            {
+                "name": "input_fs",
+                "type": "number",
+                "label": "Input Signal Window",
+                "default": 400
             }
         ]
     },
