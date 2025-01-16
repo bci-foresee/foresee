@@ -2,13 +2,13 @@ import sys
 
 sys.path.append("./")
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, abort
 import os
 from visualize.visualize import plot_visualizations
 import json
 import pandas as pd
 from asa.utils import INPUT_PE, generate_signal
-from asa import FFT, SVM, THR
+from asa import FFT, SVM, THR, PWXC, BBF
 import numpy as np
 import csv
 
@@ -227,57 +227,82 @@ def get_pipeline_data(pipeline_name):
         dummy_data = df.to_dict(orient="records")
         return jsonify(dummy_data)
 
+def find_pe_by_name(nodes, pe):
+    for node in nodes:
+        print(node)
+        if node['label'] == pe:
+            return node
+    return None
 
 # Add call that puts the pipeline together and runs it.
 @app.route("/run_pipeline", methods=['POST'])
 def run_pipeline():
     pipeline_data = request.get_json()
+    final_pes = {}
+    elements = []
 
-    # input signal window
-    input_fs = 400
-    input_channels = 2  # 1 for demonstration (speed)
-    input_samples = 8192
+    # Get input node
+    input = find_pe_by_name(pipeline_data['nodes'], "Input")
+    if input is None:
+         abort(400, description="Input PE not found in nodes.") 
 
-    input_signal = generate_signal(frequencies=[10, 20, 40],
-                                   amplitudes=[20, 15, 10],
-                                   fs=input_fs,
-                                   n_channels=input_channels,
-                                   n_samples=input_samples)
+    # Input signal window
+    input_signal = generate_signal(frequencies=input.get('frequencies', [10, 20, 40]),
+                                   amplitudes=input.get('amplitudes', [20, 15, 10]),
+                                   fs=input.get('input_fs', 400),
+                                   n_channels=input.get('input_channels', 2),
+                                   n_samples=input.get('input_samples', 8192))
 
-    # TODO: once the PEs are set up correctly with all of their inputs set, fix this to be more scalable.
+    input_pe = INPUT_PE(input=input_signal, clk=input.get('clk', 0))
+    final_pes[input['id']] = input_pe
+    elements.append(input_pe)
 
-    input_pe = INPUT_PE(input=input_signal, clk=0)
+    for node in pipeline_data['nodes']:
+        if node['label'] == "FFT":
+            fft_pe = FFT(berger_bands=node.get('berger_bands', [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80)]),
+                        n_samples=node.get('input_samples', 8192),
+                        fs=node.get('input_fs', 400),
+                        clk=node.get('clk', 1),
+                        rtl_sim=node.get('rtl_sim', False),
+                        save_visualization=node.get('save_visualization', False))
+            final_pes[node['id']] = fft_pe
+            elements.append(fft_pe)
+        elif node['label'] == "BBF":
+            bbf_pe = BBF(fs=node.get("input_fs", 400),
+                         berger_bands=node.get('berger_bands', [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80)]),
+                         clk=node.get('clk', 1),
+                         save_visualization=node.get('save_visualization', False))
+            final_pes[node['id']] = bbf_pe
+            elements.append(bbf_pe)
+        elif node['label'] == "PWXC":
+            pwxc_pe = PWXC(n_channels=input.get('n_channels', 2),
+                           clk=node.get('clk', 1),
+                           save_visualization=node.get('save_visualization', False),
+                           rtl_sim=node.get('rtl_sim', False),
+                           rtl_power_estimation=node.get('rtl_power_estimation', False))
+            final_pes[node['id']] = pwxc_pe
+            elements.append(pwxc_pe)
+        elif node['label'] == "SVM":
+            svm_pe = SVM(weights=node.get('weights', np.ones(10)),
+                        clk=node.get('clk', 1),
+                        rtl_sim=node.get('rtl_sim', False),
+                        rtl_power_estimation=node.get('rtl_power_estimation', False),
+                        save_visualization=node.get('save_visualization', False))
+            final_pes[node['id']] = svm_pe
+            elements.append(svm_pe)
+        elif node['label'] == "THR":
+            thr_pe = THR(lower_bound=node.get('lower_bound', 0),
+                        upper_bound=node.get('upper_bound', 1),
+                        clk=node.get('clk', 15_700_000),
+                        rtl_sim=node.get('rtl_sim', True),
+                        rtl_power_estimation=node.get('rtl_power_estimation', False),
+                        save_visualization=node.get('save_visualization', False))
+            final_pes[node['id']] = thr_pe
+            elements.append(thr_pe)
 
-    fft_pe = FFT(berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80)],
-                 n_samples=input_samples,
-                 fs=input_fs,
-                 clk=1,
-                 rtl_sim=False,
-                 save_visualization=False)
-
-    some_weights = np.ones(10)
-
-    svm_pe = SVM(weights=some_weights,
-                 clk=1,
-                 rtl_sim=False,
-                 rtl_power_estimation=False,
-                 save_visualization=False)
-
-    thr_pe = THR(lower_bound=0,
-                 upper_bound=1,
-                 clk=15_700_000,
-                 rtl_sim=True,
-                 rtl_power_estimation=False,
-                 save_visualization=False)
-
-    input_pe.add_output(fft_pe)
-    fft_pe.add_input(input_pe)
-    fft_pe.add_output(svm_pe)
-    svm_pe.add_input(fft_pe)
-    svm_pe.add_output(thr_pe)
-    thr_pe.add_input(svm_pe)
-
-    elements = [input_pe, fft_pe, svm_pe, thr_pe]
+    for edge in pipeline_data['edges']:
+        final_pes[edge['source']].add_output(final_pes[edge['target']])
+        final_pes[edge['target']].add_input(final_pes[edge['source']])
 
     # Run pipeline
     for pe in elements:
@@ -286,7 +311,6 @@ def run_pipeline():
     output_data = []
     for element in elements:
         element_simulation_data = dict(element.simulation_data.items())
-        print(element_simulation_data)
         accuracy_value = np.mean(
             np.array(element_simulation_data['output_data']))
         latency_value = element_simulation_data['latency']

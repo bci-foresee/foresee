@@ -28,7 +28,7 @@ document.getElementById("rerun-pipeline").addEventListener("click", () => {
         .then(response => {
             if (response.ok) {
                 console.log('Pipeline run successfully');
-                // location.reload();
+                location.reload();
             } else {
                 console.error('Error running pipeline:', response.statusText);
             }
