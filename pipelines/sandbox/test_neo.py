@@ -23,32 +23,31 @@ def test_sandbox_pipeline() -> None:
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
     tkeo_pe = TKEO(n_channels=input_channels,
-                     clk=1,
-                     rtl_sim=False,
-                     rtl_power_estimation=False,
-                     save_visualization=False)
-    
+                   clk=1,
+                   rtl_sim=False,
+                   rtl_power_estimation=False,
+                   save_visualization=False)
+
     avg_pe = AVG(n_channels=input_channels,
-                    clk=1,
-                    rtl_sim=False,
-                    rtl_power_estimation=False,
-                    save_visualization=False)
-    
+                 clk=1,
+                 rtl_sim=False,
+                 rtl_power_estimation=False,
+                 save_visualization=False)
+
     some_weights = np.ones(input_channels)
 
     svm_pe = SVM(weights=some_weights,
-                    clk=1,
-                    rtl_sim=False,
-                    rtl_power_estimation=False,
-                    save_visualization=False)
+                 clk=1,
+                 rtl_sim=False,
+                 rtl_power_estimation=False,
+                 save_visualization=False)
 
-    thr_pe = THR(lower_bound=0,             
-                    upper_bound=1,
-                    clk=15_700_000,
-                    rtl_sim=False,
-                    rtl_power_estimation=False,
-                    save_visualization=False)
-    
+    thr_pe = THR(lower_bound=0,
+                 upper_bound=1,
+                 clk=15_700_000,
+                 rtl_sim=False,
+                 rtl_power_estimation=False,
+                 save_visualization=False)
 
     # connect PEs
     input_pe.add_output(tkeo_pe)
@@ -63,7 +62,6 @@ def test_sandbox_pipeline() -> None:
     svm_pe.add_output(thr_pe)
 
     thr_pe.add_input(svm_pe)
-
 
     # run end PE which recursively runs all previous PEs
     # output = thr_pe.run()
