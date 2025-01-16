@@ -227,12 +227,14 @@ def get_pipeline_data(pipeline_name):
         dummy_data = df.to_dict(orient="records")
         return jsonify(dummy_data)
 
+
 def find_pe_by_name(nodes, pe):
     for node in nodes:
         print(node)
         if node['label'] == pe:
             return node
     return None
+
 
 # Add call that puts the pipeline together and runs it.
 @app.route("/run_pipeline", methods=['POST'])
@@ -244,14 +246,15 @@ def run_pipeline():
     # Get input node
     input = find_pe_by_name(pipeline_data['nodes'], "Input")
     if input is None:
-         abort(400, description="Input PE not found in nodes.") 
+        abort(400, description="Input PE not found in nodes.")
 
     # Input signal window
-    input_signal = generate_signal(frequencies=input.get('frequencies', [10, 20, 40]),
-                                   amplitudes=input.get('amplitudes', [20, 15, 10]),
-                                   fs=input.get('input_fs', 400),
-                                   n_channels=input.get('input_channels', 2),
-                                   n_samples=input.get('input_samples', 8192))
+    input_signal = generate_signal(
+        frequencies=input.get('frequencies', [10, 20, 40]),
+        amplitudes=input.get('amplitudes', [20, 15, 10]),
+        fs=input.get('input_fs', 400),
+        n_channels=input.get('input_channels', 2),
+        n_samples=input.get('input_samples', 8192))
 
     input_pe = INPUT_PE(input=input_signal, clk=input.get('clk', 0))
     final_pes[input['id']] = input_pe
@@ -259,44 +262,56 @@ def run_pipeline():
 
     for node in pipeline_data['nodes']:
         if node['label'] == "FFT":
-            fft_pe = FFT(berger_bands=node.get('berger_bands', [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80)]),
-                        n_samples=node.get('input_samples', 8192),
-                        fs=node.get('input_fs', 400),
-                        clk=node.get('clk', 1),
-                        rtl_sim=node.get('rtl_sim', False),
-                        save_visualization=node.get('save_visualization', False))
+            fft_pe = FFT(berger_bands=node.get('berger_bands',
+                                               [(0.1, 4), (4, 8), (8, 12),
+                                                (12, 30), (30, 80)]),
+                         n_samples=node.get('input_samples', 8192),
+                         fs=node.get('input_fs', 400),
+                         clk=node.get('clk', 1),
+                         rtl_sim=node.get('rtl_sim', False),
+                         save_visualization=node.get('save_visualization',
+                                                     False))
             final_pes[node['id']] = fft_pe
             elements.append(fft_pe)
         elif node['label'] == "BBF":
             bbf_pe = BBF(fs=node.get("input_fs", 400),
-                         berger_bands=node.get('berger_bands', [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80)]),
+                         berger_bands=node.get('berger_bands',
+                                               [(0.1, 4), (4, 8), (8, 12),
+                                                (12, 30), (30, 80)]),
                          clk=node.get('clk', 1),
-                         save_visualization=node.get('save_visualization', False))
+                         save_visualization=node.get('save_visualization',
+                                                     False))
             final_pes[node['id']] = bbf_pe
             elements.append(bbf_pe)
         elif node['label'] == "PWXC":
             pwxc_pe = PWXC(n_channels=input.get('n_channels', 2),
                            clk=node.get('clk', 1),
-                           save_visualization=node.get('save_visualization', False),
+                           save_visualization=node.get('save_visualization',
+                                                       False),
                            rtl_sim=node.get('rtl_sim', False),
-                           rtl_power_estimation=node.get('rtl_power_estimation', False))
+                           rtl_power_estimation=node.get(
+                               'rtl_power_estimation', False))
             final_pes[node['id']] = pwxc_pe
             elements.append(pwxc_pe)
         elif node['label'] == "SVM":
             svm_pe = SVM(weights=node.get('weights', np.ones(10)),
-                        clk=node.get('clk', 1),
-                        rtl_sim=node.get('rtl_sim', False),
-                        rtl_power_estimation=node.get('rtl_power_estimation', False),
-                        save_visualization=node.get('save_visualization', False))
+                         clk=node.get('clk', 1),
+                         rtl_sim=node.get('rtl_sim', False),
+                         rtl_power_estimation=node.get('rtl_power_estimation',
+                                                       False),
+                         save_visualization=node.get('save_visualization',
+                                                     False))
             final_pes[node['id']] = svm_pe
             elements.append(svm_pe)
         elif node['label'] == "THR":
             thr_pe = THR(lower_bound=node.get('lower_bound', 0),
-                        upper_bound=node.get('upper_bound', 1),
-                        clk=node.get('clk', 15_700_000),
-                        rtl_sim=node.get('rtl_sim', True),
-                        rtl_power_estimation=node.get('rtl_power_estimation', False),
-                        save_visualization=node.get('save_visualization', False))
+                         upper_bound=node.get('upper_bound', 1),
+                         clk=node.get('clk', 15_700_000),
+                         rtl_sim=node.get('rtl_sim', True),
+                         rtl_power_estimation=node.get('rtl_power_estimation',
+                                                       False),
+                         save_visualization=node.get('save_visualization',
+                                                     False))
             final_pes[node['id']] = thr_pe
             elements.append(thr_pe)
 
