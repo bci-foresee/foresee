@@ -54,8 +54,31 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error fetching JSON:', error);
         });
 
-    // Load initial pipeline data
-    fetch('/create/nodes.json')
+    
+    const pipelineNameInput = document.getElementById("pipeline-name");
+    const pipelineName = pipelineNameInput.value;
+
+    if (pipelineName) {
+        Promise.all([
+            fetch(`/pipeline/${pipelineName}/d3/nodes`).then(response => {
+                return response.json();
+            }),
+            fetch(`/pipeline/${pipelineName}/d3/edges`).then(response => {
+                return response.json();
+            })
+        ])
+        .then(([nodes, edges]) => {
+            pipelineVisualization.setData(nodes, edges);
+            setupEventHandlers();
+        })
+        .catch(error => {
+            console.error('Error fetching pipeline data:', error);
+            pipelineVisualization.setData(baseNodes, baseEdges);
+            setupEventHandlers();
+        });
+    } else {
+        // Load initial pipeline data
+        fetch('/create/nodes.json')
         .then(response => response.json())
         .then(nodes => {
             fetch('/create/edges.json')
@@ -75,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pipelineVisualization.setData(baseNodes, baseEdges);
             setupEventHandlers();
         });
+    }
 });
 
 function setupEventHandlers() {

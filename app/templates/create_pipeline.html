@@ -17,7 +17,7 @@
 
   <div class="pipeline-controls">
     <label id="pipeline-name-label" for="pipeline-name">Pipeline Name:</label>
-    <input type="text" id="pipeline-name">
+    <input type="text" id="pipeline-name" value="{{ selected_pipeline or '' }}">
     <div class="pipeline-controls-buttons">
       <button id="pipeline-save">Save Pipeline</button>
       <button id="pipeline-reset">Reset Pipeline</button>
