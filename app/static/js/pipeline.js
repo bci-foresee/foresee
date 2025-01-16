@@ -60,20 +60,60 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// Promise.all([
-//     fetch(`/pipeline/${pipelineName}/d3/nodes`).then(response => response.json()),
-//     fetch(`/pipeline/${pipelineName}/d3/edges`).then(response => response.json())
-// ])
-// .then(([nodes, edges]) => {
-//     pipelineVisualization.setData(
-//         nodes?.length > 0 ? nodes : defaultNodes,
-//         edges?.length > 0 ? edges : defaultEdges
-//     );
-// })
-// .catch(error => {
-//     console.error('Error loading pipeline data:', error);
-//     pipelineVisualization.setData(defaultNodes, defaultEdges);
-// });
+document.getElementById("edit-pipeline").addEventListener("click", () => {
+    const url = `/edit_pipeline?name=${pipelineName}`;
+
+    fetch(url, {
+        method: 'GET',
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = response.url;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+    // // Call run on this pipeline.
+    // fetch('/edit_pipeline', {
+    //     method: 'GET',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({ 
+    //         name: pipelineName,
+    //     })
+    // })
+    // .then(response => {
+    //     if (response.ok) {
+    //         console.log('Editing pipeline successfully');
+    //     } else {
+    //         console.error('Error editing pipeline:', response.statusText);
+    //     }
+    // })
+    // .catch(error => {
+    //     console.error('Error:', error);
+    // });
+});
+
+// Makes the customPath option visible if selected.
+document.addEventListener("DOMContentLoaded", function() {
+    const customElement = document.getElementById("custom");
+
+    if (customElement) {
+        customElement.addEventListener("change", function() {
+            var customPathDiv = document.getElementById("customPath");
+            if (this.checked) {
+                customPathDiv.style.display = "block";
+            } else {
+                customPathDiv.style.display = "none";
+            }
+        });
+    } else {
+        console.error("Element with ID 'custom' not found.");
+    }
+});
 
 fetch(`/pipeline/${pipelineName}/d3/output_data`)
     .then(response => {

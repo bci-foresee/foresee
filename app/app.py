@@ -227,6 +227,11 @@ def get_pipeline_data(pipeline_name):
         dummy_data = df.to_dict(orient="records")
         return jsonify(dummy_data)
 
+# Loads up the pipeline in edit mode
+@app.route("/edit_pipeline", methods=['GET'])
+def edit_pipeline():
+    selected_pipeline = request.args.get('name')
+    return render_template('create_pipeline.html', selected_pipeline=selected_pipeline)
 
 def find_pe_by_name(nodes, pe):
     for node in nodes:
