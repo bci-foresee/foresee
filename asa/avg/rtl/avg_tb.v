@@ -1,6 +1,7 @@
 `timescale 1ns/1ps
 
-module tkeo_testbench;
+// Testbench for Average Calculator
+module average_calculator_tb;
     // Clock and reset
     reg clk = 0;
     reg reset = 1;
@@ -9,7 +10,7 @@ module tkeo_testbench;
     // Input and output signals
     reg [15:0] x_in;
     reg valid_in;
-    wire [31:0] tkeo_out;
+    wire [31:0] avg_out;
     wire valid_out;
 
     // File handling
@@ -17,18 +18,18 @@ module tkeo_testbench;
     integer scan_file, i;
     reg [15:0] input_data [0:8191]; // For 8192 samples
 
-    // Instantiate the TKEO module
-    tkeo_operator tkeo_inst (
+    // Instantiate the average calculator
+    average_calculator avg_inst (
         .clk(clk),
         .reset(reset),
         .x_in(x_in),
         .valid_in(valid_in),
-        .tkeo_out(tkeo_out),
+        .avg_out(avg_out),
         .valid_out(valid_out)
     );
 
     initial begin
-        $display("Starting TKEO simulation...");
+        $display("Starting Average Calculator simulation...");
 
         // Open files
         input_file = $fopen("input_buffer.txt", "r");
@@ -68,26 +69,24 @@ module tkeo_testbench;
             @(posedge clk);
             x_in = input_data[i];
             valid_in = 1;
-            
-            // Wait for valid_out to be asserted
-            if (valid_out) begin
-                $fdisplay(output_file, "%h", tkeo_out);
-            end
         end
 
-        // Add a few extra cycles to process the last samples
-        valid_in = 0;
+        // Wait for computation to complete and valid_out to be asserted
+        wait(valid_out);
+        $fdisplay(output_file, "%h", avg_out);
+
+        // Add a few extra cycles for safety
         repeat(5) @(posedge clk);
         
         $fclose(output_file);
-        $display("Simulation complete.");
+        $display("Simulation complete. Average computed.");
         $finish;
     end
 
     // Optional: Add waveform dumping for debugging
     // initial begin
-    //     $dumpfile("tkeo_test.vcd");
-    //     $dumpvars(0, tkeo_testbench);
+    //     $dumpfile("average_calc_test.vcd");
+    //     $dumpvars(0, average_calculator_tb);
     // end
 
 endmodule

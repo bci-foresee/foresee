@@ -6,3 +6,4 @@ from .pwxc.pwxc import PWXC
 from .loader.loader import LOADER
 
 from .tkeo.tkeo import TKEO
+from .avg.avg import AVG
