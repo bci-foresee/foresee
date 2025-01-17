@@ -77,10 +77,10 @@ class SVM(ProcessingElement):
         weights_int = self.weights.astype(np.int32)
 
         # Ensure the input arrays have the correct length
-        if input_int.size != 10:
-            raise ValueError(f"Input signal must be of length {10}.")
-        if weights_int.size != 10:
-            raise ValueError(f"Weight vector must be of length {10}.")
+        if input_int.size != 312:
+            raise ValueError(f"Input signal must be of length {312}.")
+        if weights_int.size != 312:
+            raise ValueError(f"Weight vector must be of length {312}.")
 
         # Define file names for the input and output buffers
         self.input_buffer = 'input_data.txt'

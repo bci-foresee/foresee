@@ -9,10 +9,10 @@ import numpy as np
 def test_pwxc_basic() -> None:
 
     # input
-    input_arr = np.ones(10)
+    input_arr = np.ones(312)
 
     # input weights
-    input_weights = np.ones(10)
+    input_weights = np.ones(312)
 
     input_pe = INPUT_PE(input=input_arr, clk=0)
 
@@ -47,4 +47,4 @@ def test_pwxc_basic() -> None:
     print(f"input_arr: {input_arr}")
     print(f"input_weights: {input_weights}")
 
-    assert 1 == 1
+    assert len(output) == 1
