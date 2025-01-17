@@ -1,5 +1,5 @@
 // Average Calculator Module
-module average_calculator (
+module avg (
     input wire clk,
     input wire reset,
     input wire [15:0] x_in,      // 16-bit input signal

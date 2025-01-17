@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 
 // Testbench for Average Calculator
-module average_calculator_tb;
+module avg_testbench;
     // Clock and reset
     reg clk = 0;
     reg reset = 1;
