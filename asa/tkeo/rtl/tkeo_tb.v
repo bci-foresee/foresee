@@ -18,7 +18,7 @@ module tkeo_testbench;
     reg [15:0] input_data [0:8191]; // For 8192 samples
 
     // Instantiate the TKEO module
-    tkeo_operator tkeo_inst (
+    tkeo tkeo_inst (
         .clk(clk),
         .reset(reset),
         .x_in(x_in),

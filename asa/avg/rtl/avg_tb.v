@@ -19,7 +19,7 @@ module avg_testbench;
     reg [15:0] input_data [0:8191]; // For 8192 samples
 
     // Instantiate the average calculator
-    average_calculator avg_inst (
+    avg avg_inst (
         .clk(clk),
         .reset(reset),
         .x_in(x_in),
