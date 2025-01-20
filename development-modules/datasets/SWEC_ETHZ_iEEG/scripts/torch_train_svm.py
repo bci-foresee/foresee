@@ -1,3 +1,4 @@
+import pickle
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -155,16 +156,26 @@ print("Confusion matrix: \n", cm)
 accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy: ", accuracy)
 
-# # Extract weights
-# weights = model.coef_
-# intercept = model.intercept_
+# Save the model
+filename = './model_data/svm_model.pkl'  # Path to save the file
 
-# # Print the weights and intercept
-# print("Weights:", weights)
-# print("Intercept:", intercept)
+with open(filename, 'wb') as file:
+    pickle.dump(model, file)
 
-# with torch.no_grad():
-#     outputs = model(X_train).squeeze()
-#     predictions = outputs > 0
-#     accuracy = (predictions == y_train).float().mean()
-#     print(f'Test Accuracy: {accuracy.item():.4f}')
+print("Model saved to", filename)
+
+
+# # Load the model from the file
+# with open(filename, 'rb') as file:
+#     loaded_model = pickle.load(file)
+
+# # Make predictions using the loaded model
+# y_pred_new = loaded_model.predict(X_test)
+
+# # Calculate and print the accuracy
+# new_accuracy = accuracy_score(y_test, y_pred_new)
+# print("New Test Accuracy:", new_accuracy)
+
+# # Print the confusion matrix
+# new_cm = confusion_matrix(y_test, y_pred_new)
+# print("New Confusion Matrix:\n", new_cm)
