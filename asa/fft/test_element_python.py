@@ -47,7 +47,5 @@ def test_fft_basic() -> None:
             f"Element: {element.name}, visualisation generated: {element.save_visualization}"
         )
     print()
-    print(
-        f"assert test case not implemented yet, output shape:\n {output.shape}"
-    )
-    assert 1 == 1
+    
+    assert output.shape == (input_channels, 6)

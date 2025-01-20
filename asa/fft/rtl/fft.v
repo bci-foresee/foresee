@@ -57,7 +57,7 @@
 // Latency: 5714
 // Gap: 2048
 // module_name_is:dft_top
-module spiral_fft_8192(clk, reset, next, next_out,
+module fft(clk, reset, next, next_out,
    X0, Y0,
    X1, Y1,
    X2, Y2,

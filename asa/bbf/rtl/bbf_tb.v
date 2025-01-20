@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module bbf_tb;
+module bbf_testbench;
     // Clock and reset
     reg clk = 0;
     reg rst = 0;

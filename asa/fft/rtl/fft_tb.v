@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module spiral_fft_8192_testbench; //adder testbench
+module fft_testbench; //adder testbench
 
    //set up i/o ports for module
    // all inputs are registers so we can store values to them from buffer txt files
@@ -28,7 +28,7 @@ module spiral_fft_8192_testbench; //adder testbench
    end
 
    // instantiate the PE module
-   spiral_fft_8192 spiral_fft_8192(
+   fft fft_inst(
       .clk(clk),
       .reset(reset),
       .next(next),
