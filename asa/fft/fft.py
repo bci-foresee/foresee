@@ -96,7 +96,7 @@ class FFT(ProcessingElement):
                         input: NDArray[np.float32]) -> NDArray[np.float32]:
 
         # do if statements to choose between verilog implementations (ie how many points) here
-        verilog_file = "spiral_fft_8192"
+        verilog_file = "fft"
 
         self.rtl_single_module_runs = 2048  # verilog is run 2048 times to emulate hardware
 
