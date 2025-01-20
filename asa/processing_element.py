@@ -51,7 +51,6 @@ class ProcessingElement:
         # this is used for when we have multiple channels in signals
         self.rtl_module_runs = 0
 
-
         # for a single run, how many times was module ran
         # this is for example if a module is ran 8192 times for a single signal window
         self.rtl_single_module_runs = 0
@@ -241,7 +240,9 @@ class ProcessingElement:
                     # self.simulation_data["power_dict"][key] = value * self.rtl_module_runs
                     # self.simulation_data["power_dict"]
                     if key != 'Percentage':
-                        self.simulation_data["power_dict"][key] = value * self.rtl_module_runs * max(1, self.rtl_single_module_runs)
+                        self.simulation_data["power_dict"][
+                            key] = value * self.rtl_module_runs * max(
+                                1, self.rtl_single_module_runs)
 
         else:
             output = self.compute(input=input_data)

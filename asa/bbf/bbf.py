@@ -117,9 +117,8 @@ class BBF(ProcessingElement):
 
     def compute_verilog(self,
                         input: NDArray[np.float32]) -> NDArray[np.float32]:
-        
 
-        self.rtl_single_module_runs = 8192 # verilog is run 8192 times to emulate hardware
+        self.rtl_single_module_runs = 8192  # verilog is run 8192 times to emulate hardware
 
         if input.ndim == 1:
             input = input.reshape(1, -1)

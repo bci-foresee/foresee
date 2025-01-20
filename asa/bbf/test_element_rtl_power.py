@@ -46,7 +46,7 @@ def test_fft_basic() -> None:
             f"Element: {element.name}, visualisation generated: {element.save_visualization}"
         )
     print()
-    
+
     for element in elements:
         for key, value in element.simulation_data.items():
             print(f"{element.name}.{key} = {value}")
