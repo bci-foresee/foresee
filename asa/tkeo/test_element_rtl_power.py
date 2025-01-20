@@ -44,7 +44,8 @@ def test_tkeo_basic() -> None:
             f"Element: {element.name}, visualisation generated: {element.save_visualization}"
         )
     print()
-    print(
-        f"assert test case not implemented yet, output shape:\n {output.shape}"
-    )
+    for element in elements:
+        for key, value in element.simulation_data.items():
+            print(f"{element.name}.{key} = {value}")
+        print()
     assert output.shape == (input_channels, input_samples)

@@ -72,6 +72,8 @@ class SVM(ProcessingElement):
             np.int64: The result of the dot product computation.
         """
 
+        self.rtl_single_module_runs = 1 # verilog is run 1 time to emulate hardware
+
         # Convert input and weights to appropriate integer types (e.g., int32)
         input_int = input.astype(np.int32)
         weights_int = self.weights.astype(np.int32)

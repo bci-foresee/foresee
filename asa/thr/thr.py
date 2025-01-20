@@ -72,6 +72,8 @@ class THR(ProcessingElement):
         # do if statements to choose between verilog implementations (ie how many points) here
         verilog_file = "thr"
 
+        self.rtl_single_module_runs = 1 # verilog is run 1 time to emulate hardware
+
         input_int = np.int32(input.item())
 
         with open(self.input_buffer, 'w') as file:

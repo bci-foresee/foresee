@@ -48,7 +48,13 @@ class ProcessingElement:
         # how many times this rtl module was ran.
         # this is important for power estimation
         # ie if we did 16 idential runs of the same module, we can multiply the power by 16
+        # this is used for when we have multiple channels in signals
         self.rtl_module_runs = 0
+
+
+        # for a single run, how many times was module ran
+        # this is for example if a module is ran 8192 times for a single signal window
+        self.rtl_single_module_runs = 0
 
         # save vizualisation of processing element
         self.save_visualization = save_visualization
@@ -235,8 +241,7 @@ class ProcessingElement:
                     # self.simulation_data["power_dict"][key] = value * self.rtl_module_runs
                     # self.simulation_data["power_dict"]
                     if key != 'Percentage':
-                        self.simulation_data["power_dict"][
-                            key] = value * self.rtl_module_runs
+                        self.simulation_data["power_dict"][key] = value * self.rtl_module_runs * max(1, self.rtl_single_module_runs)
 
         else:
             output = self.compute(input=input_data)
@@ -334,7 +339,7 @@ class ProcessingElement:
         create_clock -period {clock_period} [get_ports clk]
 
         # Manually estimate switching activity (you may have to estimate this externally)
-        # switching activity, 0.2 normal??
+        # switching activity, 0.2 normal
         {comment_sw}set_power_activity -input -activity {switching_activity}
         # for example when a certain port will never toggle:
         # set_power_activity -input_port reset -activity 0.0

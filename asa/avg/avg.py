@@ -77,6 +77,9 @@ class AVG(ProcessingElement):
         Returns:
             NDArray containing average values for all channels
         """
+
+        self.rtl_single_module_runs = 8192 # verilog is run 8192 times to emulate hardware
+
         if input.ndim == 1:
             input = input.reshape(1, -1)
 
