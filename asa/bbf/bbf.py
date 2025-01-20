@@ -104,7 +104,6 @@ class BBF(ProcessingElement):
                 power_bands.append(power)
 
                 # print(f"Power bands shape: {np.array(power_bands).shape}")
-                
 
                 #print(f"Power in band {lowcut}-{highcut} Hz: {np.mean(power)}")
             bbf_power_features.append(power_bands)
@@ -116,7 +115,8 @@ class BBF(ProcessingElement):
 
         return bbf_power_features
 
-    def compute_verilog(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
+    def compute_verilog(self,
+                        input: NDArray[np.float32]) -> NDArray[np.float32]:
 
         if input.ndim == 1:
             input = input.reshape(1, -1)
@@ -162,9 +162,7 @@ class BBF(ProcessingElement):
                 # normalize the filtered signal
                 # filtered_signal = filtered_signal * 0.25
 
-                
                 # Convert to integer representation
-                
 
                 # Write input buffer - 8192 cycles for 8192 points
                 with open(self.input_buffer, 'w') as file:

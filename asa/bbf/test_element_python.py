@@ -20,12 +20,12 @@ def test_fft_basic() -> None:
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
     bbf_pe = BBF(fs=input_fs,
-                berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80),
-                            (80, 180)],
-                clk=1,
-                rtl_sim=False,
-                rtl_power_estimation=False,
-                save_visualization=False)
+                 berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80),
+                               (80, 180)],
+                 clk=1,
+                 rtl_sim=False,
+                 rtl_power_estimation=False,
+                 save_visualization=False)
 
     # connect PEs
     input_pe.add_output(bbf_pe)
@@ -49,5 +49,5 @@ def test_fft_basic() -> None:
     print(
         f"assert test case not implemented yet, output shape:\n {output.shape}"
     )
-    
+
     assert output.shape == (input_channels, 6)
