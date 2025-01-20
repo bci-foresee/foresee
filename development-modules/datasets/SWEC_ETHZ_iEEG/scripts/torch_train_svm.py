@@ -165,7 +165,6 @@ with open(filename, 'wb') as file:
 
 print("Model saved to", filename)
 
-
 # # Load the model from the file
 # with open(filename, 'rb') as file:
 #     loaded_model = pickle.load(file)
