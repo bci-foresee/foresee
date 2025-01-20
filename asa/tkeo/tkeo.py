@@ -102,8 +102,8 @@ class TKEO(ProcessingElement):
 
         assert n_samples == 8192, "Input must have 8192 samples per channel"
 
-        self.rtl_single_module_runs = n_samples # verilog is run 8192 times to emulate hardware
-        
+        self.rtl_single_module_runs = n_samples  # verilog is run 8192 times to emulate hardware
+
         verilog_file = "tkeo"
         tkeo_outputs = []
 

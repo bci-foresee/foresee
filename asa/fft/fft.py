@@ -98,7 +98,7 @@ class FFT(ProcessingElement):
         # do if statements to choose between verilog implementations (ie how many points) here
         verilog_file = "spiral_fft_8192"
 
-        self.rtl_single_module_runs = 2048 # verilog is run 2048 times to emulate hardware
+        self.rtl_single_module_runs = 2048  # verilog is run 2048 times to emulate hardware
 
         fft_power_features = []
         fft_outputs = []

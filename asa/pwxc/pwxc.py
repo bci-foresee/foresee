@@ -72,7 +72,7 @@ class PWXC(ProcessingElement):
         # do if statements to choose between verilog implementations (ie how many points) here
         verilog_file = "pwxc"
         correlations = []
-        self.rtl_single_module_runs = 1 # verilog is run 1 time to emulate hardware
+        self.rtl_single_module_runs = 1  # verilog is run 1 time to emulate hardware
 
         input = input.astype(int)
 
