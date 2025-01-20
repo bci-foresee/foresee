@@ -22,9 +22,13 @@ class BBF(ProcessingElement):
                  fs: int,
                  berger_bands: List[Tuple[int, int]],
                  clk: int = 0,
+                 rtl_sim: bool = False,
+                 rtl_power_estimation: bool = False,
                  save_visualization: bool = False) -> None:
         super().__init__(name=self.name,
                          clk=clk,
+                         rtl_sim=rtl_sim,
+                         rtl_power_estimation=rtl_power_estimation,
                          save_visualization=save_visualization)
 
         self.sample_freq = fs
@@ -94,7 +98,96 @@ class BBF(ProcessingElement):
                 if np.isinf(power) or np.isnan(
                         power):  # this is a fix idk why this happens
                     power = 0
+
+                # print(f"Power shape: {power.shape}")
+
                 power_bands.append(power)
+
+                # print(f"Power bands shape: {np.array(power_bands).shape}")
+                
+
+                #print(f"Power in band {lowcut}-{highcut} Hz: {np.mean(power)}")
+            bbf_power_features.append(power_bands)
+
+        bbf_power_features = np.array(bbf_power_features)
+        self.bbf_power_features = bbf_power_features
+
+        # self.simulation_data
+
+        return bbf_power_features
+
+    def compute_verilog(self, input: NDArray[np.float32]) -> NDArray[np.float32]:
+
+        if input.ndim == 1:
+            input = input.reshape(1, -1)
+
+        n_channels, n_samples = input.shape
+
+        assert n_samples == 8192, "Input must have 8192 samples per channel"
+
+        verilog_file = "bbf"
+
+        # helper functions
+        def butter_bandpass(lowcut, highcut, fs, order=5):
+            # this function returns the coefficients of the bandpass filter
+            nyquist = 0.5 * fs
+            low = lowcut / nyquist
+            high = highcut / nyquist
+            b, a = butter(order, [low, high], btype='band')
+            return b, a
+
+        def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+            # this function applies the bandpass filter to the input data
+            # a, b are the coefficients of the bandpass filter
+            b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+            y = filtfilt(b, a, data)
+            return y
+
+        bbf_power_features = []
+
+        for signal in input:
+
+            signal_int = signal.astype(np.int32)
+
+            # Apply the bandpass filters and calculate power
+            power_bands = []
+
+            for lowcut, highcut in self.berger_bands:
+                filtered_signal = butter_bandpass_filter(signal_int,
+                                                         lowcut,
+                                                         highcut,
+                                                         self.sample_freq,
+                                                         order=5)
+
+                # normalize the filtered signal
+                # filtered_signal = filtered_signal * 0.25
+
+                
+                # Convert to integer representation
+                
+
+                # Write input buffer - 8192 cycles for 8192 points
+                with open(self.input_buffer, 'w') as file:
+                    for i in range(8192):
+                        # Write 1 sample per line (similar to FFT implementation)
+                        values = [signal_int[i]]
+                        # Convert to hex and write to file
+                        hex_values = [self.int_to_signedHex(v) for v in values]
+                        file.write(" ".join(hex_values) + "\n")
+
+                # Run Verilog simulation
+                bbf_result = self.run_verilog_simulation(
+                    PE_name=self.name,
+                    verilog_file=verilog_file,
+                    output_file=self.output_buffer)
+
+                power = bbf_result[-1]
+
+                # print(f"Power shape: {power.shape}")
+
+                power_bands.append(power)
+
+                # print(f"Power bands shape: {np.array(power_bands).shape}")
 
                 #print(f"Power in band {lowcut}-{highcut} Hz: {np.mean(power)}")
             bbf_power_features.append(power_bands)
@@ -117,17 +210,18 @@ class BBF(ProcessingElement):
 
     # necessary method to validate the dimensions of the input data
     def visualize(self) -> None:
-        # Ensure the directory exists
-        output_dir = 'plots'
-        os.makedirs(output_dir, exist_ok=True)
+        # # Ensure the directory exists
+        # output_dir = 'plots'
+        # os.makedirs(output_dir, exist_ok=True)
 
-        # displaying power bands of first signal
-        plt.figure(figsize=(12, 6))
-        plt.bar(range(len(self.berger_bands)), self.bbf_power_features[0])
-        plt.xticks(ticks=range(len(self.berger_bands)),
-                   labels=[str(band) for band in self.berger_bands])
-        plt.title('Power in Berger Bands for 1st input channel')
-        plt.xlabel('Band')
-        plt.ylabel('Power')
-        plt.grid()
-        plt.savefig(os.path.join(output_dir, 'bbf_power_in_berger_bands.png'))
+        # # displaying power bands of first signal
+        # plt.figure(figsize=(12, 6))
+        # plt.bar(range(len(self.berger_bands)), self.bbf_power_features[0])
+        # plt.xticks(ticks=range(len(self.berger_bands)),
+        #            labels=[str(band) for band in self.berger_bands])
+        # plt.title('Power in Berger Bands for 1st input channel')
+        # plt.xlabel('Band')
+        # plt.ylabel('Power')
+        # plt.grid()
+        # plt.savefig(os.path.join(output_dir, 'bbf_power_in_berger_bands.png'))
+        pass
