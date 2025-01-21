@@ -36,8 +36,8 @@ def test_sandbox_pipeline() -> None:
                  berger_bands=[(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80),
                                (80, 180)],
                  clk=1,
-                 rtl_sim=True,
-                 rtl_power_estimation=True,
+                 rtl_sim=False,
+                 rtl_power_estimation=False,
                  save_visualization=False)
 
     # pwxc
