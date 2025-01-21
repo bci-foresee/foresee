@@ -28,3 +28,5 @@ pipelines/*
 !pipelines/create_default/
 !pipelines/seizure/
 !pipelines/sandbox/
+!pipelines/shiao/
+!pipelines/neo/

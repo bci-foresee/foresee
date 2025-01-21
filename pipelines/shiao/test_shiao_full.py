@@ -85,7 +85,7 @@ def test_sandbox_pipeline() -> None:
 
     svm_pe = SVM(weights=some_weights,
                  clk=1,
-                 rtl_sim=False,
+                 rtl_sim=True,
                  rtl_power_estimation=False,
                  save_visualization=False)
 
