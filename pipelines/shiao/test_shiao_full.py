@@ -90,7 +90,7 @@ def test_sandbox_pipeline() -> None:
                  save_visualization=False)
 
     thr_pe = THR(lower_bound=0,
-                 upper_bound=1,
+                 upper_bound=9999999999,
                  clk=15_700_000,
                  rtl_sim=False,
                  rtl_power_estimation=False,
