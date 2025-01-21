@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 
+
 def tkeo_py(self, input: NDArray[np.float64]) -> NDArray[np.float64]:
     """
     Vectorized implementation of TKEO computation for multiple channels
@@ -37,7 +38,7 @@ def tkeo_py(self, input: NDArray[np.float64]) -> NDArray[np.float64]:
 
 
 def avg_py(self, input: NDArray[np.float64]) -> NDArray[np.float64]:
-        """
+    """
         Vectorized implementation of AVG computation for multiple channels
 
         Args:
@@ -50,4 +51,4 @@ def avg_py(self, input: NDArray[np.float64]) -> NDArray[np.float64]:
             NDArray containing AVG values for all channels
         """
 
-        return np.mean(input, axis=1)
+    return np.mean(input, axis=1)
