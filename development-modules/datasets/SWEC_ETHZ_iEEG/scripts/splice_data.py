@@ -5,6 +5,7 @@ import requests
 from scipy.io import loadmat
 from tqdm import tqdm
 
+
 def splice_seizure_data(patient_dict):
     '''
     Iterates through each patient and each seizure, downloads the corresponding seizure files,
@@ -20,8 +21,10 @@ def splice_seizure_data(patient_dict):
             end_idx = int(patient_data.seizure_end_indicies[seizure_index])
 
             save_seizure_splice(start_file, end_file, start_idx, end_idx,
-                                patient_id, seizure_index, patient_data.offset_beg,
+                                patient_id, seizure_index,
+                                patient_data.offset_beg,
                                 patient_data.offset_end)
+
 
 def download_and_load_mat(url):
     """
@@ -32,37 +35,43 @@ def download_and_load_mat(url):
 
         # Total size of the file (obtained from the headers)
         total_size_in_bytes = int(response.headers.get('content-length', 0))
-        
+
         # Create a progress bar instance with the total expected size in bytes
-        progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
-        
+        progress_bar = tqdm(total=total_size_in_bytes,
+                            unit='iB',
+                            unit_scale=True)
+
         # Create a BytesIO object to accumulate the data
         data_to_load = BytesIO()
-        
+
         # Download the file in chunks and update the progress bar
         for data in response.iter_content(chunk_size=1024):
             progress_bar.update(len(data))
             data_to_load.write(data)
-        
+
         # Ensure the progress bar is filled completely upon download finish
         progress_bar.close()
-        
+
         # Move the cursor of BytesIO object to the beginning after writing all data
         data_to_load.seek(0)
-        
+
         # Load the .mat file from the buffered bytes
         return loadmat(data_to_load)
 
-def save_seizure_splice(start_file, end_file, start_idx, end_idx,
-                        patient_id, seizure_id, offset_beg, offset_end):
+
+def save_seizure_splice(start_file, end_file, start_idx, end_idx, patient_id,
+                        seizure_id, offset_beg, offset_end):
     base_url = 'http://ieeg-swez.ethz.ch/long-term_dataset/ID{}/ID{}_{}h.mat'
     spliced_data = []
 
     # Load data across multiple files if needed
     for file_number in range(start_file, end_file + 1):
         file_url = base_url.format(patient_id, patient_id, file_number)
-        mat_data = download_and_load_mat(file_url)  # Using the new download function
-        data = mat_data['EEG'][:16]  # Assuming EEG data is under key 'EEG' and taking first 16 channels
+        mat_data = download_and_load_mat(
+            file_url)  # Using the new download function
+        data = mat_data[
+            'EEG'][:
+                   16]  # Assuming EEG data is under key 'EEG' and taking first 16 channels
         print(mat_data.keys())
         print(data)
 
@@ -104,17 +113,15 @@ def save_seizure_splice(start_file, end_file, start_idx, end_idx,
     # np.save(os.path.join(save_dir, 'signals.npy'), np.array(slices))
     # np.save(os.path.join(save_dir, 'labels.npy'), np.array(slice_labels))
 
+
 # Example usage:
 # Assuming patient_dict is defined and contains the necessary patient data
 # splice_seizure_data(patient_dict)
-
-
 
 # import numpy as np
 # from scipy.io import loadmat
 # import os
 # import re
-
 
 # def splice_seizure_data(patient_dict):
 #     '''
@@ -138,7 +145,6 @@ def save_seizure_splice(start_file, end_file, start_idx, end_idx,
 #                             seizure_id=i,
 #                             offset_beg=patient_data.offset_beg,
 #                             offset_end=patient_data.offset_end)
-
 
 # def save_seizure_splice(start_file, end_file, start_idx, end_idx, seizure_id,
 #                         patient_id, offset_beg, offset_end):
