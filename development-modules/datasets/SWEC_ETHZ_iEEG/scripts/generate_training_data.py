@@ -10,7 +10,9 @@ patient_nums = [
     '13', '14', '15', '16', '17', '18'
 ]
 
-splice_seizure_data(patient_dict)
+splices_remaining = splice_seizure_data(patient_dict)
+
+# splice_nonseizure_data(patient_dict, 10)
 
 # splice_nonseizure_data(patient_id='01',
 #                        patient_dict=patient_dict,

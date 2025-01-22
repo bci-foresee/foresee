@@ -18,8 +18,8 @@ class patient_data_info:
         self.sample_rate = sample_rate
         self.seizure_begin = seizure_begin
         self.seizure_end = seizure_end
-        self.offset_beg = offset_beg * self.sample_rate
-        self.offset_end = offset_end * self.sample_rate
+        self.offset_beg = offset_beg
+        self.offset_end = offset_end
 
         # dataset files and indices containing seizures
         self.seizure_start_files = np.zeros_like(self.seizure_begin)
@@ -27,42 +27,32 @@ class patient_data_info:
         self.seizure_start_indicies = np.zeros_like(self.seizure_begin)
         self.seizure_end_indicies = np.zeros_like(self.seizure_begin)
 
-        self.extract_seizure_data()
+        self.get_seizure_bounds()
 
-    def extract_seizure_data(self, file_idx_len=1843200):
+    def get_seizure_bounds(self): #, file_idx_len=1843200):
         '''
         Extracts dataset files and indices corresponding to seizures
         '''
 
-        # getting seizure start file info
+        # get start file and index
         for i in range(len(self.seizure_begin)):
-            # getting index of data where the seizure starts (- an offset)
-            overall_start_idx = np.floor(
-                self.seizure_begin[i] * self.sample_rate) + self.offset_beg
+            start_time = self.seizure_begin[i] + self.offset_beg # in s
+            start_file_num = (start_time // 3600) + 1 # in hrs
+            relative_start_time = start_time % 3600 # in s
+            start_index = np.floor(relative_start_time * self.sample_rate)
 
-            # getting which matlab file the start of the seizure will be found in
-            start_file_num = overall_start_idx // file_idx_len
+            self.seizure_start_files[i] = start_file_num
+            self.seizure_start_indicies[i] = start_index
 
-            # within the start file, where does the start idx start
-            file_start_idx = overall_start_idx - start_file_num * file_idx_len
-
-            # storing the start file nums and indicies
-            self.seizure_start_files[i] = start_file_num  # 1 indexed
-            self.seizure_start_indicies[i] = file_start_idx
-
-        # same thing but for seizure end
-        # so getting seizure end file and the index within that file that the seizure resides in
-
-        for i in range(len(self.seizure_begin)):
-            overall_end_idx = np.ceil(
-                self.seizure_end[i] * self.sample_rate) + self.offset_end
-
-            end_file_num = overall_end_idx // file_idx_len
-
-            file_end_idx = overall_end_idx - end_file_num * file_idx_len
+        # get end file and index
+        for i in range(len(self.seizure_end)):
+            end_time = self.seizure_end[i] + self.offset_end # in s
+            end_file_num = (end_time // 3600) + 1 # in hrs
+            relative_end_time = end_time % 3600 # in s
+            end_index = np.floor(relative_end_time * self.sample_rate)
 
             self.seizure_end_files[i] = end_file_num
-            self.seizure_end_indicies[i] = file_end_idx
+            self.seizure_end_indicies[i] = end_index
 
     def save_seizure_data_urls(self):
         num_seizures = len(self.seizure_begin)
