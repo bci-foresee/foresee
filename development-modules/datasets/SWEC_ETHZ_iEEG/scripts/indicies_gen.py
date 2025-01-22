@@ -2,7 +2,6 @@ import os
 import requests
 from scipy.io import loadmat
 import numpy as np
-from tqdm import tqdm  # This imports the tqdm function directly
 
 
 class patient_data_info:
@@ -27,9 +26,9 @@ class patient_data_info:
         self.seizure_start_indicies = np.zeros_like(self.seizure_begin) 
         self.seizure_end_indicies = np.zeros_like(self.seizure_begin) 
 
-        self.extract_seizure_data(offset_beg=offset_beg, offset_end=offset_end)
+        self.extract_seizure_data()
 
-    def extract_seizure_data(self, file_idx_len=1843200, offset_beg=0, offset_end=0):
+    def extract_seizure_data(self, file_idx_len=1843200):
         '''
         Extracts dataset files and indices corresponding to seizures
         '''
@@ -38,7 +37,7 @@ class patient_data_info:
         for i in range(len(self.seizure_begin)):
             # getting index of data where the seizure starts (- an offset)
             overall_start_idx = np.floor(
-                self.seizure_begin[i] * self.sample_rate) + offset_beg
+                self.seizure_begin[i] * self.sample_rate) + self.offset_beg
 
             # getting which matlab file the start of the seizure will be found in
             start_file_num = overall_start_idx // file_idx_len
@@ -55,7 +54,7 @@ class patient_data_info:
 
         for i in range(len(self.seizure_begin)):
             overall_end_idx = np.ceil(
-                self.seizure_end[i] * self.sample_rate) + offset_end
+                self.seizure_end[i] * self.sample_rate) + self.offset_end
 
             end_file_num = overall_end_idx // file_idx_len
 
