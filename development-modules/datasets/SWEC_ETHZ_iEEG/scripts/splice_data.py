@@ -22,8 +22,10 @@ def splice_seizure_data(patient_dict):
             end_idx = int(patient_data.seizure_end_indicies[seizure_index])
 
             save_seizure_splices(start_file, end_file, start_idx, end_idx,
-                                patient_id, seizure_index, patient_data.offset_beg,
-                                patient_data.offset_end, patient_data.sample_rate)
+                                 patient_id, seizure_index,
+                                 patient_data.offset_beg,
+                                 patient_data.offset_end,
+                                 patient_data.sample_rate)
 
 
 def download_and_load_mat(url):
@@ -32,19 +34,21 @@ def download_and_load_mat(url):
     """
     with requests.get(url, stream=True) as response:
         print(f'Downloading {url}')
-        response.raise_for_status() 
+        response.raise_for_status()
 
         total_size_in_bytes = int(response.headers.get('content-length', 0))
-        progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
-        
+        progress_bar = tqdm(total=total_size_in_bytes,
+                            unit='iB',
+                            unit_scale=True)
+
         data_to_load = BytesIO()
         for data in response.iter_content(chunk_size=1024):
             progress_bar.update(len(data))
             data_to_load.write(data)
-        
+
         progress_bar.close()
         data_to_load.seek(0)
-        
+
         return loadmat(data_to_load)
 
 def save_seizure_splices(start_file, end_file, start_idx, end_idx,
@@ -58,8 +62,11 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx,
     # get EEG data from seizure bounds
     for file_number in range(start_file, end_file + 1):
         file_url = base_url.format(patient_id, patient_id, file_number)
-        mat_data = download_and_load_mat(file_url)  # Using the new download function
-        data = mat_data['EEG'][:16]  # Assuming EEG data is under key 'EEG' and taking first 16 channels
+        mat_data = download_and_load_mat(
+            file_url)  # Using the new download function
+        data = mat_data[
+            'EEG'][:
+                   16]  # Assuming EEG data is under key 'EEG' and taking first 16 channels
 
         if file_number == start_file:
             data = data[:, start_idx:]
@@ -88,7 +95,9 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx,
     for start in range(0, spliced_data.shape[1] - window_size + 1, step_size):
         end = start + window_size
         slice = spliced_data[:, start:end]
-        label = np.argmax(np.bincount(labels[start:end]))  # Label for the slice is the most common label in this window
+        label = np.argmax(
+            np.bincount(labels[start:end])
+        )  # Label for the slice is the most common label in this window
 
         slices.append(slice)
         slice_labels.append(label)
