@@ -5,6 +5,7 @@ import requests
 from scipy.io import loadmat
 from tqdm import tqdm
 
+
 def splice_seizure_data(patient_dict):
     '''
     Iterates through each patient and each seizure, downloads the corresponding seizure files,
@@ -23,6 +24,7 @@ def splice_seizure_data(patient_dict):
             save_seizure_splices(start_file, end_file, start_idx, end_idx,
                                 patient_id, seizure_index, patient_data.offset_beg,
                                 patient_data.offset_end, patient_data.sample_rate)
+
 
 def download_and_load_mat(url):
     """
@@ -92,17 +94,15 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx,
     np.save(save_path + '_signals.npy', np.array(slices))
     np.save(save_path + '_labels.npy', np.array(slice_labels))
 
+
 # Example usage:
 # Assuming patient_dict is defined and contains the necessary patient data
 # splice_seizure_data(patient_dict)
-
-
 
 # import numpy as np
 # from scipy.io import loadmat
 # import os
 # import re
-
 
 # def splice_seizure_data(patient_dict):
 #     '''
@@ -126,7 +126,6 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx,
 #                             seizure_id=i,
 #                             offset_beg=patient_data.offset_beg,
 #                             offset_end=patient_data.offset_end)
-
 
 # def save_seizure_splice(start_file, end_file, start_idx, end_idx, seizure_id,
 #                         patient_id, offset_beg, offset_end):
