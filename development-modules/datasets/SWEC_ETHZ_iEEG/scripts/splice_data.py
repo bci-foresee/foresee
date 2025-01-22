@@ -22,8 +22,10 @@ def splice_seizure_data(patient_dict):
             end_idx = int(patient_data.seizure_end_indicies[seizure_index])
 
             save_seizure_splices(start_file, end_file, start_idx, end_idx,
-                                patient_id, seizure_index, patient_data.offset_beg,
-                                patient_data.offset_end, patient_data.sample_rate)
+                                 patient_id, seizure_index,
+                                 patient_data.offset_beg,
+                                 patient_data.offset_end,
+                                 patient_data.sample_rate)
 
 
 def download_and_load_mat(url):
@@ -32,31 +34,37 @@ def download_and_load_mat(url):
     """
     with requests.get(url, stream=True) as response:
         print(f'Downloading {url}')
-        response.raise_for_status() 
+        response.raise_for_status()
 
         total_size_in_bytes = int(response.headers.get('content-length', 0))
-        progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
-        
+        progress_bar = tqdm(total=total_size_in_bytes,
+                            unit='iB',
+                            unit_scale=True)
+
         data_to_load = BytesIO()
         for data in response.iter_content(chunk_size=1024):
             progress_bar.update(len(data))
             data_to_load.write(data)
-        
+
         progress_bar.close()
         data_to_load.seek(0)
-        
+
         return loadmat(data_to_load)
 
-def save_seizure_splices(start_file, end_file, start_idx, end_idx,
-                        patient_id, seizure_id, offset_beg, offset_end, sample_rate):
+
+def save_seizure_splices(start_file, end_file, start_idx, end_idx, patient_id,
+                         seizure_id, offset_beg, offset_end, sample_rate):
     base_url = 'http://ieeg-swez.ethz.ch/long-term_dataset/ID{}/ID{}_{}h.mat'
     spliced_data = []
 
     # Load data across multiple files if needed
     for file_number in range(start_file, end_file + 1):
         file_url = base_url.format(patient_id, patient_id, file_number)
-        mat_data = download_and_load_mat(file_url)  # Using the new download function
-        data = mat_data['EEG'][:16]  # Assuming EEG data is under key 'EEG' and taking first 16 channels
+        mat_data = download_and_load_mat(
+            file_url)  # Using the new download function
+        data = mat_data[
+            'EEG'][:
+                   16]  # Assuming EEG data is under key 'EEG' and taking first 16 channels
 
         if file_number == start_file:
             data = data[:, start_idx:]
@@ -66,15 +74,19 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx,
         spliced_data.append(data)
 
     # Concatenate data from potentially multiple files
-    spliced_data = np.concatenate(spliced_data, axis=1) if len(spliced_data) > 1 else spliced_data[0]
+    spliced_data = np.concatenate(
+        spliced_data, axis=1) if len(spliced_data) > 1 else spliced_data[0]
 
     # Create labels indicating seizure presence
     pre_seizure_samples = int(-offset_beg)
     post_seizure_samples = int(offset_end)
-    seizure_samples = spliced_data.shape[1] - pre_seizure_samples - post_seizure_samples
-    labels = np.concatenate([np.zeros(pre_seizure_samples),
-                             np.ones(seizure_samples),
-                             np.zeros(post_seizure_samples)]).astype(int)
+    seizure_samples = spliced_data.shape[
+        1] - pre_seizure_samples - post_seizure_samples
+    labels = np.concatenate([
+        np.zeros(pre_seizure_samples),
+        np.ones(seizure_samples),
+        np.zeros(post_seizure_samples)
+    ]).astype(int)
 
     # Generate overlapping slices
     window_size = 20 * sample_rate  # 20 second splice window
@@ -84,7 +96,9 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx,
     for start in range(0, spliced_data.shape[1] - window_size + 1, step_size):
         end = start + window_size
         slice = spliced_data[:, start:end]
-        label = np.argmax(np.bincount(labels[start:end]))  # Label for the slice is the most common label in this window
+        label = np.argmax(
+            np.bincount(labels[start:end])
+        )  # Label for the slice is the most common label in this window
 
         slices.append(slice)
         slice_labels.append(label)
