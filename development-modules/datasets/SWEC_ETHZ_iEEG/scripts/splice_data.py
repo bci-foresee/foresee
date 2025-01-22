@@ -11,6 +11,7 @@ def splice_seizure_data(patient_dict):
     extracts the seizure splice, and saves it.
     '''
     for patient_id, patient_data in patient_dict.items():
+        print(f"Processing patient {patient_id} data")
         num_seizures = len(patient_data.seizure_begin)
 
         for seizure_index in range(num_seizures):
@@ -19,42 +20,33 @@ def splice_seizure_data(patient_dict):
             start_idx = int(patient_data.seizure_start_indicies[seizure_index])
             end_idx = int(patient_data.seizure_end_indicies[seizure_index])
 
-            save_seizure_splice(start_file, end_file, start_idx, end_idx,
+            save_seizure_splices(start_file, end_file, start_idx, end_idx,
                                 patient_id, seizure_index, patient_data.offset_beg,
-                                patient_data.offset_end)
+                                patient_data.offset_end, patient_data.sample_rate)
 
 def download_and_load_mat(url):
     """
     Download a .mat file from the given URL with a progress bar and load it into memory.
     """
     with requests.get(url, stream=True) as response:
-        response.raise_for_status()  # Check that the request was successful
+        print(f'Downloading {url}')
+        response.raise_for_status() 
 
-        # Total size of the file (obtained from the headers)
         total_size_in_bytes = int(response.headers.get('content-length', 0))
-        
-        # Create a progress bar instance with the total expected size in bytes
         progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
         
-        # Create a BytesIO object to accumulate the data
         data_to_load = BytesIO()
-        
-        # Download the file in chunks and update the progress bar
         for data in response.iter_content(chunk_size=1024):
             progress_bar.update(len(data))
             data_to_load.write(data)
         
-        # Ensure the progress bar is filled completely upon download finish
         progress_bar.close()
-        
-        # Move the cursor of BytesIO object to the beginning after writing all data
         data_to_load.seek(0)
         
-        # Load the .mat file from the buffered bytes
         return loadmat(data_to_load)
 
-def save_seizure_splice(start_file, end_file, start_idx, end_idx,
-                        patient_id, seizure_id, offset_beg, offset_end):
+def save_seizure_splices(start_file, end_file, start_idx, end_idx,
+                        patient_id, seizure_id, offset_beg, offset_end, sample_rate):
     base_url = 'http://ieeg-swez.ethz.ch/long-term_dataset/ID{}/ID{}_{}h.mat'
     spliced_data = []
 
@@ -63,46 +55,42 @@ def save_seizure_splice(start_file, end_file, start_idx, end_idx,
         file_url = base_url.format(patient_id, patient_id, file_number)
         mat_data = download_and_load_mat(file_url)  # Using the new download function
         data = mat_data['EEG'][:16]  # Assuming EEG data is under key 'EEG' and taking first 16 channels
-        print(mat_data.keys())
-        print(data)
 
-    #     if file_number == start_file:
-    #         data = data[:, start_idx:]
-    #     if file_number == end_file:
-    #         data = data[:, :end_idx + 1]
+        if file_number == start_file:
+            data = data[:, start_idx:]
+        if file_number == end_file:
+            data = data[:, :end_idx + 1]
 
-    #     spliced_data.append(data)
+        spliced_data.append(data)
 
-    # # Concatenate data from potentially multiple files
-    # spliced_data = np.concatenate(spliced_data, axis=1) if len(spliced_data) > 1 else spliced_data[0]
+    # Concatenate data from potentially multiple files
+    spliced_data = np.concatenate(spliced_data, axis=1) if len(spliced_data) > 1 else spliced_data[0]
 
-    # # Create labels indicating seizure presence
-    # pre_seizure_samples = int(-offset_beg)
-    # post_seizure_samples = int(offset_end)
-    # seizure_samples = spliced_data.shape[1] - pre_seizure_samples - post_seizure_samples
-    # labels = np.concatenate([np.zeros(pre_seizure_samples),
-    #                          np.ones(seizure_samples),
-    #                          np.zeros(post_seizure_samples)]).astype(int)
+    # Create labels indicating seizure presence
+    pre_seizure_samples = int(-offset_beg)
+    post_seizure_samples = int(offset_end)
+    seizure_samples = spliced_data.shape[1] - pre_seizure_samples - post_seizure_samples
+    labels = np.concatenate([np.zeros(pre_seizure_samples),
+                             np.ones(seizure_samples),
+                             np.zeros(post_seizure_samples)]).astype(int)
 
-    # # Generate overlapping slices
-    # sample_rate = 512  # Assuming 512 Hz sampling rate
-    # window_size = 20 * sample_rate  # 20 seconds
-    # step_size = 10 * sample_rate  # 10 seconds overlap
-    # slices, slice_labels = [], []
+    # Generate overlapping slices
+    window_size = 20 * sample_rate  # 20 second splice window
+    step_size = 10 * sample_rate  # 10 seconds overlap
+    slices, slice_labels = [], []
 
-    # for start in range(0, spliced_data.shape[1] - window_size + 1, step_size):
-    #     end = start + window_size
-    #     slice = spliced_data[:, start:end]
-    #     label = np.argmax(np.bincount(labels[start:end]))  # Label for the slice is the most common label in this window
+    for start in range(0, spliced_data.shape[1] - window_size + 1, step_size):
+        end = start + window_size
+        slice = spliced_data[:, start:end]
+        label = np.argmax(np.bincount(labels[start:end]))  # Label for the slice is the most common label in this window
 
-    #     slices.append(slice)
-    #     slice_labels.append(label)
+        slices.append(slice)
+        slice_labels.append(label)
 
-    # # Save the slices and labels
-    # save_dir = './seizure_data/ID{}_{}'.format(patient_id, seizure_id)
-    # os.makedirs(save_dir, exist_ok=True)
-    # np.save(os.path.join(save_dir, 'signals.npy'), np.array(slices))
-    # np.save(os.path.join(save_dir, 'labels.npy'), np.array(slice_labels))
+    # Save the slices and labels
+    save_path = './seizure_data/ID{}_{}'.format(patient_id, seizure_id)
+    np.save(save_path + '_signals.npy', np.array(slices))
+    np.save(save_path + '_labels.npy', np.array(slice_labels))
 
 # Example usage:
 # Assuming patient_dict is defined and contains the necessary patient data
