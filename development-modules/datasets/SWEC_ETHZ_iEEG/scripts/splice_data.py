@@ -51,8 +51,9 @@ def download_and_load_mat(url):
 
         return loadmat(data_to_load)
 
-def save_seizure_splices(start_file, end_file, start_idx, end_idx,
-                        patient_id, seizure_id, offset_beg, offset_end, sample_rate):
+
+def save_seizure_splices(start_file, end_file, start_idx, end_idx, patient_id,
+                         seizure_id, offset_beg, offset_end, sample_rate):
     '''
     Splice seizure into 20s windows and save corresponding EEG data and labels
     '''
@@ -76,21 +77,25 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx,
         spliced_data.append(data)
 
     # concatenate data if multi files spanned
-    spliced_data = np.concatenate(spliced_data, axis=1) if len(spliced_data) > 1 else spliced_data[0]
+    spliced_data = np.concatenate(
+        spliced_data, axis=1) if len(spliced_data) > 1 else spliced_data[0]
 
     # create labels at sample level indicating seizure
     pre_seizure_samples = int(-offset_beg * sample_rate)
     post_seizure_samples = int(offset_end * sample_rate)
-    seizure_samples = spliced_data.shape[1] - pre_seizure_samples - post_seizure_samples
-    labels = np.concatenate([np.zeros(pre_seizure_samples),
-                             np.ones(seizure_samples),
-                             np.zeros(post_seizure_samples)]).astype(int)
+    seizure_samples = spliced_data.shape[
+        1] - pre_seizure_samples - post_seizure_samples
+    labels = np.concatenate([
+        np.zeros(pre_seizure_samples),
+        np.ones(seizure_samples),
+        np.zeros(post_seizure_samples)
+    ]).astype(int)
 
     # generate overlapping slices and label them
     window_size = 20 * sample_rate  # 20 second splice window
     step_size = 10 * sample_rate  # 10 seconds overlap
     slices, slice_labels = [], []
-    nonseizure_splices_remaining = 0 # used in save_nonseizure_splices() to balance dataset
+    nonseizure_splices_remaining = 0  # used in save_nonseizure_splices() to balance dataset
 
     for start in range(0, spliced_data.shape[1] - window_size + 1, step_size):
         end = start + window_size
@@ -108,7 +113,7 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx,
     np.save(save_path + '_positive_signals.npy', np.array(slices))
     np.save(save_path + '_positive_labels.npy', np.array(slice_labels))
 
-    return 
+    return
 
 
 def splice_nonseizure_data(patient_dict, target_slices_count):
@@ -125,14 +130,12 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
                 # print(patient_id, f)
                 url = f'http://ieeg-swez.ethz.ch/long-term_dataset/ID{patient_id}/ID{patient_id}_{f}h.mat'
                 omit_urls.add(url)
-                
 
     # get poolable files
     all_data_urls = '../data_urls/all_data.txt'
     with open(all_data_urls, 'r') as f:
         urls = [line.strip() for line in f.readlines()]
     usable_urls = [url for url in urls if url not in omit_urls]
-    
 
     # slices = []
     # slices_labels = []
@@ -151,7 +154,6 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
 
     #     window_size = 20 * sample_rate
     #     step_size = 10 * sample_rate
-       
 
     #     # Generate slices from this file
     #     for start in range(0, data.shape[1] - window_size + 1, step_size):
@@ -166,7 +168,6 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
     # np.save(save_path + '_signals.npy', np.array(slices))
     # np.save(save_path + '_labels.npy', np.array(slices_labels))
     # print(f'Saved {len(slices)} non-seizure slices from various sources.')
-
 
 
 # # this function and the following helper functions generate non-seizure slices of ieeg data
@@ -260,7 +261,6 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
 #             most_common_value = np.argmax(
 #                 counts
 #             )  # take most common occurence as an indicator of seizure or not
-            
 
 #             #print(slice.shape)
 #             slices.append(slice)

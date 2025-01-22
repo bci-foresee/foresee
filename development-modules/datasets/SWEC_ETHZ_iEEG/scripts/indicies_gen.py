@@ -29,16 +29,16 @@ class patient_data_info:
 
         self.get_seizure_bounds()
 
-    def get_seizure_bounds(self): #, file_idx_len=1843200):
+    def get_seizure_bounds(self):  #, file_idx_len=1843200):
         '''
         Extracts dataset files and indices corresponding to seizures
         '''
 
         # get start file and index
         for i in range(len(self.seizure_begin)):
-            start_time = self.seizure_begin[i] + self.offset_beg # in s
-            start_file_num = (start_time // 3600) + 1 # in hrs
-            relative_start_time = start_time % 3600 # in s
+            start_time = self.seizure_begin[i] + self.offset_beg  # in s
+            start_file_num = (start_time // 3600) + 1  # in hrs
+            relative_start_time = start_time % 3600  # in s
             start_index = np.floor(relative_start_time * self.sample_rate)
 
             self.seizure_start_files[i] = start_file_num
@@ -46,9 +46,9 @@ class patient_data_info:
 
         # get end file and index
         for i in range(len(self.seizure_end)):
-            end_time = self.seizure_end[i] + self.offset_end # in s
-            end_file_num = (end_time // 3600) + 1 # in hrs
-            relative_end_time = end_time % 3600 # in s
+            end_time = self.seizure_end[i] + self.offset_end  # in s
+            end_file_num = (end_time // 3600) + 1  # in hrs
+            relative_end_time = end_time % 3600  # in s
             end_index = np.floor(relative_end_time * self.sample_rate)
 
             self.seizure_end_files[i] = end_file_num
