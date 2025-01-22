@@ -6,13 +6,14 @@ import numpy as np
 
 class patient_data_info:
 
-    def __init__(self,
-                 patient_id,
-                 sample_rate, # sample rate (Hz)
-                 seizure_begin, # arr of seizure start times
-                 seizure_end, # arr of seizure end times
-                 offset_beg, # pre-seizure offset (s)
-                 offset_end): # post-seizure offset (s)
+    def __init__(
+            self,
+            patient_id,
+            sample_rate,  # sample rate (Hz)
+            seizure_begin,  # arr of seizure start times
+            seizure_end,  # arr of seizure end times
+            offset_beg,  # pre-seizure offset (s)
+            offset_end):  # post-seizure offset (s)
         self.id = patient_id
         self.sample_rate = sample_rate
         self.seizure_begin = seizure_begin
@@ -21,10 +22,10 @@ class patient_data_info:
         self.offset_end = offset_end * self.sample_rate
 
         # dataset files and indices containing seizures
-        self.seizure_start_files = np.zeros_like(self.seizure_begin) 
-        self.seizure_end_files = np.zeros_like(self.seizure_begin) 
-        self.seizure_start_indicies = np.zeros_like(self.seizure_begin) 
-        self.seizure_end_indicies = np.zeros_like(self.seizure_begin) 
+        self.seizure_start_files = np.zeros_like(self.seizure_begin)
+        self.seizure_end_files = np.zeros_like(self.seizure_begin)
+        self.seizure_start_indicies = np.zeros_like(self.seizure_begin)
+        self.seizure_end_indicies = np.zeros_like(self.seizure_begin)
 
         self.extract_seizure_data()
 
@@ -62,11 +63,12 @@ class patient_data_info:
 
             self.seizure_end_files[i] = end_file_num
             self.seizure_end_indicies[i] = file_end_idx
-    
+
     def save_seizure_data_urls(self):
         num_seizures = len(self.seizure_begin)
         urls_directory = '../data_urls/'
-        os.makedirs(urls_directory, exist_ok=True)  # Ensure the directory exists
+        os.makedirs(urls_directory,
+                    exist_ok=True)  # Ensure the directory exists
         urls_file_path = os.path.join(urls_directory, 'seizure_data.txt')
 
         # read existing urls
@@ -86,7 +88,6 @@ class patient_data_info:
                     if url not in existing_urls:
                         file.write(url + '\n')
                         existing_urls.add(url)
-            
 
 
 def create_seizure_indices(offset_beg=0, offset_end=0):
@@ -104,19 +105,19 @@ def create_seizure_indices(offset_beg=0, offset_end=0):
 
         patient_dict[patient_id] = patient_data_info(patient_id,
                                                      data['fs'][0][0],
-                                                      data['seizure_begin'],
-                                                      data['seizure_end'],
-                                                      offset_beg, offset_end)
-        
+                                                     data['seizure_begin'],
+                                                     data['seizure_end'],
+                                                     offset_beg, offset_end)
+
         # download seizure files
         patient_dict[patient_id].save_seizure_data_urls()
 
     return patient_dict
 
+
 # Tests
 if __name__ == "__main__":
-    patient_dict = create_seizure_indices(offset_beg=-180,
-                                      offset_end=180)
+    patient_dict = create_seizure_indices(offset_beg=-180, offset_end=180)
     patient_1 = patient_dict['01']
     print("Patient 1 Data:")
 
