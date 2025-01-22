@@ -4,28 +4,31 @@ import os
 import re
 
 
-# this function and the following helper functions go into the massive dataset downloaded
-# and (with some padding) return the areas of the recording with seizures.
-def splice_seizure_data(patient_id, patient_dict, offset_beg, offset_end):
+def splice_seizure_data(patient_dict):
+    '''
+    Iterates through seizures in dataset and saves spliced EEG data
+    '''
+    patient_nums = [
+        '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12',
+        '13', '14', '15', '16', '17', '18'
+    ]
 
-    for i in range(len(patient_dict[patient_id].seizure_start_files)):
+    for patient_num in patient_nums:
+        patient_data = patient_dict[patient_num]
+        num_seizures = len(patient_data.seizure_start_files)
 
-        start_file = patient_dict[patient_id].seizure_start_files[i]
-        end_file = patient_dict[patient_id].seizure_end_files[i]
-        start_idx = patient_dict[patient_id].seizure_start_indicies[i]
-        end_idx = patient_dict[patient_id].seizure_end_indicies[i]
-
-        save_seizure_splice(start_file=start_file,
-                            end_file=end_file,
-                            start_idx=start_idx,
-                            end_idx=end_idx,
-                            i=i,
-                            patient_id=patient_id,
-                            offset_beg=offset_beg,
-                            offset_end=offset_end)
+        for i in range(num_seizures):
+            save_seizure_splice(start_file=patient_data.seizure_start_files[i],
+                            end_file=patient_data.seizure_end_files[i],
+                            start_idx=patient_data.seizure_start_indicies[i],
+                            end_idx=patient_data.seizure_end_indicies[i],
+                            patient_id=patient_num,
+                            seizure_id=i,
+                            offset_beg=patient_data.offset_beg,
+                            offset_end=patient_data.offset_end)
 
 
-def save_seizure_splice(start_file, end_file, start_idx, end_idx, i,
+def save_seizure_splice(start_file, end_file, start_idx, end_idx, seizure_id,
                         patient_id, offset_beg, offset_end):
     if start_file != end_file:
         #start data
