@@ -3,8 +3,7 @@ from splice_data import splice_seizure_data, splice_nonseizure_data
 
 import numpy as np
 
-patient_dict = create_seizure_indices(offset_beg=-180,
-                                      offset_end=180)
+patient_dict = create_seizure_indices(offset_beg=-180, offset_end=180)
 
 patient_nums = [
     '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12',

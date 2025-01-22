@@ -18,14 +18,15 @@ def splice_seizure_data(patient_dict):
         num_seizures = len(patient_data.seizure_start_files)
 
         for i in range(num_seizures):
-            save_seizure_splice(start_file=patient_data.seizure_start_files[i],
-                            end_file=patient_data.seizure_end_files[i],
-                            start_idx=patient_data.seizure_start_indicies[i],
-                            end_idx=patient_data.seizure_end_indicies[i],
-                            patient_id=patient_num,
-                            seizure_id=i,
-                            offset_beg=patient_data.offset_beg,
-                            offset_end=patient_data.offset_end)
+            save_seizure_splice(
+                start_file=patient_data.seizure_start_files[i],
+                end_file=patient_data.seizure_end_files[i],
+                start_idx=patient_data.seizure_start_indicies[i],
+                end_idx=patient_data.seizure_end_indicies[i],
+                patient_id=patient_num,
+                seizure_id=i,
+                offset_beg=patient_data.offset_beg,
+                offset_end=patient_data.offset_end)
 
 
 def save_seizure_splice(start_file, end_file, start_idx, end_idx, seizure_id,
