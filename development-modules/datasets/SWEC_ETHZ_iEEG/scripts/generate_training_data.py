@@ -3,6 +3,7 @@ from splice_data import splice_seizure_data, splice_nonseizure_data
 import numpy as np
 from multiprocessing import Process
 
+
 def process_data(patient_dict, key_subset):
     """
     Process data for a subset of patient keys for seizure data and the full dictionary for non-seizure data.
@@ -12,6 +13,7 @@ def process_data(patient_dict, key_subset):
     nonseizure_splices_remaining = splice_seizure_data(patient_subdict)
     # Use the full patient_dict for non-seizure data processing
     splice_nonseizure_data(patient_dict, nonseizure_splices_remaining)
+
 
 def main():
     """
@@ -23,7 +25,9 @@ def main():
     # Split patient keys into four groups
     patient_keys = list(patient_dict.keys())
     n = len(patient_keys) // 4
-    key_subsets = [patient_keys[i:i + n] for i in range(0, len(patient_keys), n)]
+    key_subsets = [
+        patient_keys[i:i + n] for i in range(0, len(patient_keys), n)
+    ]
 
     # Create a process for each group of keys
     processes = []
@@ -37,6 +41,7 @@ def main():
         p.join()
 
     print("Training data ready-----")
+
 
 if __name__ == "__main__":
     main()

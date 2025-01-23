@@ -23,14 +23,13 @@ def splice_seizure_data(patient_dict):
             start_idx = int(patient_data.seizure_start_indicies[seizure_index])
             end_idx = int(patient_data.seizure_end_indicies[seizure_index])
 
-            nonseizure_splices_remaining += save_seizure_splices(start_file, end_file, start_idx, end_idx,
-                                 patient_id, seizure_index,
-                                 patient_data.offset_beg,
-                                 patient_data.offset_end,
-                                 patient_data.sample_rate)
-            
+            nonseizure_splices_remaining += save_seizure_splices(
+                start_file, end_file, start_idx, end_idx, patient_id,
+                seizure_index, patient_data.offset_beg,
+                patient_data.offset_end, patient_data.sample_rate)
+
         print(f"Done splicing seizure data from patient {patient_id}")
-    
+
     return nonseizure_splices_remaining
 
 
@@ -151,7 +150,9 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
     for url in urls:
         parts = url.split('/')
         patient_id = parts[-2][2:]
-        if url not in omit_urls and patient_id not in ['01', '02', '03', '05', '07', '15']: #FIXME: remove once sample rate is made variable
+        if url not in omit_urls and patient_id not in [
+                '01', '02', '03', '05', '07', '15'
+        ]:  #FIXME: remove once sample rate is made variable
             usable_urls.append(url)
 
     # slice random nonseizure files until we reach target
