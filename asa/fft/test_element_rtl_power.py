@@ -52,4 +52,8 @@ def test_fft_basic() -> None:
         )
     print()
 
+    for key, value in fft_pe.simulation_data.items():
+        print(f"{element.name}.{key} = {value}")
+    print()
+
     assert output.shape == (input_channels, 6)

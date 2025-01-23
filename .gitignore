@@ -21,6 +21,7 @@
 **/*.ys
 **/*.tcl
 **/*.vvp
+**/*.sdc
 # external/*
 
 # Pipeline exclusions - only allow specific pipelines
