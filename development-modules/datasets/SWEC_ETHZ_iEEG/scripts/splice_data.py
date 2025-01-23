@@ -145,6 +145,7 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
 
     while slice_count < target_slices_count:
         random_url = np.random.choice(usable_urls)
+        usable_urls.remove(random_url)
         print("sampled file: " + str(random_url))
 
         parts = random_url.split('/')  # Split the URL into parts

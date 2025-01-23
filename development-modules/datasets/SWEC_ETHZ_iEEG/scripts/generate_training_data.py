@@ -5,12 +5,8 @@ import numpy as np
 
 patient_dict = create_seizure_indices(offset_beg=-180, offset_end=180)
 
-# splices_remaining = splice_seizure_data(patient_dict)
+nonseizure_splices_remaining = splice_seizure_data(patient_dict)
 
-splice_nonseizure_data(patient_dict, 10)
+splice_nonseizure_data(patient_dict, nonseizure_splices_remaining)
 
-# splice_nonseizure_data(patient_id='01',
-#                        patient_dict=patient_dict,
-#                        samples_to_generate=5)
-
-# print("training data ready-----")
+print("training data ready-----")
