@@ -110,8 +110,13 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx, patient_id,
 
     # save slices and labels
     save_path = './seizure_data/ID{}_{}'.format(patient_id, seizure_id)
-    np.save(save_path + '_positive_signals.npy', np.array(slices))
-    np.save(save_path + '_positive_labels.npy', np.array(slice_labels))
+    slices_path = save_path + '_positive_signals.npy'
+    labels_path = save_path + '_positive_labels.npy'
+
+    np.save(slices_path, np.array(slices))
+    print(f'Patient {patient_id}: saved {slices_path}')
+    np.save(labels_path, np.array(slice_labels))
+    print(f'Patient {patient_id}: saved {labels_path}')
 
     return
 
@@ -194,18 +199,18 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
                 counts
             )  # take most common occurence as an indicator of seizure or not
 
-            #print(slice.shape)
             slices.append(slice)
             slices_labels.append(most_common_value)
 
-        # Convert the list of slices to a numpy array
-        slices_array = np.array(slices)
-        slices_labels_array = np.array(slices_labels)
-
         # save slices and labels
         save_path = './seizure_data/ID{}_{}'.format(patient_id, hour)
-        np.save(save_path + '_negative_signals.npy', np.array(slices))
-        np.save(save_path + '_negative_labels.npy', np.array(slices_labels))
+        slices_path = save_path + '_negative_signals.npy'
+        labels_path = save_path + '_negative_labels.npy'
+
+        np.save(slices_path, np.array(slices))
+        print(f'Patient {patient_id}: saved {slices_path}')
+        np.save(labels_path, np.array(slices_labels))
+        print(f'Patient {patient_id}: saved {labels_path}')
 
         slice_count += len(slices)
 
