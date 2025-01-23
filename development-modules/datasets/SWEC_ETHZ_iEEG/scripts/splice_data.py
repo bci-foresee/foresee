@@ -127,32 +127,11 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx, patient_id,
     return nonseizure_splices_remaining
 
 
-def splice_nonseizure_data(patient_dict, target_slices_count):
+def splice_nonseizure_data(patient_dict, target_slices_count, shared_queue):
     """
     Generate non-seizure EEG data slices
     """
     print('Splicing nonseizure data')
-    # determine which files not to pool from
-    omit_urls = set()
-    for patient_id, patient_data in patient_dict.items():
-        for i in range(len(patient_data.seizure_start_files)):
-            start_file = int(patient_data.seizure_start_files[i])
-            end_file = int(patient_data.seizure_end_files[i])
-            for f in range(start_file, end_file + 1):
-                # print(patient_id, f)
-                url = f'http://ieeg-swez.ethz.ch/long-term_dataset/ID{patient_id}/ID{patient_id}_{f}h.mat'
-                omit_urls.add(url)
-
-    # get poolable files
-    all_data_urls = '../data_urls/all_data.txt'
-    with open(all_data_urls, 'r') as f:
-        urls = [line.strip() for line in f.readlines()]
-    usable_urls = []
-    for url in urls:
-        parts = url.split('/')
-        patient_id = parts[-2][2:]
-        if url not in omit_urls and patient_id not in ['01', '02', '03', '05', '07', '15']: #FIXME: remove once sample rate is made variable
-            usable_urls.append(url)
 
     # slice random nonseizure files until we reach target
     sample_length = 600  # 600 s samples
@@ -160,8 +139,7 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
     slice_count = 0
 
     while slice_count < target_slices_count:
-        random_url = np.random.choice(usable_urls)
-        usable_urls.remove(random_url)
+        random_url = shared_queue.pop()
         print("sampled file: " + str(random_url))
 
         parts = random_url.split('/')  # Split the URL into parts
