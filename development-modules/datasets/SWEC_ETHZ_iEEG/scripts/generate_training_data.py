@@ -4,6 +4,7 @@ from splice_data import splice_seizure_data, splice_nonseizure_data
 import numpy as np
 from multiprocessing import Process, Queue
 
+
 def process_data(patient_dict, key_subset, shared_queue):
     """
     Process data for a subset of patient keys for seizure data and the full dictionary for non-seizure data.
@@ -12,7 +13,9 @@ def process_data(patient_dict, key_subset, shared_queue):
     patient_subdict = {key: patient_dict[key] for key in key_subset}
     nonseizure_splices_remaining = splice_seizure_data(patient_subdict)
     # Use the full patient_dict for non-seizure data processing
-    splice_nonseizure_data(patient_dict, nonseizure_splices_remaining, shared_queue)
+    splice_nonseizure_data(patient_dict, nonseizure_splices_remaining,
+                           shared_queue)
+
 
 def create_shared_queue(patient_dict):
     shared_queue = Queue()
@@ -39,7 +42,7 @@ def create_shared_queue(patient_dict):
         patient_id = parts[-2][2:]
         if url not in omit_urls and patient_id in patient_dict.keys():
             shared_queue.put(url)
-        
+
     return shared_queue
 
 
@@ -53,7 +56,9 @@ def main():
     # Split patient keys into four groups
     patient_keys = list(patient_dict.keys())
     n = len(patient_keys) // 4
-    key_subsets = [patient_keys[i:i + n] for i in range(0, len(patient_keys), n)]
+    key_subsets = [
+        patient_keys[i:i + n] for i in range(0, len(patient_keys), n)
+    ]
 
     # create shared queue of poolable files for nonseizure splices
     shared_queue = create_shared_queue(patient_dict)
@@ -61,7 +66,8 @@ def main():
     # Create a process for each group of keys
     processes = []
     for key_subset in key_subsets:
-        p = Process(target=process_data, args=(patient_dict, key_subset, shared_queue))
+        p = Process(target=process_data,
+                    args=(patient_dict, key_subset, shared_queue))
         processes.append(p)
         p.start()
 
