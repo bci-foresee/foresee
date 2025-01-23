@@ -36,8 +36,7 @@ def splice_seizure_data(patient_dict):
 
 def download_and_load_mat(url, patient_id):
     """
-    Download a .mat file from the given URL and load it into memory.
-    Displays simple start and end messages instead of a progress bar to avoid overlap in multiprocessing.
+    Downloads file from dataset.
     """
     print(f'Patient {patient_id}: Starting download {url}')
     with requests.get(url, stream=True) as response:
@@ -148,7 +147,12 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
     all_data_urls = '../data_urls/all_data.txt'
     with open(all_data_urls, 'r') as f:
         urls = [line.strip() for line in f.readlines()]
-    usable_urls = [url for url in urls if url not in omit_urls]
+    usable_urls = []
+    for url in urls:
+        parts = url.split('/')
+        patient_id = parts[-2][2:]
+        if url not in omit_urls and patient_id not in ['01', '02', '03', '05', '07', '15']: #FIXME: remove once sample rate is made variable
+            usable_urls.append(url)
 
     # slice random nonseizure files until we reach target
     sample_length = 600  # 600 s samples
@@ -220,123 +224,3 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
         print(f'Patient {patient_id}: saved {labels_path}')
 
         slice_count += len(slices)
-
-
-# # this function and the following helper functions generate non-seizure slices of ieeg data
-# def splice_nonseizure_data(patient_id, patient_dict, samples_to_generate=5):
-#     # find out which files not to take data from:
-
-#     omit_files = set()  # set of files to not take nonseizure data from
-
-#     for i in range(len(patient_dict[patient_id].seizure_start_files)):
-
-#         start_file = int(patient_dict[patient_id].seizure_start_files[i][0])
-#         end_file = int(patient_dict[patient_id].seizure_end_files[i][0])
-
-#         correlated_zone_size = 3  # how many files to leave to have no correlation
-
-#         for j in range(start_file - correlated_zone_size,
-#                        end_file + correlated_zone_size):
-#             omit_files.add(j)
-
-#     # sort omit_files
-#     # omit_files = sorted(omit_files)
-#     # print(omit_files)
-
-#     #finding upper limit of file indexes we can sample from:
-#     directory = '../data'
-
-#     numbers = set()
-#     # Iterate over all files in the directory
-#     for filename in os.listdir(directory):
-#         if filename.endswith('.mat'):
-#             file_path = os.path.join(directory, filename)
-#             # print(filename)
-#             pattern = re.compile(r'_(\d+)h')
-
-#             numbers.add(int(pattern.search(filename).group(1)))
-
-#     #finding intersection of files to sample from non-seizure files
-
-#     sampleable_files = np.array([x for x in numbers if x not in omit_files])
-#     # print(sampleable_files)
-
-#     sample_length = 600  #seconds
-#     sample_rate = 512  #Hz
-#     sample_idx_len = sample_length * sample_rate
-
-#     offset = 30  #seconds
-#     offset_idx = offset * sample_rate
-#     sample_idx_len = sample_idx_len + offset_idx
-
-#     for i in range(samples_to_generate):
-
-#         # choose random file to sample from
-#         random_file = np.random.choice(sampleable_files)
-#         print("sampled_file: " + str(random_file))
-
-#         # open the chosen random
-#         patient_file = '../data/ID01_' + str(i + 1) + 'h.mat'
-#         data = loadmat(patient_file)
-
-#         # splice of data with no seizure present
-#         spliced_data = data['EEG'][:16, int(offset_idx):int(sample_idx_len)]
-
-#         # print(spliced_data.shape)
-
-#         # labels of all 0s
-#         label_size = len(spliced_data[0])
-
-#         label_arr = np.zeros(label_size).astype(np.int64)
-#         # print(label_arr.shape)
-
-#         # Parameters for slicing
-#         slice_size = 20 * 512  # 20s * 512 Hz (num indexes)
-#         step_size = 10 * 512  # 10s * 512 Hz (how much shift between slices)
-
-#         # List to store the slices
-#         slices = []
-#         slices_labels = []
-
-#         # Loop to create overlapping slices
-#         for start_index in range(0,
-#                                  len(spliced_data[0]) - slice_size + 1,
-#                                  step_size):
-#             end_index = start_index + slice_size
-
-#             # one 20s slice of data
-#             slice = spliced_data[:, start_index:end_index]
-
-#             # is it a seizure or not
-#             counts = np.bincount(
-#                 label_arr[start_index:end_index])  # how many ones or zeros
-#             most_common_value = np.argmax(
-#                 counts
-#             )  # take most common occurence as an indicator of seizure or not
-
-#             #print(slice.shape)
-#             slices.append(slice)
-#             slices_labels.append(most_common_value)
-
-#         # Convert the list of slices to a numpy array
-#         slices_array = np.array(slices)
-#         slices_labels_array = np.array(slices_labels)
-
-#         print("slices shape nonseizure:")
-#         print(slices_array.shape)
-#         print(slices_array[0].shape)
-#         print(slices_labels_array.shape)
-
-#         #save labels
-#         # format:
-#         # 93 items each corresponding to a label in ieeg_signals.npy
-#         np.save(
-#             './test_save_data/ID' + patient_id + '_' + str(i) +
-#             '_negative_labels.npy', slices_labels_array)
-
-#         #save the ieeg data
-#         # format:
-#         # 93 rows each of a 20s ieeg input with a corresponding label
-#         np.save(
-#             './test_save_data/ID' + patient_id + '_' + str(i) +
-#             '_negative_signals.npy', slices_array)

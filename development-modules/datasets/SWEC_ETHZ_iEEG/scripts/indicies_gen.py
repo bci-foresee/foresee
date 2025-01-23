@@ -83,25 +83,23 @@ class patient_data_info:
 def create_seizure_indices(offset_beg=0, offset_end=0):
     patient_dict = {}
 
-    # Load the .mat info file
-    patient_nums = [
-        '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12',
-        '13', '14', '15', '16', '17', '18'
+    # FIXME: sample rate is currently not variable as it might destandardize the features.
+    # It is either 512 or 1024 Hz, but we pick 1024 as it is majority. 
+    # This excludes patients 1 2 3 5 7 15.
+    patient_nums = ['04', '06', '08', '09', '10', '11', '12',
+        '13', '14', '16', '17', '18'
     ]
 
     for patient_id in patient_nums:
         info_file = '../data_info/ID' + patient_id + '_info.mat'
         data = loadmat(info_file)
 
-        # FIXME: sample rate is currently not variable as it might destandardizing features
-        # it is either 512 or 1024 Hz, but 1024 is majority. This excludes patients 1 2 3 5 7 15.
-        if int(data['fs'][0][0]) == 1024:
-            patient_dict[patient_id] = patient_data_info(
-                patient_id, data['fs'][0][0], data['seizure_begin'],
-                data['seizure_end'], offset_beg, offset_end)
+        patient_dict[patient_id] = patient_data_info(
+            patient_id, data['fs'][0][0], data['seizure_begin'],
+            data['seizure_end'], offset_beg, offset_end)
 
-            # record seizure files in data_urls/seizure_data for debug
-            patient_dict[patient_id].save_seizure_data_urls()
+        # record seizure files in data_urls/seizure_data for debug
+        patient_dict[patient_id].save_seizure_data_urls()
 
     return patient_dict
 
