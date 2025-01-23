@@ -79,40 +79,79 @@ class SVM(ProcessingElement):
         weights_int = self.weights.astype(np.int32)
 
         # Ensure the input arrays have the correct length
-        if input_int.size != 312:
-            raise ValueError(f"Input signal must be of length {312}.")
-        if weights_int.size != 312:
-            raise ValueError(f"Weight vector must be of length {312}.")
+        if input_int.size >= 32 * 32:
+            raise ValueError(f"Input signal must be less than length {32 * 32}.")
+        if weights_int.size != input_int.size:
+            raise ValueError(f"Weight vector must be of length {input_int.size}, same as input weights vector.")
+        
+        # Pad input_int and weights_int with zeros if their length is not 16*16
+        # "Two deep SVM", do SVM once (size 16), then do SVM on result with weights[i] == 1
+        if input_int.size <= 32 * 32:
+            input_int = np.pad(input_int, (0, 32 * 32 - input_int.size), 'constant')
+            weights_int = np.pad(weights_int, (0, 32 * 32 - weights_int.size), 'constant')
+
+        # SVM one
+        layer_one_result = np.zeros(32)
 
         # Define file names for the input and output buffers
-        self.input_buffer = 'input_data.txt'
-        self.weights_buffer = 'weights_data.txt'
-        self.output_result = 'output_result.txt'
+        self.input_buffer = 'input_buffer.txt'
+        self.weights_buffer = 'weights_buffer.txt'
+        self.output_result = 'output_buffer.txt'
+
+        for i in range(32):  
+
+            curr_input = input_int[i*32:(i+1)*32]
+            curr_weights = weights_int[i*32:(i+1)*32]
+
+            # Write input to "input_data.txt"
+            with open(self.input_buffer, 'w') as file_in:
+                for sample in curr_input:
+                    # Writing each sample as a signed hex string
+                    file_in.write(f"{self.int_to_signedHex(sample)}\n")
+
+            # Write weights to "weights_data.txt"
+            with open(self.weights_buffer, 'w') as file_weights:
+                for weight in curr_weights:
+                    # Writing each weight as a signed hex string
+                    file_weights.write(f"{self.int_to_signedHex(weight)}\n")
+
+            # Run the Verilog simulation
+            verilog_result = self.run_verilog_simulation(
+                PE_name=self.name,
+                verilog_file='svm',
+                output_file=self.output_result)
+
+            layer_one_result[i] = verilog_result
+
+            # print(f"Layer_one [{i}]: {layer_one_result[i]}")
+
+        # SVM two
+        result_int = 0
+        
+        curr_input = layer_one_result.astype(np.int32)
+        curr_weights = np.ones(32).astype(np.int32)
 
         # Write input to "input_data.txt"
         with open(self.input_buffer, 'w') as file_in:
-            for sample in input_int:
+            for sample in curr_input:
                 # Writing each sample as a signed hex string
                 file_in.write(f"{self.int_to_signedHex(sample)}\n")
-
+        
         # Write weights to "weights_data.txt"
         with open(self.weights_buffer, 'w') as file_weights:
-            for weight in weights_int:
+            for weight in curr_weights:
                 # Writing each weight as a signed hex string
                 file_weights.write(f"{self.int_to_signedHex(weight)}\n")
-
+        
         # Run the Verilog simulation
         verilog_result = self.run_verilog_simulation(
             PE_name=self.name,
             verilog_file='svm',
             output_file=self.output_result)
-
-        # The result is expected to be in decimal format, read and convert it
-        with open(self.output_result, 'r') as f:
-            result_str = f.readline().strip()
-            result_int = int(result_str, 10)  # Assuming decimal format
-
-        return np.array([result_int])
+        
+        # print(f"Layer_two: {verilog_result}")
+            
+        return np.array([verilog_result])
 
     def get_tooltip(self):
         tooltip_text = f"{self.name}\n"

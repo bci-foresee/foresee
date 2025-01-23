@@ -43,15 +43,22 @@ def test_pwxc_basic() -> None:
             f"Element: {element.name}, visualisation generated: {element.save_visualization}"
         )
     print()
-    print(f"assert test case not implemented yet, output:\n {output}")
+    # print(f"assert test case not implemented yet, output:\n {output}")
     print(f"input_arr: {input_arr}")
     print(f"input_weights: {input_weights}")
 
-    power_dict = elements[-1].simulation_data["power_dict"]
+    # power_dict = elements[-1].simulation_data["power_dict"]
 
-    print(elements[-1].rtl_module_runs)
+    output = elements[-1].simulation_data['output_data']
 
-    for key, value in power_dict.items():
-        print(f"{key}: {value}")
+    for element in elements:
+        print(
+            f"Element: {element.name}, visualisation generated: {element.save_visualization}"
+        )
+    print()
+
+    for key, value in svm_pe.simulation_data.items():
+        print(f"{element.name}.{key} = {value}")
+    print()
 
     assert len(output) == 1

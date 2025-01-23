@@ -14,6 +14,9 @@ def test_sandbox_pipeline() -> None:
     input_channels = 2  # 1 for demonstration (speed)
     input_samples = 8192
 
+    global_rtl_sim = True
+    global_rtl_power_estimation = True
+
     input_signal = generate_signal(frequencies=[10, 20, 40],
                                    amplitudes=[20, 15, 10],
                                    fs=input_fs,
@@ -23,30 +26,30 @@ def test_sandbox_pipeline() -> None:
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
     tkeo_pe = TKEO(n_channels=input_channels,
-                   clk=1,
-                   rtl_sim=False,
-                   rtl_power_estimation=False,
+                   clk=1_000_000,
+                   rtl_sim=False or global_rtl_sim,
+                   rtl_power_estimation=False or global_rtl_power_estimation,
                    save_visualization=False)
 
     avg_pe = AVG(n_channels=input_channels,
-                 clk=1,
-                 rtl_sim=False,
-                 rtl_power_estimation=False,
+                 clk=1_000_000,
+                 rtl_sim=False or global_rtl_sim,
+                 rtl_power_estimation=False or global_rtl_power_estimation,
                  save_visualization=False)
 
     some_weights = np.ones(input_channels)
 
     svm_pe = SVM(weights=some_weights,
-                 clk=1,
-                 rtl_sim=False,
-                 rtl_power_estimation=False,
+                 clk=1_000_000,
+                 rtl_sim=False or global_rtl_sim,
+                 rtl_power_estimation=False or global_rtl_power_estimation,
                  save_visualization=False)
 
     thr_pe = THR(lower_bound=0,
-                 upper_bound=1,
-                 clk=15_700_000,
-                 rtl_sim=False,
-                 rtl_power_estimation=False,
+                 upper_bound=9999999,
+                 clk=1_000_000,
+                 rtl_sim=False or global_rtl_sim,
+                 rtl_power_estimation=False or global_rtl_power_estimation,
                  save_visualization=False)
 
     # connect PEs
