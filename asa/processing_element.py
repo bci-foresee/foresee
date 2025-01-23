@@ -144,7 +144,7 @@ class ProcessingElement:
         # Create Yosys synthesis script
         self.create_yosys_synth_file(verilog_file=verilog_file,
                                      process_library=process_library)
-        
+
         self.create_sdc_constraints(verilog_file, clock_period_ns)
 
         # Create OpenSTA power analysis script
@@ -190,12 +190,15 @@ class ProcessingElement:
                 'Total Power': total_power,
                 'Percentage': percentage
             }
-        
+
         # Refined regex to target the specific "data arrival time" pattern
-        pattern = re.compile(r"\s+([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)\s+data arrival time")
+        pattern = re.compile(
+            r"\s+([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)\s+data arrival time")
 
         # Find all matches and extract the data arrival times
-        arrival_times = [float(match.group(1)) for match in pattern.finditer(result.stdout)]
+        arrival_times = [
+            float(match.group(1)) for match in pattern.finditer(result.stdout)
+        ]
 
         max_latency = max(arrival_times)
 
@@ -246,7 +249,7 @@ class ProcessingElement:
                     process_library=
                     "../../hardware_lib/sky130_fd_sc_hd__ff_n40C_1v65",
                     clock_freq=self.clk)
-                
+
                 # multiply power by number of rtl runs
                 # total power is what is relevant to us right now
                 for key, value in self.simulation_data["power_dict"].items():
@@ -256,9 +259,11 @@ class ProcessingElement:
                         self.simulation_data["power_dict"][
                             key] = value * self.rtl_module_runs * max(
                                 1, self.rtl_single_module_runs)
-                        
+
                 # multiply latency by how many times module has to be repeated to get one valid output
-                self.simulation_data["latency"] = self.simulation_data["latency"] * max(1, self.rtl_single_module_runs)
+                self.simulation_data[
+                    "latency"] = self.simulation_data["latency"] * max(
+                        1, self.rtl_single_module_runs)
 
         else:
             output = self.compute(input=input_data)
@@ -325,7 +330,11 @@ class ProcessingElement:
         with open("synth.ys", "w") as f:
             f.write(content)
 
-    def create_sdc_constraints(self, verilog_file, clock_period, input_delay=2.0, output_delay=1.5):
+    def create_sdc_constraints(self,
+                               verilog_file,
+                               clock_period,
+                               input_delay=2.0,
+                               output_delay=1.5):
         """
         Create SDC constraints file for timing analysis
         Args:
@@ -350,13 +359,13 @@ class ProcessingElement:
         # Load capacitance for all outputs
         set_load 0.1 [all_outputs]
         """
-        
+
         # sdc_path = f"./rtl/{verilog_file}.sdc"
         with open("constraints.sdc", "w") as f:
             f.write(content)
         # print(f"SDC constraints written to {sdc_path}")
 
-            # ... rest of the function
+        # ... rest of the function
 
     def create_power_opesta_tcl_file(self, verilog_file, process_library,
                                      clock_period):
