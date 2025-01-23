@@ -11,6 +11,8 @@ def splice_seizure_data(patient_dict):
     '''
     Iterates through each seizure and saves EEG data splices and labels
     '''
+    nonseizure_splices_remaining = 0
+
     for patient_id, patient_data in patient_dict.items():
         print(f"Splicing seizure data from patient {patient_id}")
         num_seizures = len(patient_data.seizure_begin)
@@ -21,11 +23,15 @@ def splice_seizure_data(patient_dict):
             start_idx = int(patient_data.seizure_start_indicies[seizure_index])
             end_idx = int(patient_data.seizure_end_indicies[seizure_index])
 
-            save_seizure_splices(start_file, end_file, start_idx, end_idx,
+            nonseizure_splices_remaining += save_seizure_splices(start_file, end_file, start_idx, end_idx,
                                  patient_id, seizure_index,
                                  patient_data.offset_beg,
                                  patient_data.offset_end,
                                  patient_data.sample_rate)
+            
+        print(f"Done splicing seizure data from patient {patient_id}")
+    
+    return nonseizure_splices_remaining
 
 
 def download_and_load_mat(url, patient_id):
@@ -119,7 +125,7 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx, patient_id,
     np.save(labels_path, np.array(slice_labels))
     print(f'Patient {patient_id}: saved {labels_path}')
 
-    return
+    return nonseizure_splices_remaining
 
 
 def splice_nonseizure_data(patient_dict, target_slices_count):
