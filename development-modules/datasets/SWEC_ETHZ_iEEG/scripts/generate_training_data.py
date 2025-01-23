@@ -37,7 +37,7 @@ def create_shared_queue(patient_dict):
     for url in urls:
         parts = url.split('/')
         patient_id = parts[-2][2:]
-        if url not in omit_urls and patient_id not in ['01', '02', '03', '05', '07', '15']: #FIXME: remove once sample rate is made variable
+        if url not in omit_urls and patient_id in patient_dict.keys():
             shared_queue.put(url)
         
     return shared_queue
