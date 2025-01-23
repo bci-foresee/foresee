@@ -12,7 +12,7 @@ def splice_seizure_data(patient_dict):
     Iterates through each seizure and saves EEG data splices and labels
     '''
     for patient_id, patient_data in patient_dict.items():
-        print(f"Processing patient {patient_id} data")
+        print(f"Splicing seizure data from patient {patient_id}")
         num_seizures = len(patient_data.seizure_begin)
 
         for seizure_index in range(num_seizures):
@@ -115,6 +115,7 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
     """
     Generate non-seizure EEG data slices
     """
+    print('Splicing nonseizure data')
     # determine which files not to pool from
     omit_urls = set()
     for patient_id, patient_data in patient_dict.items():
@@ -134,38 +135,68 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
     usable_urls = [url for url in urls if url not in omit_urls]
     
 
-    # slices = []
-    # slices_labels = []
+    # slice random nonseizure files until we reach target
+    sample_length = 600 # 600 s samples
+    offset = 30 # 30 s sample offset
+    slice_count = 0
 
-    # while len(slices) < target_slices_count and usable_urls:
-    #     url = np.random.choice(usable_urls)
-    #     usable_urls.remove(url)  # Avoid reusing the same URL
+    while slice_count < target_slices_count:
+        random_url = np.random.choice(usable_urls)
+        print("sampled file: " + str(random_url))
 
-    #     mat_data = download_and_load_mat(url)
-    #     data = mat_data['EEG'][:16]  # Assume EEG data is under 'EEG' key and only 16 channels are used
+        parts = random_url.split('/')  # Split the URL into parts
+        id_part = parts[-2]     # Get the second last part which includes the patient ID
+        patient_id = id_part[2:]  # Extract the numeric part of the ID (skip the 'ID')
+        hour_part = parts[-1]  # Get the last part which includes the hour information
+        hour = hour_part.split('_')[1].replace('.mat', '')  # Extract the hour and remove file extension
+        sample_rate = patient_dict[patient_id].sample_rate
 
-    #     match = re.search(r'/ID(\d+)/', url)
-    #     patient_id = match.group(1)
-    #     sample_rate = patient_dict[patient_id].sample_rate
-    #     ste
+        mat_data = download_and_load_mat(random_url)  # Using the new download function
+        spliced_data = mat_data['EEG'][:16, int(offset * sample_rate):int(sample_length * sample_rate)]
 
-    #     window_size = 20 * sample_rate
-    #     step_size = 10 * sample_rate
-       
+         # labels of all 0s
+        label_size = len(spliced_data[0])
+        label_arr = np.zeros(label_size).astype(np.int64)
 
-    #     # Generate slices from this file
-    #     for start in range(0, data.shape[1] - window_size + 1, step_size):
-    #         if len(slices) >= target_slices_count:
-    #             break
-    #         end = start + window_size
-    #         slices.append(data[:, start:end])
-    #         slices_labels.append(0)  # Label for non-seizure slices
+         # parameters for slicing
+        slice_size = 20 * sample_rate  # 20s windows
+        step_size = 10 * sample_rate  # 10s overalaps
 
-    # # Save the slices and labels
-    # save_path = './non_seizure_data/general_nonseizure'
-    # np.save(save_path + '_signals.npy', np.array(slices))
-    # np.save(save_path + '_labels.npy', np.array(slices_labels))
-    # print(f'Saved {len(slices)} non-seizure slices from various sources.')
+        # lists to store slices and labels
+        slices = []
+        slices_labels = []
+
+        # slice the sample
+        for start_index in range(0,
+                                 len(spliced_data[0]) - slice_size + 1,
+                                 step_size):
+            end_index = start_index + slice_size
+
+            # one 20s slice of data
+            slice = spliced_data[:, start_index:end_index]
+
+            # is it a seizure or not
+            counts = np.bincount(
+                label_arr[start_index:end_index])  # how many ones or zeros
+            most_common_value = np.argmax(
+                counts
+            )  # take most common occurence as an indicator of seizure or not
+            
+
+            #print(slice.shape)
+            slices.append(slice)
+            slices_labels.append(most_common_value)
+        
+        # Convert the list of slices to a numpy array
+        slices_array = np.array(slices)
+        slices_labels_array = np.array(slices_labels)
+
+        # save slices and labels
+        save_path = './seizure_data/ID{}_{}'.format(patient_id, hour)
+        np.save(save_path + '_negative_signals.npy', np.array(slices))
+        np.save(save_path + '_negative_labels.npy', np.array(slices_labels))
+
+        slice_count += len(slices)
 
 
 

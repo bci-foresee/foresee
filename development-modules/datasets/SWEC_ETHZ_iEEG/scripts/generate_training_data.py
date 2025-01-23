@@ -5,14 +5,9 @@ import numpy as np
 
 patient_dict = create_seizure_indices(offset_beg=-180, offset_end=180)
 
-patient_nums = [
-    '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12',
-    '13', '14', '15', '16', '17', '18'
-]
+# splices_remaining = splice_seizure_data(patient_dict)
 
-splices_remaining = splice_seizure_data(patient_dict)
-
-# splice_nonseizure_data(patient_dict, 10)
+splice_nonseizure_data(patient_dict, 10)
 
 # splice_nonseizure_data(patient_id='01',
 #                        patient_dict=patient_dict,
