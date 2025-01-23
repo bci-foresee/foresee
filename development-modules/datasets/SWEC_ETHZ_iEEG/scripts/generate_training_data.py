@@ -42,6 +42,7 @@ def create_shared_queue(patient_dict):
         
     return shared_queue
 
+
 def main():
     """
     Main function to create patient indices, split keys among processes,
@@ -69,6 +70,7 @@ def main():
         p.join()
 
     print("Training data ready-----")
+
 
 if __name__ == "__main__":
     main()

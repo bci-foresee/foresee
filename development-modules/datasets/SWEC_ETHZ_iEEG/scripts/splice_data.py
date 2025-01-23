@@ -23,14 +23,13 @@ def splice_seizure_data(patient_dict):
             start_idx = int(patient_data.seizure_start_indicies[seizure_index])
             end_idx = int(patient_data.seizure_end_indicies[seizure_index])
 
-            nonseizure_splices_remaining += save_seizure_splices(start_file, end_file, start_idx, end_idx,
-                                 patient_id, seizure_index,
-                                 patient_data.offset_beg,
-                                 patient_data.offset_end,
-                                 patient_data.sample_rate)
-            
+            nonseizure_splices_remaining += save_seizure_splices(
+                start_file, end_file, start_idx, end_idx, patient_id,
+                seizure_index, patient_data.offset_beg,
+                patient_data.offset_end, patient_data.sample_rate)
+
         print(f"Done splicing seizure data from patient {patient_id}")
-    
+
     return nonseizure_splices_remaining
 
 
