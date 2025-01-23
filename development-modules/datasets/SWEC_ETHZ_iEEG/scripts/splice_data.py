@@ -28,28 +28,28 @@ def splice_seizure_data(patient_dict):
                                  patient_data.sample_rate)
 
 
-def download_and_load_mat(url):
+def download_and_load_mat(url, patient_id):
     """
-    Download a .mat file from the given URL with a progress bar and load it into memory.
+    Download a .mat file from the given URL and load it into memory.
+    Displays simple start and end messages instead of a progress bar to avoid overlap in multiprocessing.
     """
+    print(f'Patient {patient_id}: Starting download {url}')
     with requests.get(url, stream=True) as response:
-        print(f'Downloading {url}')
         response.raise_for_status()
 
         total_size_in_bytes = int(response.headers.get('content-length', 0))
-        progress_bar = tqdm(total=total_size_in_bytes,
-                            unit='iB',
-                            unit_scale=True)
-
         data_to_load = BytesIO()
+        downloaded = 0
+
         for data in response.iter_content(chunk_size=1024):
-            progress_bar.update(len(data))
+            downloaded += len(data)
             data_to_load.write(data)
 
-        progress_bar.close()
-        data_to_load.seek(0)
+        print(f'Patient {patient_id}: Completed download {url} [{downloaded} bytes]')
 
+        data_to_load.seek(0)
         return loadmat(data_to_load)
+
 
 
 def save_seizure_splices(start_file, end_file, start_idx, end_idx, patient_id,
@@ -64,7 +64,7 @@ def save_seizure_splices(start_file, end_file, start_idx, end_idx, patient_id,
     for file_number in range(start_file, end_file + 1):
         file_url = base_url.format(patient_id, patient_id, file_number)
         mat_data = download_and_load_mat(
-            file_url)  # Using the new download function
+            file_url, patient_id)  # Using the new download function
         data = mat_data[
             'EEG'][:
                    16]  # Assuming EEG data is under key 'EEG' and taking first 16 channels
@@ -160,7 +160,7 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
         sample_rate = patient_dict[patient_id].sample_rate
 
         mat_data = download_and_load_mat(
-            random_url)  # Using the new download function
+            random_url, patient_id)  # Using the new download function
         spliced_data = mat_data['EEG'][:16,
                                        int(offset *
                                            sample_rate):int(sample_length *
