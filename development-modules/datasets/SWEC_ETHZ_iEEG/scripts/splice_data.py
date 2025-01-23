@@ -139,8 +139,8 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
     usable_urls = [url for url in urls if url not in omit_urls]
 
     # slice random nonseizure files until we reach target
-    sample_length = 600 # 600 s samples
-    offset = 30 # 30 s sample offset
+    sample_length = 600  # 600 s samples
+    offset = 30  # 30 s sample offset
     slice_count = 0
 
     while slice_count < target_slices_count:
@@ -148,20 +148,28 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
         print("sampled file: " + str(random_url))
 
         parts = random_url.split('/')  # Split the URL into parts
-        id_part = parts[-2]     # Get the second last part which includes the patient ID
-        patient_id = id_part[2:]  # Extract the numeric part of the ID (skip the 'ID')
-        hour_part = parts[-1]  # Get the last part which includes the hour information
-        hour = hour_part.split('_')[1].replace('.mat', '')  # Extract the hour and remove file extension
+        id_part = parts[
+            -2]  # Get the second last part which includes the patient ID
+        patient_id = id_part[
+            2:]  # Extract the numeric part of the ID (skip the 'ID')
+        hour_part = parts[
+            -1]  # Get the last part which includes the hour information
+        hour = hour_part.split('_')[1].replace(
+            '.mat', '')  # Extract the hour and remove file extension
         sample_rate = patient_dict[patient_id].sample_rate
 
-        mat_data = download_and_load_mat(random_url)  # Using the new download function
-        spliced_data = mat_data['EEG'][:16, int(offset * sample_rate):int(sample_length * sample_rate)]
+        mat_data = download_and_load_mat(
+            random_url)  # Using the new download function
+        spliced_data = mat_data['EEG'][:16,
+                                       int(offset *
+                                           sample_rate):int(sample_length *
+                                                            sample_rate)]
 
-         # labels of all 0s
+        # labels of all 0s
         label_size = len(spliced_data[0])
         label_arr = np.zeros(label_size).astype(np.int64)
 
-         # parameters for slicing
+        # parameters for slicing
         slice_size = 20 * sample_rate  # 20s windows
         step_size = 10 * sample_rate  # 10s overalaps
 
@@ -184,12 +192,11 @@ def splice_nonseizure_data(patient_dict, target_slices_count):
             most_common_value = np.argmax(
                 counts
             )  # take most common occurence as an indicator of seizure or not
-            
 
             #print(slice.shape)
             slices.append(slice)
             slices_labels.append(most_common_value)
-        
+
         # Convert the list of slices to a numpy array
         slices_array = np.array(slices)
         slices_labels_array = np.array(slices_labels)
