@@ -246,6 +246,7 @@ class ProcessingElement:
                     process_library=
                     "../../hardware_lib/sky130_fd_sc_hd__ff_n40C_1v65",
                     clock_freq=self.clk)
+                
                 # multiply power by number of rtl runs
                 # total power is what is relevant to us right now
                 for key, value in self.simulation_data["power_dict"].items():
@@ -255,6 +256,9 @@ class ProcessingElement:
                         self.simulation_data["power_dict"][
                             key] = value * self.rtl_module_runs * max(
                                 1, self.rtl_single_module_runs)
+                        
+                # multiply latency by how many times module has to be repeated to get one valid output
+                self.simulation_data["latency"] = self.simulation_data["latency"] * max(1, self.rtl_single_module_runs)
 
         else:
             output = self.compute(input=input_data)
