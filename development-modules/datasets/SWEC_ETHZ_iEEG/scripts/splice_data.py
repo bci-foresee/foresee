@@ -45,11 +45,12 @@ def download_and_load_mat(url, patient_id):
             downloaded += len(data)
             data_to_load.write(data)
 
-        print(f'Patient {patient_id}: Completed download {url} [{downloaded} bytes]')
+        print(
+            f'Patient {patient_id}: Completed download {url} [{downloaded} bytes]'
+        )
 
         data_to_load.seek(0)
         return loadmat(data_to_load)
-
 
 
 def save_seizure_splices(start_file, end_file, start_idx, end_idx, patient_id,
