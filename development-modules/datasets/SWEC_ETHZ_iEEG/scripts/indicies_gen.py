@@ -96,11 +96,9 @@ def create_seizure_indices(offset_beg=0, offset_end=0):
         # FIXME: sample rate is currently not variable as it might destandardizing features
         # it is either 512 or 1024 Hz, but 1024 is majority. This excludes patients 1 2 3 5 7 15.
         if int(data['fs'][0][0]) == 1024:
-            patient_dict[patient_id] = patient_data_info(patient_id,
-                                                        data['fs'][0][0],
-                                                        data['seizure_begin'],
-                                                        data['seizure_end'],
-                                                        offset_beg, offset_end)
+            patient_dict[patient_id] = patient_data_info(
+                patient_id, data['fs'][0][0], data['seizure_begin'],
+                data['seizure_end'], offset_beg, offset_end)
 
             # record seizure files in data_urls/seizure_data for debug
             patient_dict[patient_id].save_seizure_data_urls()
