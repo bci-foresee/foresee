@@ -14,8 +14,8 @@ def test_sandbox_pipeline() -> None:
     input_channels = 2  # 1 for demonstration (speed)
     input_samples = 8192
 
-    global_rtl_sim = True
-    global_rtl_power_estimation = True
+    global_rtl_sim = False
+    global_rtl_power_estimation = False
 
     input_signal = generate_signal(frequencies=[10, 20, 40],
                                    amplitudes=[20, 15, 10],
