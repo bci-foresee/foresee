@@ -14,10 +14,13 @@ def test_pwxc_basic() -> None:
     # input weights
     input_weights = np.ones(312)
 
+    # constant 312 input
+    clk_freq = input_fs = 400
+
     input_pe = INPUT_PE(input=input_arr, clk=0)
 
     svm_pe = SVM(weights=input_weights,
-                 clk=1,
+                 clk=clk_freq,
                  rtl_sim=True,
                  rtl_power_estimation=True,
                  save_visualization=False)
