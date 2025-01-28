@@ -15,7 +15,7 @@ def test_pwxc_basic() -> None:
     input_channels = 2
     input_samples = 8192
 
-    clk_freq = input_fs * 16 # for 16 input_channels, demo purposes
+    clk_freq = input_fs * 16  # for 16 input_channels, demo purposes
 
     # input_signal = generate_signal(frequencies=[10, 20, 40],
     #                                amplitudes=[20, 15, 10],
@@ -24,7 +24,6 @@ def test_pwxc_basic() -> None:
     #                                n_samples=input_samples)
 
     input_signal = np.zeros((input_channels, input_samples))
-
 
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
@@ -57,6 +56,5 @@ def test_pwxc_basic() -> None:
     for key, value in pwxc_pe.simulation_data.items():
         print(f"{element.name}.{key} = {value}")
     print()
-
 
     output.shape == (input_channels, 6)

@@ -13,7 +13,7 @@ def test_fft_basic() -> None:
     input_channels = 1
     input_samples = 8192
 
-    clk_freq = input_fs * 16 # for 16 input_channels, demo purposes
+    clk_freq = input_fs * 16  # for 16 input_channels, demo purposes
 
     input_signal = generate_signal(frequencies=[10, 20, 40],
                                    amplitudes=[20, 15, 10],
