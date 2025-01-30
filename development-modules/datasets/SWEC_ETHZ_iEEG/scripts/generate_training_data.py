@@ -74,6 +74,10 @@ def main():
     # Wait for all processes to complete
     for p in processes:
         p.join()
+    
+    # empty queue
+    while not shared_queue.empty():
+        shared_queue.get() 
 
     print("Training data ready-----")
 

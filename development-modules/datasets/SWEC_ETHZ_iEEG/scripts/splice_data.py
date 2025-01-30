@@ -138,7 +138,7 @@ def splice_nonseizure_data(patient_dict, target_slices_count, shared_queue):
     slice_count = 0
 
     while slice_count < target_slices_count:
-        random_url = shared_queue.pop()
+        random_url = shared_queue.get()
         print("sampled file: " + str(random_url))
 
         parts = random_url.split('/')  # Split the URL into parts
