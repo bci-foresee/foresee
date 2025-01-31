@@ -2,7 +2,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-def tkeo_py(self, input: NDArray[np.float64]) -> NDArray[np.float64]:
+def tkeo_py(input: NDArray[np.float64]) -> NDArray[np.float64]:
     """
     Vectorized implementation of TKEO computation for multiple channels
     
@@ -37,7 +37,7 @@ def tkeo_py(self, input: NDArray[np.float64]) -> NDArray[np.float64]:
     return output
 
 
-def avg_py(self, input: NDArray[np.float64]) -> NDArray[np.float64]:
+def avg_py(input: NDArray[np.float64]) -> NDArray[np.float64]:
     """
         Vectorized implementation of AVG computation for multiple channels
 
