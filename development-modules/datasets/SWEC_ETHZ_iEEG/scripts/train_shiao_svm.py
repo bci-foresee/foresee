@@ -124,6 +124,8 @@ n_classes = 1
 # torch.save(y, "in_label_tensor.pt")
 # Load the tensors from disk
 
+# run the prior code first to save feature files; then run the following to train the SVM
+
 # Load tensors directly
 X = torch.load('./model_data/in_feature_gen_tensor.pt')
 y = torch.load('./model_data/in_label_tensor.pt')
@@ -136,18 +138,6 @@ X_train, X_test, y_train, y_test = train_test_split(X,
                                                     y,
                                                     test_size=0.20,
                                                     random_state=42)
-
-# # Define the SVM model
-# class SVM(nn.Module):
-#     def __init__(self, n_features):
-#         super(SVM, self).__init__()
-#         self.linear = nn.Linear(n_features, 1)
-
-#     def forward(self, x):
-#         return self.linear(x)
-
-# def hinge_loss(output, target):
-#     return torch.mean(torch.clamp(1 - output * target, min=0))
 
 model = SVC(kernel='linear')
 model.fit(X_train, y_train)
@@ -164,18 +154,3 @@ with open(filename, 'wb') as file:
     pickle.dump(model, file)
 
 print("Model saved to", filename)
-
-# # Load the model from the file
-# with open(filename, 'rb') as file:
-#     loaded_model = pickle.load(file)
-
-# # Make predictions using the loaded model
-# y_pred_new = loaded_model.predict(X_test)
-
-# # Calculate and print the accuracy
-# new_accuracy = accuracy_score(y_test, y_pred_new)
-# print("New Test Accuracy:", new_accuracy)
-
-# # Print the confusion matrix
-# new_cm = confusion_matrix(y_test, y_pred_new)
-# print("New Confusion Matrix:\n", new_cm)
