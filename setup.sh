@@ -37,6 +37,12 @@ sudo make install
 cd ../..
 
 # openSTA
+# NOTE: there may be system specific installations that need to be done for openSTA
+# make sure that your "make" command actually worked
+sudo apt install cmake  # version 3.27.8-1build1
+sudo apt install swig
+sudo apt-get install tcl-dev
+
 git submodule add --force https://github.com/The-OpenROAD-Project/OpenSTA.git external/OpenSTA
 git submodule init
 git submodule update

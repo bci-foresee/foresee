@@ -145,6 +145,8 @@ class ProcessingElement:
         self.create_yosys_synth_file(verilog_file=verilog_file,
                                      process_library=process_library)
 
+        self.create_sdc_constraints(verilog_file, clock_period_ns)
+
         # Create OpenSTA power analysis script
         self.create_power_opesta_tcl_file(verilog_file=verilog_file,
                                           process_library=process_library,
@@ -188,6 +190,19 @@ class ProcessingElement:
                 'Total Power': total_power,
                 'Percentage': percentage
             }
+
+        # Refined regex to target the specific "data arrival time" pattern
+        pattern = re.compile(
+            r"\s+([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)\s+data arrival time")
+
+        # Find all matches and extract the data arrival times
+        arrival_times = [
+            float(match.group(1)) for match in pattern.finditer(result.stdout)
+        ]
+
+        max_latency = max(arrival_times)
+
+        self.simulation_data["latency"] = max_latency
 
         self.simulation_data["power_dict"] = power_data['Total']
 
@@ -234,6 +249,7 @@ class ProcessingElement:
                     process_library=
                     "../../hardware_lib/sky130_fd_sc_hd__ff_n40C_1v65",
                     clock_freq=self.clk)
+
                 # multiply power by number of rtl runs
                 # total power is what is relevant to us right now
                 for key, value in self.simulation_data["power_dict"].items():
@@ -243,6 +259,11 @@ class ProcessingElement:
                         self.simulation_data["power_dict"][
                             key] = value * self.rtl_module_runs * max(
                                 1, self.rtl_single_module_runs)
+
+                # multiply latency by how many times module has to be repeated to get one valid output
+                self.simulation_data[
+                    "latency"] = self.simulation_data["latency"] * max(
+                        1, self.rtl_single_module_runs)
 
         else:
             output = self.compute(input=input_data)
@@ -309,6 +330,43 @@ class ProcessingElement:
         with open("synth.ys", "w") as f:
             f.write(content)
 
+    def create_sdc_constraints(self,
+                               verilog_file,
+                               clock_period,
+                               input_delay=2.0,
+                               output_delay=1.5):
+        """
+        Create SDC constraints file for timing analysis
+        Args:
+            verilog_file: Name of the verilog module/file
+            clock_period: Clock period in nanoseconds
+            input_delay: Maximum input delay (default 2.0ns)
+            output_delay: Maximum output delay (default 1.5ns)
+        """
+        content = f"""
+        # Clock definition
+        create_clock -name clk -period {clock_period} [get_ports clk]
+        set_clock_uncertainty 0.1 [get_clocks clk]
+
+        # Input delays for all synchronous inputs
+        set_input_delay -clock clk -max {input_delay} [all_inputs]
+        set_input_delay -clock clk -min {input_delay / 4} [all_inputs]
+
+        # Output delays
+        set_output_delay -clock clk -max {output_delay} [all_outputs]
+        set_output_delay -clock clk -min {output_delay / 3} [all_outputs]
+
+        # Load capacitance for all outputs
+        set_load 0.1 [all_outputs]
+        """
+
+        # sdc_path = f"./rtl/{verilog_file}.sdc"
+        with open("constraints.sdc", "w") as f:
+            f.write(content)
+        # print(f"SDC constraints written to {sdc_path}")
+
+        # ... rest of the function
+
     def create_power_opesta_tcl_file(self, verilog_file, process_library,
                                      clock_period):
         # function that creates a power analysis tcl script
@@ -336,7 +394,7 @@ class ProcessingElement:
         link_design {verilog_file}
 
         # Read the design constraints
-        # read_sdc clocked_adder.sdc
+        read_sdc constraints.sdc
         create_clock -period {clock_period} [get_ports clk]
 
         # Manually estimate switching activity (you may have to estimate this externally)
@@ -351,6 +409,9 @@ class ProcessingElement:
 
         # Perform a simplified power analysis based on the static power and estimated switching activity
         report_power
+
+        # timing analysis
+        report_checks -path_delay max -group_count 1
 
         # exit
         exit

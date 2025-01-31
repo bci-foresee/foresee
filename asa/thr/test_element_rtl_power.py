@@ -11,12 +11,14 @@ def test_thr_basic() -> None:
     input_val = 50
     input_val = np.array([50])
 
+    clk_freq = input_fs = 400
+
     input_pe = INPUT_PE(input=input_val, clk=0)
 
     thr_pe = THR(lower_bound=0,
                  upper_bound=100,
                  rtl_sim=True,
-                 clk=16_000_000,
+                 clk=clk_freq,
                  rtl_power_estimation=True,
                  save_visualization=True)
 
@@ -38,14 +40,12 @@ def test_thr_basic() -> None:
         print(
             f"Element: {element.name}, visualisation generated: {element.save_visualization}"
         )
-
-    power_dict = elements[-1].simulation_data["power_dict"]
-
-    print(elements[-1].rtl_module_runs)
-
-    for key, value in power_dict.items():
-        print(f"{key}: {value}")
-
     print()
-    print(f"assert test case not implemented yet, output:\n {output}")
+    for element in elements:
+        for key, value in element.simulation_data.items():
+            print(f"{element.name}.{key} = {value}")
+        print()
+
+    print(output)
+
     assert 1 == 1

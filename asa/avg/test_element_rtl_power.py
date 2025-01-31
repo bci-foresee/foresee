@@ -8,8 +8,10 @@ def test_avg_basic() -> None:
 
     # input signal window
     input_fs = 400
-    input_channels = 2
+    input_channels = 1
     input_samples = 8192
+
+    clk_freq = input_fs * 16  # for 16 input_channels, demo purposes
 
     input_signal = generate_signal(frequencies=[10, 20, 40],
                                    amplitudes=[20, 15, 10],
@@ -20,7 +22,7 @@ def test_avg_basic() -> None:
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
     avg_pe = AVG(n_channels=input_channels,
-                 clk=1,
+                 clk=clk_freq,
                  rtl_sim=True,
                  rtl_power_estimation=True,
                  save_visualization=False)
