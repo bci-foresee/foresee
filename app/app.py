@@ -11,6 +11,8 @@ from asa.utils import INPUT_PE, generate_signal
 from asa import FFT, SVM, THR, PWXC, BBF
 import numpy as np
 import csv
+from storage import StorageModel, CellType, ResultType
+import math
 
 app = Flask(__name__)
 app.config['STATIC_FOLDER'] = 'static'
@@ -350,6 +352,26 @@ def run_pipeline():
             "Power": power
         }
         output_data.append(element_output)
+
+    model = StorageModel(
+        cell_type=CellType.STT,
+        write_size=32 *
+        math.prod(elements[-1].simulation_data['output_dimensions']),
+        time_constraint=input_samples / (input_fs * input_channels))
+    model.run()
+
+    storage_fields = [
+        ResultType.TOTAL_POWER, ResultType.TOTAL_DYNAMIC_READ_POWER,
+        ResultType.TOTAL_DYNAMIC_WRITE_POWER, ResultType.TOTAL_ENERGY,
+        ResultType.TOTAL_LATENCY, ResultType.TOTAL_READ_LATENCY,
+        ResultType.TOTAL_WRITE_LATENCY, ResultType.AREA,
+        ResultType.LIFE_EXPECTANCY
+    ]
+
+    storage_data = {}
+    for field in storage_fields:
+        storage_data[field.value] = model.get_result(field)
+    print(storage_data)
 
     # Save output
     filename = os.path.join(BASE_DIR, "pipelines", pipeline_data['name'], "d3",

@@ -4,7 +4,7 @@ import subprocess
 from enum import Enum
 import pandas as pd
 from pathlib import Path
-from utils import CellType, OpTarget, ResultType
+from .utils import CellType, OpTarget, ResultType
 from typing import List
 
 # Example usage:
@@ -34,17 +34,19 @@ class StorageModel:
     A class to model storage performance from various workload and cell configurations.
     """
 
-    def __init__(self,
-                 cell_type: CellType,
-                 total_reads: int,
-                 total_writes: int,
-                 read_size: int,
-                 write_size: int,
-                 word_width: int = 16,
-                 process_node: int = 22,
-                 opt_target: OpTarget = OpTarget.ReadLatency,
-                 capacity: int = 1,
-                 bits_per_cell: int = 1):
+    def __init__(
+            self,
+            cell_type: CellType,
+            total_reads: int = 1,
+            total_writes: int = 1,
+            read_size: int = 0,  #bytes
+            write_size: int = 0,  # bytes
+            time_constraint: int = 1,  # s
+            word_width: int = 16,  #bits
+            process_node: int = 22,
+            opt_target: OpTarget = OpTarget.ReadLatency,
+            capacity: int = 1,  #MB
+            bits_per_cell: int = 1):
         self.nvm_explorer_path = Path(
             __file__).resolve().parent / "nvmexplorer"
         self.config = {
@@ -56,6 +58,8 @@ class StorageModel:
                 "read_size":
                 read_size,
                 "write_size":
+                write_size,
+                "time_constraint":
                 write_size,
                 "cell_type": [cell_type.value],
                 "process_node":
@@ -173,9 +177,12 @@ class StorageModel:
         return vals
 
     def get_results_path(self):
-        cell_value, capacity, opt_target, bits_per_cell = self.get_config_vals(
-            ["cell_type", "capacity", "opt_target", "bits_per_cell"])
-        return self.nvm_explorer_path / "output" / "results" / f"{cell_value}_{capacity}MB_{opt_target}_{bits_per_cell}BPC-default.csv"
+        cell_value, capacity, opt_target, bits_per_cell, word_width = self.get_config_vals(
+            [
+                "cell_type", "capacity", "opt_target", "bits_per_cell",
+                "word_width"
+            ])
+        return self.nvm_explorer_path / "output" / "results" / f"{cell_value}_{capacity}MB_{opt_target}_{bits_per_cell}BPC_{word_width}b_default.csv"
 
     def add_lifetime_data(self):
         endurancedf_path = self.nvm_explorer_path / "EducationalTutorial" / "2016-2020_EnduranceSummary.csv"
@@ -193,10 +200,9 @@ class StorageModel:
             (endurancedf['Memory Cell'] == cell_type)
             & (endurancedf['max'].notnull())]['max'].iloc[0]
 
-        min_life_expectancy = minEndurance if self.get_result(
-            ResultType.WRITE_ACCESSES) != 0.0 else 3.2e8
-        max_life_expectancy = maxEndurance if self.get_result(
-            ResultType.WRITE_ACCESSES) != 0.0 else 3.2e8
+        write_accesses = self.get_result(ResultType.WRITE_ACCESSES)
+        min_life_expectancy = minEndurance / write_accesses if write_accesses != 0.0 else 3.2e8
+        max_life_expectancy = maxEndurance / write_accesses if write_accesses != 0.0 else 3.2e8
 
         # add result as a touple to results dataframe
         self.results["Life Expectancy (s)"] = (min_life_expectancy,
@@ -231,27 +237,31 @@ class StorageModel:
         print("Cleanup complete.")
         return
 
+    def delete_nvsim_output(self):
+        '''Delete the nvsim output to ensure rerun.'''
+        cell_value, capacity, opt_target, bits_per_cell, word_width = self.get_config_vals(
+            [
+                "cell_type", "capacity", "opt_target", "bits_per_cell",
+                "word_width"
+            ])
+
+        output_path = self.nvm_explorer_path / "output" / "nvsim_output" / f"{cell_value}_{capacity}MB_{opt_target}_{bits_per_cell}BPC_{word_width}b_default_nvsim_output.pkl"
+        if output_path.exists():
+            output_path.unlink()
+        return
+
 
 # runs example model
 def main():
-    model = StorageModel(
-        cell_type=CellType.PCM,
-        total_reads=1000,
-        total_writes=1000,
-        read_size=64,
-        write_size=64,
-    )
+    model = StorageModel(cell_type=CellType.STT,
+                         total_reads=1,
+                         read_size=524611,
+                         total_writes=1,
+                         write_size=524612,
+                         time_constraint=8192 / (30000 * 16))
 
     model.run()
     model.print_summary()
-
-    # get specific results
-    print(f"\n\nRead Accesses: {model.get_result(ResultType.READ_ACCESSES)}")
-    print(f"Write Accesses: {model.get_result(ResultType.WRITE_ACCESSES)}")
-    print(f"Total latency (ms): {model.get_result(ResultType.TOTAL_LATENCY)}")
-    print(f"Total power (mW): {model.get_result(ResultType.TOTAL_POWER)}")
-    print(f"Total energy (mJ): {model.get_result(ResultType.TOTAL_ENERGY)}")
-    print(f"Total latency (ms): {model.get_result(ResultType.TOTAL_LATENCY)}")
 
     # model.cleanup()
     return
