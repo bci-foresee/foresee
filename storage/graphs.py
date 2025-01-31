@@ -480,6 +480,7 @@ def plot_pipeline_stages(model: StorageModel, result_type: ResultType):
     plt.tight_layout()
     plt.show()
 
+
 def plot_total_power_vs_memory_types(model: StorageModel):
     memory_types = [cell_type for cell_type in CellType]
     total_power = []
@@ -491,21 +492,23 @@ def plot_total_power_vs_memory_types(model: StorageModel):
 
     fig, ax = plt.subplots(figsize=(8, 5))
     x = np.arange(len(memory_types))  # Positions for the bars
-    
+
     ax.bar(x, total_power, color='lightcoral', edgecolor='black', zorder=3)
 
     ax.set_xlabel('Cell Type')
     ax.set_ylabel('Memory Power (mW)')
 
     ax.set_xticks(x)
-    ax.set_xticklabels([cell_type.value for cell_type in memory_types], rotation=45)
-    
+    ax.set_xticklabels([cell_type.value for cell_type in memory_types],
+                       rotation=45)
+
     ax.grid(which='both', linestyle='-', linewidth=0.5, alpha=0.7, zorder=0)
     ax.grid(which='major', linestyle='-', linewidth=1.2, alpha=0.9, zorder=0)
 
     fig.tight_layout()
-    
+
     plt.show()
+
 
 def compare_total_power(model1: StorageModel, model2: StorageModel):
     model1.run()
@@ -520,12 +523,26 @@ def compare_total_power(model1: StorageModel, model2: StorageModel):
 
     fig, ax = plt.subplots(figsize=(6, 4))
 
-    bars = ax.bar(labels, total_powers, color=colors, edgecolor='black', zorder=3)
+    bars = ax.bar(labels,
+                  total_powers,
+                  color=colors,
+                  edgecolor='black',
+                  zorder=3)
 
     ax.set_ylabel('Memory Power (mW)')
 
-    ax.grid(which='major', linestyle='-', linewidth='0.5', color='grey', alpha=0.7, zorder=0)
-    ax.grid(which='minor', linestyle=':', linewidth='0.5', color='grey', alpha=0.7, zorder=0)
+    ax.grid(which='major',
+            linestyle='-',
+            linewidth='0.5',
+            color='grey',
+            alpha=0.7,
+            zorder=0)
+    ax.grid(which='minor',
+            linestyle=':',
+            linewidth='0.5',
+            color='grey',
+            alpha=0.7,
+            zorder=0)
     ax.minorticks_on()
 
     fig.tight_layout()
