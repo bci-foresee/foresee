@@ -16,6 +16,7 @@ module bbf (
     wire [31:0] square;
     
     // Calculate square of input
+    // **ESTIMATION of BBF power** use cadence/proprietary tool to generate given c-file's rtl for more accurate results
     assign square = data_in * data_in;
     
     always @(posedge clk or posedge rst) begin
