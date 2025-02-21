@@ -28,7 +28,10 @@ def test_pwxc_basic() -> None:
 
     input_pe = INPUT_PE(input=input_signal, clk=0)
 
-    pwxc_pe = PWXC(n_channels=2, clk=1, rtl_sim=False, save_visualization=False)
+    pwxc_pe = PWXC(n_channels=2,
+                   clk=1,
+                   rtl_sim=False,
+                   save_visualization=False)
 
     # connect PEs
     input_pe.add_output(pwxc_pe)
