@@ -1,0 +1,357 @@
+/* LibraryPage.css */
+html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  .foresee-container {
+    height: 100vh;
+    width: 100%;
+    overflow-y: auto;
+    padding: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    background-color: #f5f5f5;
+  }
+  
+  .foresee-header h1 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .foresee-header p {
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 12px;
+  }
+  
+  /* Grid layout */
+  .grid-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 2fr 1fr;
+    gap: 10px;
+    height: calc(100% - 60px);
+  }
+  
+  /* Media query for responsive layout */
+  @media (max-width: 768px) {
+    .grid-container {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto auto;
+    }
+  }
+  
+  .implemented-pipelines-section,
+  .simulation-section,
+  .creator-section,
+  .modules-section {
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+  }
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .section-header h2 {
+    font-size: 16px;
+    margin: 0 8px;
+    white-space: nowrap;
+  }
+  
+  .icon {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .settings-icon {
+    background-color: #f8a978;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  
+  .search-container {
+    margin-left: auto;
+  }
+  
+  .search-input {
+    padding: 6px 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    width: 150px;
+    font-size: 12px;
+  }
+  
+  .pipelines-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+  }
+  
+  .pipeline-item {
+    display: flex;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .pipeline-item.selected {
+    border-color: #e0e0e0;
+  }
+  
+  .pipeline-selection {
+    padding: 12px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9f9f9;
+  }
+  
+  .pipeline-content {
+    flex: 1;
+    padding: 12px;
+  }
+  
+  .pipeline-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .pipeline-icon-container {
+    margin-right: 5px;
+    color: #d32f2f;
+  }
+  
+  .pipeline-title {
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .pipeline-description {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  
+  .pipeline-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #888;
+  }
+  
+  .pipeline-last-run {
+    color: #d32f2f;
+  }
+  
+  .pipeline-actions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .pipeline-action-icon {
+    color: #d32f2f;
+    cursor: pointer;
+  }
+  
+  .doc-icon, .database-icon {
+    color: #d32f2f;
+  }
+  
+  /* Simulation Settings Styles */
+  .simulation-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .settings-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 5px;
+  }
+  
+  .setting-option {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f8f8;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .toggle {
+    width: 32px;
+    height: 18px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .toggle.active {
+    background-color: #d32f2f;
+  }
+  
+  .toggle-handle {
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
+  }
+  
+  .toggle.active .toggle-handle {
+    transform: translateX(14px);
+  }
+  
+  .runs-input {
+    width: 32px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 12px;
+  }
+  
+  .run-button {
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    font-weight: 500;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 5px;
+  }
+  
+  .progress-bar-container {
+    height: 6px;
+    background-color: #f0f0f0;
+    border-radius: 3px;
+    position: relative;
+    margin: 8px 0;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-color: #d32f2f;
+    border-radius: 3px;
+  }
+  
+  .progress-value {
+    position: absolute;
+    right: 0;
+    bottom: -16px;
+    font-size: 10px;
+    color: #888;
+  }
+  
+  .simulation-controls {
+    display: flex;
+    gap: 5px;
+    margin-top: 16px;
+  }
+  
+  .control-button {
+    flex: 1;
+    padding: 6px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 11px;
+  }
+  
+  .control-button.pause {
+    background-color: #f0f0f0;
+    color: #666;
+  }
+  
+  .control-button.abort {
+    background-color: #f0f0f0;
+    color: #666;
+  }
+  
+  .control-button.compare {
+    background-color: #d32f2f;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  
+  /* Creator Section Styles */
+  .creator-cards {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .creator-card {
+    flex: 1;
+    min-width: 110px;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    padding: 15px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  
+  .creator-card:hover {
+    border-color: #d32f2f;
+  }
+  
+  .creator-icon {
+    color: #d32f2f;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .creator-title {
+    font-weight: 500;
+    margin-bottom: 5px;
+    font-size: 13px;
+  }
+  
+  .creator-description {
+    font-size: 11px;
+    color: #666;
+  }
+  
+  .pipeline-card-icon {
+    color: #d32f2f;
+    font-size: 20px;
+  }
