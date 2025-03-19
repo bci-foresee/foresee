@@ -1,51 +1,32 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Info } from "lucide-react";
 
-const MODULES = [
-  {
-    id: "fft",
-    name: "Fast Fourier Transform",
-    inputs: 1,
-    outputs: 1,
-    icon: "FFT",
-  },
-  {
-    id: "bpf",
-    name: "Butterworth Bandpass Filter",
-    inputs: 1,
-    outputs: 1,
-    icon: "BPF",
-  },
-  {
-    id: "pcc",
-    name: "Pairwise Cross-Correlation",
-    inputs: 1,
-    outputs: 1,
-    icon: "PWXC",
-  },
-  {
-    id: "svm",
-    name: "Support Vector Machine",
-    inputs: "multiple",
-    outputs: 1,
-    icon: "SVM",
-  },
-  {
-    id: "thr",
-    name: "Threshold Detection",
-    inputs: "multiple",
-    outputs: 1,
-    icon: "THR",
-  },
-];
+const MODULES = {
+  Processing: [
+    { id: "fft", name: "Fast Fourier Transform", inputs: 1, outputs: 1, icon: "BBF" },
+    { id: "bpf", name: "Butterworth Bandpass Filter", inputs: 1, outputs: 1, icon: "BBF" },
+    { id: "pcc", name: "Pairwise Cross-Correlation", inputs: 1, outputs: 1, icon: "PWXC" },
+    { id: "svm", name: "Support Vector Machine", inputs: "multiple", outputs: 1, icon: "SVM" },
+    { id: "thr", name: "Threshold Detection", inputs: "multiple", outputs: 1, icon: "THR" },
+  ],
+  Inputs: [
+    { id: "input1", name: "Input Module 1", inputs: 0, outputs: 1, icon: "IN1" },
+    { id: "input2", name: "Input Module 2", inputs: 0, outputs: 1, icon: "IN2" },
+  ],
+  Storage: [
+    { id: "storage1", name: "Storage Module 1", inputs: 1, outputs: 1, icon: "ST1" },
+    { id: "storage2", name: "Storage Module 2", inputs: 1, outputs: 1, icon: "ST2" },
+  ],
+};
 
 const handleDragStart = (e, module) => {
-  console.log("Dragging module:", module);
   e.dataTransfer.setData("module", JSON.stringify(module));
 };
 
 export default function Navbar({ onDragStart }) {
   const [isModulesOpen, setIsModulesOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("Processing");
   const router = useRouter();
 
   return (
@@ -66,27 +47,50 @@ export default function Navbar({ onDragStart }) {
             Modules <span className="ml-1">▼</span>
           </button>
           {isModulesOpen && (
-            <div className="absolute left-0 top-full mt-2 w-72 bg-white shadow-lg border rounded-lg p-4 z-50">
-              <h3 className="text-red-600 font-bold text-center">Modules</h3>
-              <p className="text-xs text-gray-600 text-center mb-2">
-                Drag-and-drop elements into the canvas.
-              </p>
-              <ul>
-                {MODULES.map((module) => (
+            <div className="absolute left-0 top-full mt-2 w-80 bg-white shadow-xl border rounded-lg z-50">
+              {/* Header */}
+              <div className="bg-red-600 text-white text-center font-bold py-2 rounded-t-lg">
+                Modules
+              </div>
+
+              {/* Instructions */}
+              <div className="px-4 py-2 text-gray-700 text-sm flex gap-2 items-center border-b">
+                <Info size={16} className="text-gray-500" />
+                <span>Drag-and-drop elements into the canvas.</span>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex border-b">
+                {["Inputs", "Processing", "Storage"].map((tab) => (
+                  <button
+                    key={tab}
+                    className={`flex-1 py-2 text-sm font-semibold text-gray-500 ${
+                      activeTab === tab ? "border-b-2 border-black text-black" : ""
+                    }`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              {/* Scrollable Module List */}
+              <ul className="py-2 px-4 max-h-64 overflow-y-auto">
+                {MODULES[activeTab].map((module) => (
                   <li
                     key={module.id}
                     draggable
                     onDragStart={(e) => handleDragStart(e, module)}
-                    className="p-2 border-b cursor-pointer flex items-center hover:bg-gray-100"
+                    className="flex items-center p-3 border rounded-lg mb-2 shadow-sm hover:bg-gray-100 cursor-pointer w-full h-[70px] gap-3"
                   >
-                    <span className="border border-red-500 text-red-500 px-2 py-1 rounded-md mr-2">
+                    {/* Icon */}
+                    <span className="border border-red-500 text-red-500 px-3 py-1 rounded-lg font-semibold w-14 text-center text-sm flex items-center justify-center">
                       {module.icon}
                     </span>
-                    <div>
-                      <p className="font-bold">{module.name}</p>
-                      <p className="text-xs text-gray-600">
-                        {module.inputs} inputs / {module.outputs} output
-                      </p>
+                    {/* Module Details */}
+                    <div className="flex flex-col flex-1">
+                      <p className="font-semibold text-sm">{module.name}</p>
+                      <p className="text-xs text-gray-600">{module.inputs} inputs / {module.outputs} output</p>
                     </div>
                   </li>
                 ))}
