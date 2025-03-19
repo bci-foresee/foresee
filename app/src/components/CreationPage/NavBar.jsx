@@ -4,19 +4,23 @@ import { Info } from "lucide-react";
 
 const MODULES = {
   Processing: [
-    { id: "fft", name: "Fast Fourier Transform", inputs: 1, outputs: 1, icon: "BBF" },
+    { id: "fft", name: "Fast Fourier Transform", inputs: 1, outputs: 1, icon: "FFT" },
     { id: "bpf", name: "Butterworth Bandpass Filter", inputs: 1, outputs: 1, icon: "BBF" },
     { id: "pcc", name: "Pairwise Cross-Correlation", inputs: 1, outputs: 1, icon: "PWXC" },
     { id: "svm", name: "Support Vector Machine", inputs: "multiple", outputs: 1, icon: "SVM" },
     { id: "thr", name: "Threshold Detection", inputs: "multiple", outputs: 1, icon: "THR" },
+    { id: "avg", name: "Signal Average", inputs: "multiple", outputs: 1, icon: "AVG" },
+    { id: "tkeo", name: "Teager-Kaiser Energy Operator", inputs: "single", outputs: 1, icon: "TKEO" },
   ],
   Inputs: [
-    { id: "input1", name: "Input Module 1", inputs: 0, outputs: 1, icon: "IN1" },
-    { id: "input2", name: "Input Module 2", inputs: 0, outputs: 1, icon: "IN2" },
+    { id: "custom", name: "Custom Signal", inputs: 0, outputs: 1, icon: "Input" },
+    { id: "dataset", name: "Dataset 1", inputs: 0, outputs: 1, icon: "Input" },
   ],
   Storage: [
-    { id: "storage1", name: "Storage Module 1", inputs: 1, outputs: 1, icon: "ST1" },
-    { id: "storage2", name: "Storage Module 2", inputs: 1, outputs: 1, icon: "ST2" },
+    { id: "sst", name: "Spin-Transfer Torque", inputs: 0, outputs: 1, icon: "SST" },
+    { id: "pcm", name: "Phase-Change Memory", inputs: 0, outputs: 1, icon: "PCM" },
+    { id: "fefet", name: "Ferroelectric Field-Effect Transistor", inputs: 0, outputs: 1, icon: "FeFET" },
+    { id: "rram", name: "Resistive Random Access Memory", inputs: 0, outputs: 1, icon: "RRAM" },
   ],
 };
 
