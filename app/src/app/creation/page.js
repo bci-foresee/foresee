@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Canvas from "../../components/CreationPage/Canvas";
 import Navbar from "../../components/CreationPage/Navbar";
-import { Button } from "../../components/CreationPage/Button";
 
 const CreationPage = () => {
   const searchParams = useSearchParams();
@@ -16,10 +15,20 @@ const CreationPage = () => {
     if (pipelineId) {
       window.electronAPI
         .getPipelineById(pipelineId)
-        .then(
-          (data) => (console.log("Fetched Pipeline:", data), setPipeline(data))
-        )
-        .catch((err) => console.error("Error fetching pipeline:", err));
+        .then((data) => {
+          if (data && data.graph_structure) {
+            setPipeline(data);
+          } else {
+            console.error("Invalid pipeline data:", data);
+            setPipeline({ graph_structure: JSON.stringify({ nodes: [], edges: [] }) });
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching pipeline:", err);
+          setPipeline({ graph_structure: JSON.stringify({ nodes: [], edges: [] }) });
+        });
+    } else {
+      setPipeline({ graph_structure: JSON.stringify({ nodes: [], edges: [] }) });
     }
   }, [pipelineId]);
 
@@ -40,7 +49,7 @@ const CreationPage = () => {
             pipelineId={pipelineId}
           />
         ) : (
-          <p className="text-lg font-semibold p-6">Create new pipeline.</p>
+          <p className="text-lg font-semibold p-6">Loading pipeline...</p>
         )}
       </div>
     </div>

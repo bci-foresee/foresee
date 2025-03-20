@@ -78,7 +78,7 @@ export default function Canvas({ graphData, pipelineId }) {
   );
 
   const [edges, setEdges, onEdgesChange] = useEdgesState(
-    parsedData.edges.map((edge) => ({
+    (parsedData.edges || []).map((edge) => ({
       id: `${edge.source}-${edge.target}`,
       source: edge.source.toString(),
       target: edge.target.toString(),
