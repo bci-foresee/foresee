@@ -25,22 +25,56 @@ export default function Canvas({ graphData, pipelineId }) {
   if (!parsedData.nodes || !parsedData.edges)
     return <p>No graph data found.</p>;
 
+  /** 🔹 Returns styles based on node type */
+  const getNodeStyle = (node, isSelected) => {
+    const baseStyle = {
+      transition: "0.2s ease-in-out",
+      padding: "5px 10px", // Balanced padding
+      display: "inline-block", // Prevents it from stretching
+      width: "fit-content", // Only expands based on content
+      maxWidth: "250px", // Prevents excessive width
+      minWidth: "30px", // Ensures it's not too small
+      textAlign: "center",
+      whiteSpace: "normal", // Allows text wrapping
+      wordBreak: "break-word", // Ensures long words break properly
+    };
+
+    const typeStyles = {
+      input: { border: "2px solid gray", borderRadius: 10 },
+      module: { border: "2px solid red", borderRadius: 10 },
+      storage: { border: "2px solid gray" },
+      default: { border: "2px solid red" },
+    };
+
+    return {
+      ...baseStyle,
+      ...(typeStyles[node.type] || typeStyles.default),
+      ...(isSelected && {
+        border: "3px solid blue",
+        backgroundColor: "#B3D7FF",
+      }),
+    };
+  };
+
+  /** 🔹 Returns styles for edges */
+  const getEdgeStyle = (edge, isSelected) => ({
+    stroke: isSelected ? "blue" : "orange",
+    strokeWidth: isSelected ? 3 : 2,
+    markerEnd: "url(#arrow)", // Add arrow marker
+    transition: "0.2s ease-in-out",
+  });
+
+  /** 🔹 Nodes & Edges State */
   const [nodes, setNodes, onNodesChange] = useNodesState(
-    parsedData.nodes.map((node) => {
-      return {
-        id: node.id.toString(),
-        data: { label: node.label },
-        position: { x: node.x, y: node.y },
-        style: {
-          border: "2px solid red",
-          padding: 10,
-          borderRadius: 10,
-          backgroundColor: "white",
-        },
-        sourcePosition: "right",
-        targetPosition: "left",
-      };
-    })
+    parsedData.nodes.map((node) => ({
+      id: node.id.toString(),
+      data: { label: node.label },
+      type: node.type,
+      position: { x: node.x, y: node.y },
+      style: getNodeStyle(node, false), // Apply default style
+      sourcePosition: "right",
+      targetPosition: "left",
+    }))
   );
 
   const [edges, setEdges, onEdgesChange] = useEdgesState(
@@ -49,27 +83,28 @@ export default function Canvas({ graphData, pipelineId }) {
       source: edge.source.toString(),
       target: edge.target.toString(),
       animated: true,
-      style: { stroke: "red", strokeWidth: 2 },
+      style: getEdgeStyle(edge, false),
     }))
   );
 
+  /** 🔹 Selection State */
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-  // Handle node selection
+  /** 🔹 Handle Node Click */
   const onNodeClick = (event, node) => {
     setSelectedNodeId(node.id);
-    setSelectedEdgeId(null); // Deselect edge if node is selected
+    setSelectedEdgeId(null);
   };
 
-  // Handle edge selection
+  /** 🔹 Handle Edge Click */
   const onEdgeClick = (event, edge) => {
     setSelectedEdgeId(edge.id);
-    setSelectedNodeId(null); // Deselect node if edge is selected
+    setSelectedNodeId(null);
   };
 
-  // Handle deletion of selected node or edge
+  /** 🔹 Handle Delete Key */
   const onDeleteKey = useCallback(
     (event) => {
       if (event.key === "Delete" || event.key === "Backspace") {
@@ -96,13 +131,13 @@ export default function Canvas({ graphData, pipelineId }) {
     return () => window.removeEventListener("keydown", onDeleteKey);
   }, [onDeleteKey]);
 
-  // Allow dynamic node connections
+  /** 🔹 Enable Connections */
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
     []
   );
 
-  // Allow dropping new nodes into the canvas
+  /** 🔹 Drag & Drop Handling */
   const onDragOver = (event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -125,25 +160,17 @@ export default function Canvas({ graphData, pipelineId }) {
       }
 
       const module = JSON.parse(data);
-      console.log("Dropped module:", module);
-
       const position = reactFlowInstance.project({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
 
-      console.log("New node position:", position);
-
       const newNode = {
-        id: `${Date.now()}`, // Unique ID
+        id: `${Date.now()}`,
+        type: module.type,
         position,
         data: { label: module.name },
-        style: {
-          border: "2px solid red",
-          padding: 10,
-          borderRadius: 10,
-          backgroundColor: "white",
-        },
+        style: getNodeStyle(module, false),
         sourcePosition: "right",
         targetPosition: "left",
       };
@@ -153,6 +180,7 @@ export default function Canvas({ graphData, pipelineId }) {
     [reactFlowInstance, setNodes]
   );
 
+  /** 🔹 Save Pipeline */
   const savePipeline = () => {
     if (!pipelineId) {
       console.error("Pipeline ID is missing.");
@@ -163,6 +191,7 @@ export default function Canvas({ graphData, pipelineId }) {
       nodes: nodes.map((node) => ({
         id: node.id,
         label: node.data.label,
+        type: node.type,
         x: node.position.x,
         y: node.position.y,
       })),
@@ -189,21 +218,12 @@ export default function Canvas({ graphData, pipelineId }) {
         <ReactFlow
           nodes={nodes.map((node) => ({
             ...node,
-            style: {
-              ...node.style,
-              border:
-                selectedNodeId === node.id ? "3px solid blue" : "2px solid red",
-              backgroundColor:
-                selectedNodeId === node.id ? "lightblue" : "white",
-            },
+            style: getNodeStyle(node, node.id === selectedNodeId),
           }))}
           edges={edges.map((edge) => ({
             ...edge,
             animated: true,
-            style: {
-              stroke: selectedEdgeId === edge.id ? "blue" : "red",
-              strokeWidth: selectedEdgeId === edge.id ? 3 : 2,
-            },
+            style: getEdgeStyle(edge, edge.id === selectedEdgeId),
           }))}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -211,15 +231,33 @@ export default function Canvas({ graphData, pipelineId }) {
           onEdgeClick={onEdgeClick}
           onConnect={onConnect}
           fitView
-          onInit={(instance) => {
-            console.log("ReactFlow instance initialized:", instance);
-            setReactFlowInstance(instance);
-          }}
+          onInit={(instance) => setReactFlowInstance(instance)}
         >
           <Controls />
           <Background />
+          <svg>
+            <defs>
+              <marker
+                id="arrow"
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerWidth="6"
+                markerHeight="6"
+                orient="auto-start-reverse"
+              >
+                <path
+                  d="M 0 2 L 8 5 L 0 8"
+                  fill="none"
+                  stroke="orange"
+                  strokeWidth="2"
+                />
+              </marker>
+            </defs>
+          </svg>
         </ReactFlow>
       </ReactFlowProvider>
+
       <button
         className="absolute bottom-4 right-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
         onClick={savePipeline}

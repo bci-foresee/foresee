@@ -16,7 +16,9 @@ const CreationPage = () => {
     if (pipelineId) {
       window.electronAPI
         .getPipelineById(pipelineId)
-        .then((data) => setPipeline(data))
+        .then(
+          (data) => (console.log("Fetched Pipeline:", data), setPipeline(data))
+        )
         .catch((err) => console.error("Error fetching pipeline:", err));
     }
   }, [pipelineId]);
