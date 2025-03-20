@@ -11,40 +11,29 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 
 export default function Canvas({ graphData, pipelineId }) {
-  if (!graphData) return <p>Loading...</p>;
-
-  let parsedData;
-  try {
-    parsedData =
-      typeof graphData === "string" ? JSON.parse(graphData) : graphData;
-  } catch (error) {
-    console.error("Invalid graph data format:", error);
-    return <p>Error loading graph.</p>;
-  }
-
-  if (!parsedData.nodes || !parsedData.edges)
-    return <p>No graph data found.</p>;
+  const parsedData =
+    graphData && typeof graphData === "object"
+      ? graphData
+      : { nodes: [], edges: [] };
 
   const [nodes, setNodes, onNodesChange] = useNodesState(
-    parsedData.nodes.map((node) => {
-      return {
-        id: node.id.toString(),
-        data: { label: node.label },
-        position: { x: node.x, y: node.y },
-        style: {
-          border: "2px solid red",
-          padding: 10,
-          borderRadius: 10,
-          backgroundColor: "white",
-        },
-        sourcePosition: "right",
-        targetPosition: "left",
-      };
-    })
+    (parsedData.nodes || []).map((node) => ({
+      id: node.id.toString(),
+      data: { label: node.label },
+      position: { x: node.x, y: node.y },
+      style: {
+        border: "2px solid red",
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: "white",
+      },
+      sourcePosition: "right",
+      targetPosition: "left",
+    }))
   );
 
   const [edges, setEdges, onEdgesChange] = useEdgesState(
-    parsedData.edges.map((edge) => ({
+    (parsedData.edges || []).map((edge) => ({
       id: `${edge.source}-${edge.target}`,
       source: edge.source.toString(),
       target: edge.target.toString(),
@@ -60,13 +49,13 @@ export default function Canvas({ graphData, pipelineId }) {
   // Handle node selection
   const onNodeClick = (event, node) => {
     setSelectedNodeId(node.id);
-    setSelectedEdgeId(null); // Deselect edge if node is selected
+    setSelectedEdgeId(null);
   };
 
   // Handle edge selection
   const onEdgeClick = (event, edge) => {
     setSelectedEdgeId(edge.id);
-    setSelectedNodeId(null); // Deselect node if edge is selected
+    setSelectedNodeId(null);
   };
 
   // Handle deletion of selected node or edge
@@ -153,6 +142,7 @@ export default function Canvas({ graphData, pipelineId }) {
     [reactFlowInstance, setNodes]
   );
 
+  // Save pipeline function
   const savePipeline = () => {
     if (!pipelineId) {
       console.error("Pipeline ID is missing.");
@@ -187,45 +177,30 @@ export default function Canvas({ graphData, pipelineId }) {
     >
       <ReactFlowProvider>
         <ReactFlow
-          nodes={nodes.map((node) => ({
-            ...node,
-            style: {
-              ...node.style,
-              border:
-                selectedNodeId === node.id ? "3px solid blue" : "2px solid red",
-              backgroundColor:
-                selectedNodeId === node.id ? "lightblue" : "white",
-            },
-          }))}
-          edges={edges.map((edge) => ({
-            ...edge,
-            animated: true,
-            style: {
-              stroke: selectedEdgeId === edge.id ? "blue" : "red",
-              strokeWidth: selectedEdgeId === edge.id ? 3 : 2,
-            },
-          }))}
+          nodes={nodes}
+          edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
           onEdgeClick={onEdgeClick}
           onConnect={onConnect}
           fitView
-          onInit={(instance) => {
-            console.log("ReactFlow instance initialized:", instance);
-            setReactFlowInstance(instance);
-          }}
+          onInit={(instance) => setReactFlowInstance(instance)}
         >
           <Controls />
           <Background />
         </ReactFlow>
       </ReactFlowProvider>
-      <button
-        className="absolute bottom-4 right-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
-        onClick={savePipeline}
-      >
-        Save Pipeline
-      </button>
+
+      {/* Save Button (only appears if a pipeline ID exists) */}
+      {pipelineId && (
+        <button
+          className="absolute bottom-4 right-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
+          onClick={savePipeline}
+        >
+          Save Pipeline
+        </button>
+      )}
     </div>
   );
 }
