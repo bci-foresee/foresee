@@ -27,7 +27,7 @@ const CreationPage = () => {
           setPipeline({ graph_structure: JSON.stringify({ nodes: [], edges: [] }) });
         });
     } else {
-      setPipeline({ graph_structure: JSON.stringify({ nodes: [], edges: [] }) });
+      setPipeline({ name: 'Untitled', graph_structure: JSON.stringify({ nodes: [], edges: [] }) });
     }
   }, [pipelineId]);
 

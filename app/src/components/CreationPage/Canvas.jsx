@@ -9,6 +9,8 @@ import ReactFlow, {
   ReactFlowProvider,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import { useRouter } from "next/navigation";
+
 
 export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDescription }) {
   if (!graphData) return <p>Loading...</p>;
@@ -24,6 +26,8 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
 
   if (!parsedData.nodes || !parsedData.edges)
     return <p>No graph data found.</p>;
+
+  const router = useRouter();
 
   /** 🔹 Returns styles based on node type */
   const getNodeStyle = (node, isSelected) => {
@@ -181,12 +185,7 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
   );
 
   /** 🔹 Save Pipeline */
-  const savePipeline = () => {
-    if (!pipelineId) {
-      console.error("Pipeline ID is missing.");
-      return;
-    }
-
+  const saveData = () => {
     const graphData = {
       nodes: nodes.map((node) => ({
         id: node.id,
@@ -201,10 +200,17 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
       })),
     };
 
-    window.electronAPI
+    if (pipelineId) {
+      window.electronAPI
       .editPipeline(pipelineId, pipelineName, pipelineDescription, graphData)
       .then(() => console.log("Pipeline saved successfully!"))
+      .catch((error) => console.error("Failed to edit pipeline:", error));
+    } else {
+      window.electronAPI
+      .savePipeline(pipelineName, pipelineDescription, graphData)
+      .then(() => console.log("Pipeline saved successfully!"))
       .catch((error) => console.error("Failed to save pipeline:", error));
+    }
   };
 
   return (
@@ -260,7 +266,10 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
 
       <button
         className="absolute bottom-4 right-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
-        onClick={savePipeline}
+        onClick={() => {
+          saveData();
+          router.push(`/`);
+        }}
       >
         Save Pipeline
       </button>

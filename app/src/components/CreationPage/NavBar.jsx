@@ -91,7 +91,7 @@ export default function Navbar({ pipelineName, pipelineDescription, updatePipeli
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
                 onClick={handleSave}
               >
-                Save
+                Done
               </button>
             </div>
           </div>
