@@ -1,37 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Info } from "lucide-react";
+import { Info, Edit } from "lucide-react";
+import { Menu } from "./Menu";
 
-const MODULES = {
-  Processing: [
-    { id: "fft", name: "Fast Fourier Transform", inputs: 1, outputs: 1, icon: "FFT" },
-    { id: "bpf", name: "Butterworth Bandpass Filter", inputs: 1, outputs: 1, icon: "BBF" },
-    { id: "pcc", name: "Pairwise Cross-Correlation", inputs: 1, outputs: 1, icon: "PWXC" },
-    { id: "svm", name: "Support Vector Machine", inputs: "multiple", outputs: 1, icon: "SVM" },
-    { id: "thr", name: "Threshold Detection", inputs: "multiple", outputs: 1, icon: "THR" },
-    { id: "avg", name: "Signal Average", inputs: "multiple", outputs: 1, icon: "AVG" },
-    { id: "tkeo", name: "Teager-Kaiser Energy Operator", inputs: "single", outputs: 1, icon: "TKEO" },
-  ],
-  Inputs: [
-    { id: "custom", name: "Custom Signal", inputs: 0, outputs: 1, icon: "Input" },
-    { id: "dataset", name: "Dataset 1", inputs: 0, outputs: 1, icon: "Input" },
-  ],
-  Storage: [
-    { id: "sst", name: "Spin-Transfer Torque", inputs: 0, outputs: 1, icon: "storage" },
-    { id: "pcm", name: "Phase-Change Memory", inputs: 0, outputs: 1, icon: "storage" },
-    { id: "fefet", name: "Ferroelectric Field-Effect Transistor", inputs: 0, outputs: 1, icon: "storage" },
-    { id: "rram", name: "Resistive Random Access Memory", inputs: 0, outputs: 1, icon: "storage" },
-  ],
-};
-
-const handleDragStart = (e, module) => {
-  e.dataTransfer.setData("module", JSON.stringify(module));
-};
-
-export default function Navbar({ onDragStart }) {
+export default function Navbar({ pipelineName, pipelineDescription, updatePipelineInfo }) {
   const [isModulesOpen, setIsModulesOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("Processing");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newDescription, setNewDescription] = useState("");
   const router = useRouter();
+
+  // **Update state when the modal opens**
+  const openModal = () => {
+    setNewName(pipelineName || "Untitled"); // Ensure there's always a default name
+    setNewDescription(pipelineDescription || ""); // Default to empty if no description
+    setIsModalOpen(true);
+  };
+
+  // **Handle Save**
+  const handleSave = () => {
+    updatePipelineInfo(newName ? newName : "Untitled", newDescription ? newDescription : "");
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="flex items-center justify-between px-6 py-3 bg-white shadow-md relative">
@@ -50,64 +40,63 @@ export default function Navbar({ onDragStart }) {
           >
             Modules <span className="ml-1">▼</span>
           </button>
-          {isModulesOpen && (
-            <div className="absolute left-0 top-full mt-2 w-80 bg-white shadow-xl border rounded-lg z-50">
-              {/* Header */}
-              <div className="bg-red-600 text-white text-center font-bold py-2 rounded-t-lg">
-                Modules
-              </div>
-
-              {/* Instructions */}
-              <div className="px-4 py-2 text-gray-700 text-sm flex gap-2 items-center border-b">
-                <Info size={16} className="text-gray-500" />
-                <span>Drag-and-drop elements into the canvas.</span>
-              </div>
-
-              {/* Tabs */}
-              <div className="flex border-b">
-                {["Inputs", "Processing", "Storage"].map((tab) => (
-                  <button
-                    key={tab}
-                    className={`flex-1 py-2 text-sm font-semibold text-gray-500 ${
-                      activeTab === tab ? "border-b-2 border-black text-black" : ""
-                    }`}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-
-              {/* Scrollable Module List */}
-              <ul className="py-2 px-4 max-h-64 overflow-y-auto">
-                {MODULES[activeTab].map((module) => (
-                  <li
-                    key={module.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, module)}
-                    className="flex items-center p-3 border rounded-lg mb-2 shadow-sm hover:bg-gray-100 cursor-pointer w-full h-[70px] gap-3"
-                  >
-                    {/* Icon */}
-                    <span className="border border-red-500 text-red-500 px-3 py-1 rounded-lg font-semibold w-14 text-center text-sm flex items-center justify-center">
-                      {module.icon}
-                    </span>
-                    {/* Module Details */}
-                    <div className="flex flex-col flex-1">
-                      <p className="font-semibold text-sm">{module.name}</p>
-                      <p className="text-xs text-gray-600">{module.inputs} inputs / {module.outputs} output</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {isModulesOpen && <Menu />}
         </div>
       </div>
 
       {/* Center Title - Hidden on Small Screens */}
-      <div className="absolute left-1/2 transform -translate-x-1/2 hidden sm:block">
-        <h1 className="text-xl font-bold">Seizure Detection 1</h1>
+      <div className="absolute left-1/2 transform -translate-x-1/2 hidden sm:flex items-center gap-2">
+        <h1 className="text-xl font-bold">{pipelineName}</h1>
+        <button onClick={openModal} className="text-gray-600 hover:text-gray-800">
+          <Edit size={18} />
+        </button>
       </div>
+
+      {/* Edit Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-opacity-30 backdrop-blur-md flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+            <h2 className="text-lg font-bold mb-4">Edit Pipeline Info</h2>
+
+            {/* Name Input */}
+            <label className="block mb-2">
+              <span className="text-gray-700">Name</span>
+              <input
+                type="text"
+                className="w-full border p-2 rounded mt-1"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+              />
+            </label>
+
+            {/* Description Input */}
+            <label className="block mb-4">
+              <span className="text-gray-700">Description</span>
+              <textarea
+                className="w-full border p-2 rounded mt-1"
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+              />
+            </label>
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                onClick={handleSave}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

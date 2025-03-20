@@ -13,7 +13,7 @@ export default function ImplementedPipelines() {
       const formattedPipelines = data.map((pipeline) => ({
         id: pipeline.id,
         title: pipeline.name,
-        description: pipeline.description || "No description available",
+        description: pipeline.description,
         icon: "/icons/pipeline.png",
         selected: false,
       }));
