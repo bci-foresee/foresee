@@ -17,10 +17,10 @@ const MODULES = {
     { id: "dataset", name: "Dataset 1", inputs: 0, outputs: 1, icon: "Input" },
   ],
   Storage: [
-    { id: "sst", name: "Spin-Transfer Torque", inputs: 0, outputs: 1, icon: "SST" },
-    { id: "pcm", name: "Phase-Change Memory", inputs: 0, outputs: 1, icon: "PCM" },
-    { id: "fefet", name: "Ferroelectric Field-Effect Transistor", inputs: 0, outputs: 1, icon: "FeFET" },
-    { id: "rram", name: "Resistive Random Access Memory", inputs: 0, outputs: 1, icon: "RRAM" },
+    { id: "sst", name: "Spin-Transfer Torque", inputs: 0, outputs: 1, icon: "storage" },
+    { id: "pcm", name: "Phase-Change Memory", inputs: 0, outputs: 1, icon: "storage" },
+    { id: "fefet", name: "Ferroelectric Field-Effect Transistor", inputs: 0, outputs: 1, icon: "storage" },
+    { id: "rram", name: "Resistive Random Access Memory", inputs: 0, outputs: 1, icon: "storage" },
   ],
 };
 
