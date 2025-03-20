@@ -65,7 +65,7 @@ function getPipelineById(id) {
 }
 
 // Function to edit an existing pipeline by ID
-function editPipeline(id, graphData = null) {
+function editPipeline(id, name = null, description = null, graphData = null) {
   const existingPipeline = db
     .prepare("SELECT id FROM pipelines WHERE id = ?")
     .get(id);
@@ -77,11 +77,12 @@ function editPipeline(id, graphData = null) {
   db.prepare(
     `
       UPDATE pipelines
-      SET graph_structure = ?
+      SET graph_structure = ?, name = ?, description = ?
       WHERE id = ?
     `
-  ).run(graphData ? JSON.stringify(graphData) : null, id);
+  ).run(graphData ? JSON.stringify(graphData) : null, name, description, id);
 }
+
 
 // 🔹 Insert Three Initial Pipelines (Avoid Duplicates)
 const pipelines = [

@@ -10,7 +10,7 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 
-export default function Canvas({ graphData, pipelineId }) {
+export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDescription }) {
   if (!graphData) return <p>Loading...</p>;
 
   let parsedData;
@@ -202,7 +202,7 @@ export default function Canvas({ graphData, pipelineId }) {
     };
 
     window.electronAPI
-      .editPipeline(pipelineId, graphData)
+      .editPipeline(pipelineId, pipelineName, pipelineDescription, graphData)
       .then(() => console.log("Pipeline saved successfully!"))
       .catch((error) => console.error("Failed to save pipeline:", error));
   };

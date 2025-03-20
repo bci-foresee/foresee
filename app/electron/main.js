@@ -36,8 +36,8 @@ app.whenReady().then(() => {
     return "Pipeline saved!";
   });
   ipcMain.handle("getPipelineById", async (event, id) => getPipelineById(id));
-  ipcMain.handle("editPipeline", async (event, id, graphData) =>
-    editPipeline(id, graphData)
+  ipcMain.handle("editPipeline", async (event, id, name, description, graphData) =>
+    editPipeline(id, name, description, graphData)
   );
 });
 

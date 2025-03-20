@@ -47,6 +47,8 @@ const CreationPage = () => {
           <Canvas
             graphData={JSON.parse(pipeline.graph_structure)}
             pipelineId={pipelineId}
+            pipelineName={pipeline.name ?? 'Untitled'}
+            pipelineDescription={pipeline.description ?? ''}
           />
         ) : (
           <p className="text-lg font-semibold p-6">Loading pipeline...</p>
