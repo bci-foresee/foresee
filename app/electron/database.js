@@ -83,6 +83,12 @@ function editPipeline(id, name = null, description = null, graphData = null) {
   ).run(graphData ? JSON.stringify(graphData) : null, name, description, id);
 }
 
+// Function to delete a pipeline by ID
+function deletePipeline(id) {
+  db.prepare("DELETE FROM pipelines WHERE id = ?").run(id);
+  console.log(`🗑️ Pipeline with ID ${id} deleted.`);
+}
+
 
 // 🔹 Insert Three Initial Pipelines (Avoid Duplicates)
 const pipelines = [
@@ -208,4 +214,5 @@ module.exports = {
   getPipelines,
   getPipelineById,
   editPipeline,
+  deletePipeline,
 };

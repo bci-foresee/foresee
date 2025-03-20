@@ -42,6 +42,7 @@ const CreationPage = () => {
         pipelineName={pipeline?.name}
         pipelineDescription={pipeline?.description}
         updatePipelineInfo={updatePipelineInfo}
+        pipelineId={pipelineId}
       />
 
       <div className="flex-grow flex flex-col">

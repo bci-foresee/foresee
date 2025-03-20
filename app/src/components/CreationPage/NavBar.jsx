@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Info, Edit } from "lucide-react";
 import { Menu } from "./Menu";
+import {DeleteIcon } from "../Icons/icons";
 
-export default function Navbar({ pipelineName, pipelineDescription, updatePipelineInfo }) {
+
+export default function Navbar({ pipelineName, pipelineDescription, updatePipelineInfo, pipelineId }) {
   const [isModulesOpen, setIsModulesOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newName, setNewName] = useState("");
@@ -22,6 +24,16 @@ export default function Navbar({ pipelineName, pipelineDescription, updatePipeli
     updatePipelineInfo(newName ? newName : "Untitled", newDescription ? newDescription : "");
     setIsModalOpen(false);
   };
+
+  const handleDelete = () => {
+    if (pipelineId) {
+      window.electronAPI
+      .deletePipeline(pipelineId)
+      .then(() => console.log("Pipeline deleted successfully!"))
+      .catch((error) => console.error("Failed to delete pipeline:", error));
+    }
+    router.push(`/`)
+  }
 
   return (
     <div className="flex items-center justify-between px-6 py-3 bg-white shadow-md relative">
@@ -49,6 +61,16 @@ export default function Navbar({ pipelineName, pipelineDescription, updatePipeli
         <h1 className="text-xl font-bold">{pipelineName}</h1>
         <button onClick={openModal} className="text-gray-600 hover:text-gray-800">
           <Edit size={18} />
+        </button>
+      </div>
+
+      {/* Right Side - Delete Button */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={handleDelete}
+          className="text-red-600 hover:text-red-800 transition flex items-center gap-1"
+        >
+          <DeleteIcon/>
         </button>
       </div>
 

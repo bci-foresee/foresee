@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ImplementedPipelinesIcon, EditIcon, ChartIcon } from "./icons";
+import { ImplementedPipelinesIcon, EditIcon, ChartIcon, DeleteIcon } from "../Icons/icons";
 
 export default function ImplementedPipelines() {
   const [pipelines, setPipelines] = useState([]);

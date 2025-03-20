@@ -1,6 +1,6 @@
 import React from "react";
 import {useRouter} from "next/navigation";
-import { PipelineCreatorIcon } from "./icons";
+import { PipelineCreatorIcon } from "../Icons/icons";
 
 
 export default function PipelineCreator() {

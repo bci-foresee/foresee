@@ -5,6 +5,7 @@ const {
   getPipelines,
   getPipelineById,
   editPipeline,
+  deletePipeline,
 } = require("./database"); // ✅ Import database functions
 
 let mainWindow;
@@ -39,6 +40,7 @@ app.whenReady().then(() => {
   ipcMain.handle("editPipeline", async (event, id, name, description, graphData) =>
     editPipeline(id, name, description, graphData)
   );
+  ipcMain.handle("deletePipeline", async (event, id) => deletePipeline(id));
 });
 
 app.on("window-all-closed", () => {

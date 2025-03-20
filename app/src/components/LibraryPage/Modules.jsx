@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModulesIcon } from './icons';
+import { ModulesIcon } from '../Icons/icons';
 
 export default function Modules() {
   return (

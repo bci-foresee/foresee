@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { SettingsIcon } from './icons';
+import { SettingsIcon } from '../Icons/icons';
 
 
 export default function SimulationSettings() {
