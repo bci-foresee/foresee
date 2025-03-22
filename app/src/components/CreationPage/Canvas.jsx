@@ -173,7 +173,7 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
         id: `${Date.now()}`,
         type: module.type,
         position,
-        data: { label: module.name },
+        data: { label: module.icon },
         style: getNodeStyle(module, false),
         sourcePosition: "right",
         targetPosition: "left",

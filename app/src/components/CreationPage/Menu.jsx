@@ -2,25 +2,25 @@ import { Info } from "lucide-react";
 import {useState} from 'react'
 
 const MODULES = {
-    Processing: [
-        { id: "fft", name: "Fast Fourier Transform", inputs: 1, outputs: 1, icon: "FFT" },
-        { id: "bpf", name: "Butterworth Bandpass Filter", inputs: 1, outputs: 1, icon: "BBF" },
-        { id: "pcc", name: "Pairwise Cross-Correlation", inputs: 1, outputs: 1, icon: "PWXC" },
-        { id: "svm", name: "Support Vector Machine", inputs: "multiple", outputs: 1, icon: "SVM" },
-        { id: "thr", name: "Threshold Detection", inputs: "multiple", outputs: 1, icon: "THR" },
-        { id: "avg", name: "Signal Average", inputs: "multiple", outputs: 1, icon: "AVG" },
-        { id: "tkeo", name: "Teager-Kaiser Energy Operator", inputs: "single", outputs: 1, icon: "TKEO" },
-    ],
-    Inputs: [
-        { id: "custom", name: "Custom Signal", inputs: 0, outputs: 1, icon: "Input" },
-        { id: "dataset", name: "Dataset 1", inputs: 0, outputs: 1, icon: "Input" },
-    ],
-    Storage: [
-        { id: "sst", name: "Spin-Transfer Torque", inputs: 0, outputs: 1, icon: "storage" },
-        { id: "pcm", name: "Phase-Change Memory", inputs: 0, outputs: 1, icon: "storage" },
-        { id: "fefet", name: "Ferroelectric Field-Effect Transistor", inputs: 0, outputs: 1, icon: "storage" },
-        { id: "rram", name: "Resistive Random Access Memory", inputs: 0, outputs: 1, icon: "storage" },
-    ],
+  Processing: [
+    { id: "fft", name: "Fast Fourier Transform", inputs: 1, outputs: 1, icon: "FFT", type: "module" },
+    { id: "bpf", name: "Butterworth Bandpass Filter", inputs: 1, outputs: 1, icon: "BBF", type: "module" },
+    { id: "pcc", name: "Pairwise Cross-Correlation", inputs: 1, outputs: 1, icon: "PWXC", type: "module" },
+    { id: "svm", name: "Support Vector Machine", inputs: "multiple", outputs: 1, icon: "SVM", type: "module" },
+    { id: "thr", name: "Threshold Detection", inputs: "multiple", outputs: 1, icon: "THR", type: "module" },
+    { id: "avg", name: "Signal Average", inputs: "multiple", outputs: 1, icon: "AVG", type: "module" },
+    { id: "tkeo", name: "Teager-Kaiser Energy Operator", inputs: "single", outputs: 1, icon: "TKEO", type: "module" },
+  ],
+  Inputs: [
+    { id: "custom", name: "Custom Signal", inputs: 0, outputs: 1, icon: "Input", type: "input" },
+    { id: "dataset", name: "Dataset 1", inputs: 0, outputs: 1, icon: "Input", type: "input" },
+  ],
+  Storage: [
+    { id: "sst", name: "Spin-Transfer Torque", inputs: 0, outputs: 1, icon: "storage", type: "storage" },
+    { id: "pcm", name: "Phase-Change Memory", inputs: 0, outputs: 1, icon: "storage", type: "storage" },
+    { id: "fefet", name: "Ferroelectric Field-Effect Transistor", inputs: 0, outputs: 1, icon: "storage", type: "storage" },
+    { id: "rram", name: "Resistive Random Access Memory", inputs: 0, outputs: 1, icon: "storage", type: "storage" },
+  ],
 };
 
 const handleDragStart = (e, module) => {
