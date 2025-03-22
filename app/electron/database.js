@@ -89,91 +89,51 @@ function deletePipeline(id) {
   console.log(`🗑️ Pipeline with ID ${id} deleted.`);
 }
 
-
-// 🔹 Insert Three Initial Pipelines (Avoid Duplicates)
 const pipelines = [
   {
     name: "Epileptic Seizure Prediction",
     description: "Predict epileptic seizures from EEG.",
     graph_structure: JSON.stringify({
       nodes: [
-        { id: 1, label: "Input", type: "input", x: 100, y: 100 },
-        { id: 2, label: "BBF", type: "module", x: 300, y: 100 },
-        { id: 3, label: "PWXC", type: "module", x: 300, y: 200 },
-        { id: 4, label: "FFT", type: "module", x: 300, y: 300 },
-        { id: 5, label: "SVM", type: "module", x: 500, y: 100 },
-        { id: 6, label: "THR", type: "module", x: 700, y: 100 },
-        { id: 7, label: "Storage", type: "storage", x: 900, y: 100 },
-      ],
-      edges: [
-        { source: 1, target: 2 },
-        { source: 1, target: 3 },
-        { source: 1, target: 4 },
-        { source: 2, target: 5 },
-        { source: 3, target: 5 },
-        { source: 4, target: 5 },
-        { source: 5, target: 6 },
-        { source: 6, target: 7 },
-      ],
-    }),
-  },
-  {
-    name: "Movement Intent",
-    description: "Decode movement intent from EEG.",
-    graph_structure: JSON.stringify({
-      nodes: [
-        { id: 1, label: "Input", type: "input", x: 100, y: 200 },
-        { id: 2, label: "Feature Extraction", type: "module", x: 300, y: 200 },
-        { id: 3, label: "Classifier", type: "module", x: 500, y: 200 },
-        { id: 4, label: "Decision", type: "module", x: 700, y: 200 },
-      ],
-      edges: [
-        { source: 1, target: 2 },
-        { source: 2, target: 3 },
-        { source: 3, target: 4 },
-      ],
-    }),
-  },
-  {
-    name: "Speech Decoding",
-    description: "Translate EEG signals into speech.",
-    graph_structure: JSON.stringify({
-      nodes: [
-        { id: 1, label: "Input", type: "input", x: 100, y: 200 },
-        { id: 2, label: "Signal Processing", type: "module", x: 300, y: 200 },
-        { id: 3, label: "Phoneme Extraction", type: "module", x: 500, y: 200 },
-        { id: 4, label: "Text Output", type: "module", x: 700, y: 200 },
-      ],
-      edges: [
-        { source: 1, target: 2 },
-        { source: 2, target: 3 },
-        { source: 3, target: 4 },
-      ],
-    }),
-  },
-  {
-    name: "Test Pipeline 1",
-    description: "A test pipeline with sample modules.",
-    graph_structure: JSON.stringify({
-      nodes: [
-        { id: 1, label: "Input", type: "input", x: 100, y: 200 },
-        { id: 2, label: "Processing", type: "module", x: 300, y: 200 },
-        { id: 3, label: "Output", type: "module", x: 500, y: 200 },
-      ],
-      edges: [
-        { source: 1, target: 2 },
-        { source: 2, target: 3 },
-      ],
-    }),
-  },
-  {
-    name: "Test Pipeline 2",
-    description: "Another test pipeline with different structure.",
-    graph_structure: JSON.stringify({
-      nodes: [
-        { id: 1, label: "Start", type: "input", x: 100, y: 200 },
-        { id: 2, label: "Intermediate", type: "module", x: 300, y: 200 },
-        { id: 3, label: "End", type: "module", x: 500, y: 200 },
+        {
+          id: 1,
+          label: "Custom Signal",
+          type: "input",
+          x: 100,
+          y: 100,
+          properties: {
+            Frequency: { value: 100, unit: "Hz" },
+            "Number of Channels": { value: 16, unit: "int" },
+            "Number of Samples": { value: 10240, unit: "int" },
+          },
+          expanded: false,
+        },
+        {
+          id: 2,
+          label: "FFT",
+          type: "module",
+          x: 300,
+          y: 100,
+          properties: {
+            "Clock Frequency": { value: 100, unit: "MHz" },
+            "Number of Samples": { value: 10240, unit: "int" },
+            "Sampling Frequency": { value: 512, unit: "Hz" },
+            "Berger Bands": { value: "(0.1-4), (4-8)", unit: "Hz" },
+            "Enable RTL Simulation": { value: true, unit: "boolean" },
+          },
+          expanded: false,
+        },
+        {
+          id: 3,
+          label: "Storage",
+          type: "Spin-Transfer Torque",
+          x: 900,
+          y: 100,
+          properties: {
+            Type: { value: "Spin-Transfer Torque", unit: "string" },
+          },
+          expanded: false,
+        },
       ],
       edges: [
         { source: 1, target: 2 },
@@ -182,6 +142,16 @@ const pipelines = [
     }),
   },
 ];
+
+// Insert pipelines if they don't exist
+pipelines.forEach((pipeline) => {
+  const exists = db
+    .prepare("SELECT COUNT(*) AS count FROM pipelines WHERE name = ?")
+    .get(pipeline.name);
+  if (exists.count === 0) {
+    savePipeline(pipeline.name, pipeline.description, pipeline.graph_structure);
+  }
+});
 
 pipelines.forEach((pipeline) => {
   const exists = db
