@@ -1,3 +1,8 @@
+/**
+ * Canvas component for rendering the interactive graph using React Flow.
+ * Handles node and edge rendering, drag-and-drop, and event listeners.
+ */
+
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
 import ReactFlow, {
@@ -10,7 +15,7 @@ import "reactflow/dist/style.css";
 import { useRouter } from "next/navigation";
 import { useGraphState } from "./useGraphState";
 import { useGraphEvents } from "./useGraphEvents";
-import { getNodeStyle, getEdgeStyle } from "./styles";
+import { getNodeStyle, getEdgeStyle, getExpandedNodeContent } from "./styles";
 import FlowContent from "./FlowContent"; // ✅ Import FlowContent
 
 export default function Canvas({
@@ -68,20 +73,7 @@ export default function Canvas({
         style: getNodeStyle(node, node.id === selectedNodeId),
         data: {
           ...node.data,
-          label: (
-            <div>
-              <strong>{label || "Unnamed Node"}</strong>
-              {expanded && properties && Object.keys(properties).length > 0 && (
-                <div className="mt-2 text-xs text-gray-700 bg-white p-2 border rounded shadow">
-                  {Object.entries(properties).map(([key, prop]) => (
-                    <p key={key}>
-                      <strong>{key}:</strong> {prop?.value} {prop?.unit}
-                    </p>
-                  ))}
-                </div>
-              )}
-            </div>
-          ),
+          label: getExpandedNodeContent(label, expanded ? properties : null), // ✅ Use the modularized function
         },
       };
     });

@@ -1,3 +1,7 @@
+/**
+ * Custom hook for handling graph interactions (click, drag, delete).
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import { addEdge } from "reactflow";
 import { getNodeStyle, getEdgeStyle } from "./styles";

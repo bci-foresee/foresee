@@ -1,3 +1,7 @@
+/**
+ *  Menu for selecting and dragging nodes onto the canvas.
+ */
+
 import { Info } from "lucide-react";
 import { useState } from "react";
 

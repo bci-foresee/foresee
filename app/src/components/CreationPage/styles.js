@@ -1,3 +1,7 @@
+/**
+ * Styling functions for nodes and edges in React Flow.
+ */
+
 export const getNodeStyle = (node, isSelected) => {
   const isExpanded = node.data?.expanded ?? false;
 
@@ -29,6 +33,23 @@ export const getNodeStyle = (node, isSelected) => {
     }),
   };
 };
+
+export function getExpandedNodeContent(label, properties) {
+  return (
+    <div>
+      <strong>{label || "Unnamed Node"}</strong>
+      {properties && Object.keys(properties).length > 0 && (
+        <div className="mt-2 text-xs text-gray-700 bg-white p-2 border rounded shadow">
+          {Object.entries(properties).map(([key, prop]) => (
+            <p key={key}>
+              <strong>{key}:</strong> {prop?.value} {prop?.unit}
+            </p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export const getEdgeStyle = (edge, isSelected) => ({
   stroke: isSelected ? "blue" : "orange",
