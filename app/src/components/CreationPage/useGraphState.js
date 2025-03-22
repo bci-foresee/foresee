@@ -1,3 +1,10 @@
+/**
+ * Custom hook for initializing and managing the state of nodes and edges in React Flow.
+ *
+ * This hook sets up the initial graph state based on provided data.
+ * It does not handle updates—state changes should be managed using `useGraphEvents.js`.
+ */
+
 import { useMemo } from "react";
 import { useNodesState, useEdgesState } from "reactflow";
 import { getNodeStyle, getEdgeStyle } from "./styles";
@@ -9,6 +16,7 @@ export function useGraphState(parsedData) {
       id: node.id.toString(),
       data: {
         label: node.label,
+        name: node.name,
         expanded: false,
         properties: node.properties || {},
       },

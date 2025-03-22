@@ -97,7 +97,8 @@ const pipelines = [
       nodes: [
         {
           id: 1,
-          label: "Custom Signal",
+          label: "Input", // ✅ Abbreviation
+          name: "Custom Signal", // ✅ Full Name
           type: "input",
           x: 100,
           y: 100,
@@ -110,7 +111,8 @@ const pipelines = [
         },
         {
           id: 2,
-          label: "FFT",
+          label: "FFT", // ✅ Abbreviation
+          name: "Fast Fourier Transform", // ✅ Full Name
           type: "module",
           x: 300,
           y: 100,
@@ -118,8 +120,15 @@ const pipelines = [
             "Clock Frequency": { value: 100, unit: "MHz" },
             "Number of Samples": { value: 10240, unit: "int" },
             "Sampling Frequency": { value: 512, unit: "Hz" },
-            "Berger Bands": { value: "(0.1-4), (4-8)", unit: "Hz" },
+            "Berger Bands": {
+              value: [
+                { min: 0.1, max: 4 },
+                { min: 4, max: 8 },
+              ],
+              unit: "Hz",
+            },
             "Enable RTL Simulation": { value: true, unit: "boolean" },
+            "Enable RTL Power Estimation": { value: true, unit: "boolean" },
           },
           expanded: false,
         },
@@ -130,7 +139,7 @@ const pipelines = [
           x: 900,
           y: 100,
           properties: {
-            Type: { value: "Spin-Transfer Torque", unit: "string" },
+            "Storage Type": { value: "Spin-Transfer Torque" },
           },
           expanded: false,
         },

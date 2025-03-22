@@ -7,9 +7,9 @@ export const getNodeStyle = (node, isSelected) => {
 
   const baseStyle = {
     transition: "0.2s ease-in-out",
-    padding: isExpanded ? "10px 15px" : "5px 10px",
-    width: isExpanded ? "auto" : "fit-content",
-    maxWidth: isExpanded ? "300px" : "250px",
+    padding: isExpanded ? "20px 20px" : "5px 10px",
+    width: isExpanded ? "fit-content" : "fit-content",
+    maxWidth: isExpanded ? "500px" : "250px",
     minWidth: "30px",
     textAlign: "center",
     whiteSpace: "normal",
@@ -33,23 +33,6 @@ export const getNodeStyle = (node, isSelected) => {
     }),
   };
 };
-
-export function getExpandedNodeContent(label, properties) {
-  return (
-    <div>
-      <strong>{label || "Unnamed Node"}</strong>
-      {properties && Object.keys(properties).length > 0 && (
-        <div className="mt-2 text-xs text-gray-700 bg-white p-2 border rounded shadow">
-          {Object.entries(properties).map(([key, prop]) => (
-            <p key={key}>
-              <strong>{key}:</strong> {prop?.value} {prop?.unit}
-            </p>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export const getEdgeStyle = (edge, isSelected) => ({
   stroke: isSelected ? "blue" : "orange",

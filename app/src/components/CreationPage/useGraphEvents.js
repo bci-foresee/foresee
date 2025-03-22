@@ -1,7 +1,9 @@
 /**
- * Custom hook for handling graph interactions (click, drag, delete).
+ * Custom hook for handling dynamic updates and interactions with the graph.
+ *
+ * This hook provides functions for modifying nodes and edges,
+ * including click events, connecting nodes, deleting elements, and handling drag-and-drop.
  */
-
 import { useCallback, useEffect, useState } from "react";
 import { addEdge } from "reactflow";
 import { getNodeStyle, getEdgeStyle } from "./styles";
@@ -20,26 +22,48 @@ export function useGraphEvents(
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState(null);
 
-  const onNodeClick = useCallback((event, node) => {
-    setNodes((nds) =>
-      nds.map((n) =>
-        n.id === node.id
-          ? { ...n, data: { ...n.data, expanded: !n.data.expanded } }
-          : n
-      )
-    );
+  const onNodeClick = useCallback(
+    (event, node) => {
+      // ✅ Prevent collapsing when clicking inside an input field
+      const tag = event.target.tagName.toLowerCase();
+      if (tag === "input" || tag === "textarea" || tag === "select") {
+        event.stopPropagation(); // ✅ Stop event from reaching the node
+        return;
+      }
 
-    setSelectedNodeId(node.id);
-    setSelectedEdgeId(null);
-  }, []);
+      setNodes((nds) =>
+        nds.map((n) =>
+          n.id === node.id
+            ? { ...n, data: { ...n.data, expanded: !n.data.expanded } }
+            : n
+        )
+      );
+
+      setSelectedNodeId(node.id);
+      setSelectedEdgeId(null);
+    },
+    [setNodes]
+  );
 
   const onEdgeClick = useCallback((event, edge) => {
     setSelectedEdgeId(edge.id);
     setSelectedNodeId(null);
   }, []);
 
+  /**
+   * Deletes selected nodes or edges when the Delete/Backspace key is pressed.
+   * Prevents deletion if an input field is focused.
+   */
   const onDeleteKey = useCallback(
     (event) => {
+      // ✅ Prevent node deletion if the user is typing in an input or textarea
+      if (
+        document.activeElement.tagName === "INPUT" ||
+        document.activeElement.tagName === "TEXTAREA"
+      ) {
+        return;
+      }
+
       if (event.key === "Delete" || event.key === "Backspace") {
         if (selectedNodeId) {
           setNodes((nds) => nds.filter((n) => n.id !== selectedNodeId));
@@ -119,8 +143,8 @@ export function useGraphEvents(
           y: event.clientY,
         }),
         data: {
-          label: module.name,
-          icon: module.icon,
+          label: module.label,
+          name: module.name,
           properties: module.properties || {}, // ✅ Ensure properties are included
           expanded: false,
         },
@@ -150,8 +174,6 @@ export function useGraphEvents(
       })),
     };
 
-    console.log("🔍 Saving Data:", graphData); // Debugging log
-
     const savePromise = pipelineId
       ? window.electronAPI.editPipeline(
           pipelineId,
@@ -175,6 +197,31 @@ export function useGraphEvents(
       });
   };
 
+  const updateNodeProperty = useCallback(
+    (nodeId, propertyKey, newValue) => {
+      setNodes((nds) =>
+        nds.map((node) =>
+          node.id === nodeId
+            ? {
+                ...node,
+                data: {
+                  ...node.data,
+                  properties: {
+                    ...node.data.properties,
+                    [propertyKey]: {
+                      ...node.data.properties[propertyKey],
+                      value: newValue,
+                    },
+                  },
+                },
+              }
+            : node
+        )
+      );
+    },
+    [setNodes]
+  );
+
   return {
     selectedNodeId,
     selectedEdgeId,
@@ -184,5 +231,6 @@ export function useGraphEvents(
     onDragOver,
     onDrop,
     saveData,
+    updateNodeProperty,
   };
 }

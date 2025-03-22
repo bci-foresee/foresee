@@ -15,7 +15,8 @@ import "reactflow/dist/style.css";
 import { useRouter } from "next/navigation";
 import { useGraphState } from "./useGraphState";
 import { useGraphEvents } from "./useGraphEvents";
-import { getNodeStyle, getEdgeStyle, getExpandedNodeContent } from "./styles";
+import { getNodeStyle, getEdgeStyle } from "./styles";
+import { ExpandedNode } from "./ExpandedNode"; // ✅ Import the new component
 import FlowContent from "./FlowContent"; // ✅ Import FlowContent
 
 export default function Canvas({
@@ -49,6 +50,7 @@ export default function Canvas({
     onDragOver,
     onDrop,
     saveData,
+    updateNodeProperty,
   } = useGraphEvents(
     setNodes,
     setEdges,
@@ -61,22 +63,21 @@ export default function Canvas({
     reactFlowInstance
   );
 
-  // ✅ Ensure nodes have styles and labels correctly set up
   const renderedNodes = useMemo(() => {
     if (!nodes || nodes.length === 0) return [];
 
-    return nodes.map((node) => {
-      const { expanded, label, properties } = node.data || {};
-
-      return {
-        ...node,
-        style: getNodeStyle(node, node.id === selectedNodeId),
-        data: {
-          ...node.data,
-          label: getExpandedNodeContent(label, expanded ? properties : null), // ✅ Use the modularized function
-        },
-      };
-    });
+    return nodes.map((node) => ({
+      ...node,
+      style: getNodeStyle(node, node.id === selectedNodeId),
+      data: {
+        ...node.data,
+        label: node.data.expanded ? (
+          <ExpandedNode node={node} updateNodeProperty={updateNodeProperty} /> // ✅ Use the new component
+        ) : (
+          node.data.label
+        ),
+      },
+    }));
   }, [nodes, selectedNodeId]);
 
   const renderedEdges = useMemo(() => {
