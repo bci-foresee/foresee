@@ -11,8 +11,12 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import { useRouter } from "next/navigation";
 
-
-export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDescription }) {
+export default function Canvas({
+  graphData,
+  pipelineId,
+  pipelineName,
+  pipelineDescription,
+}) {
   if (!graphData) return <p>Loading...</p>;
 
   let parsedData;
@@ -29,18 +33,19 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
 
   const router = useRouter();
 
-  /** 🔹 Returns styles based on node type */
   const getNodeStyle = (node, isSelected) => {
+    const isExpanded = node.data?.expanded ?? false; // Ensure expanded is always a boolean
+
     const baseStyle = {
       transition: "0.2s ease-in-out",
-      padding: "5px 10px", // Balanced padding
-      display: "inline-block", // Prevents it from stretching
-      width: "fit-content", // Only expands based on content
-      maxWidth: "250px", // Prevents excessive width
-      minWidth: "30px", // Ensures it's not too small
+      padding: isExpanded ? "10px 15px" : "5px 10px", // Expand padding when expanded
+      width: isExpanded ? "auto" : "fit-content",
+      maxWidth: isExpanded ? "300px" : "250px",
+      minWidth: "30px",
       textAlign: "center",
-      whiteSpace: "normal", // Allows text wrapping
-      wordBreak: "break-word", // Ensures long words break properly
+      whiteSpace: "normal",
+      wordBreak: "break-word",
+    backgroundColor: isExpanded ? "#FFF8DC" : "white", // Light yellow when expanded
     };
 
     const typeStyles = {
@@ -72,7 +77,7 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
   const [nodes, setNodes, onNodesChange] = useNodesState(
     parsedData.nodes.map((node) => ({
       id: node.id.toString(),
-      data: { label: node.label },
+      data: { label: node.label, expanded: false },
       type: node.type,
       position: { x: node.x, y: node.y },
       style: getNodeStyle(node, false), // Apply default style
@@ -80,6 +85,19 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
       targetPosition: "left",
     }))
   );
+
+  /** 🔹 Handle Node Click */
+  const onNodeClick = (event, node) => {
+    setNodes((nds) =>
+      nds.map((n) =>
+        n.id === node.id
+          ? { ...n, data: { ...n.data, expanded: !n.data.expanded } }
+          : n
+      )
+    );
+    setSelectedNodeId(node.id);
+    setSelectedEdgeId(null);
+  };
 
   const [edges, setEdges, onEdgesChange] = useEdgesState(
     (parsedData.edges || []).map((edge) => ({
@@ -95,12 +113,6 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
-
-  /** 🔹 Handle Node Click */
-  const onNodeClick = (event, node) => {
-    setSelectedNodeId(node.id);
-    setSelectedEdgeId(null);
-  };
 
   /** 🔹 Handle Edge Click */
   const onEdgeClick = (event, edge) => {
@@ -202,14 +214,14 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
 
     if (pipelineId) {
       window.electronAPI
-      .editPipeline(pipelineId, pipelineName, pipelineDescription, graphData)
-      .then(() => console.log("Pipeline saved successfully!"))
-      .catch((error) => console.error("Failed to edit pipeline:", error));
+        .editPipeline(pipelineId, pipelineName, pipelineDescription, graphData)
+        .then(() => console.log("Pipeline saved successfully!"))
+        .catch((error) => console.error("Failed to edit pipeline:", error));
     } else {
       window.electronAPI
-      .savePipeline(pipelineName, pipelineDescription, graphData)
-      .then(() => console.log("Pipeline saved successfully!"))
-      .catch((error) => console.error("Failed to save pipeline:", error));
+        .savePipeline(pipelineName, pipelineDescription, graphData)
+        .then(() => console.log("Pipeline saved successfully!"))
+        .catch((error) => console.error("Failed to save pipeline:", error));
     }
   };
 
@@ -225,6 +237,28 @@ export default function Canvas({ graphData, pipelineId, pipelineName, pipelineDe
           nodes={nodes.map((node) => ({
             ...node,
             style: getNodeStyle(node, node.id === selectedNodeId),
+            data: {
+              ...node.data,
+              label: (
+                <div>
+                  <strong>{node.data.label}</strong>
+                  {node.data.expanded && (
+                    <div className="mt-2 text-xs text-gray-700">
+                      <p>
+                        <strong>ID:</strong> {node.id}
+                      </p>
+                      <p>
+                        <strong>Type:</strong> {node.type}
+                      </p>
+                      <p>
+                        <strong>Position:</strong>{" "}
+                        {`(${node.position.x}, ${node.position.y})`}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ),
+            },
           }))}
           edges={edges.map((edge) => ({
             ...edge,
