@@ -8,7 +8,6 @@ import { PROPERTY_VALIDATIONS, validateProperty } from "./validation";
  * @returns {JSX.Element} - The expanded node UI.
  */
 export function ExpandedNode({ node, updateNodeProperty }) {
-  console.log(node);
   const { label, name, properties } = node.data;
 
   return (
@@ -136,11 +135,17 @@ export function ExpandedNode({ node, updateNodeProperty }) {
             }
 
             /** ✅ Default Handling for Other Properties **/
+            const newValue = isBoolean
+              ? prop.value
+              : validationRule?.type === "number" ||
+                validationRule?.type === "integer"
+              ? Number(prop.value) || 0
+              : prop.value;
+
             const isInvalid =
               validationRule &&
-              !validateProperty(key, prop.value) &&
-              prop.value !== "";
-
+              !validateProperty(key, newValue) &&
+              newValue !== "";
             return (
               <div key={key} className="flex flex-col gap-1">
                 {/* Label */}
@@ -152,14 +157,16 @@ export function ExpandedNode({ node, updateNodeProperty }) {
                 <div className="relative">
                   <input
                     type={isBoolean ? "checkbox" : "text"}
-                    value={isBoolean ? undefined : prop.value}
+                    value={isBoolean ? undefined : newValue}
                     checked={isBoolean ? prop.value : undefined}
                     onChange={(e) => {
                       const newValue = isBoolean
                         ? e.target.checked
+                        : validationRule?.type === "number" ||
+                          validationRule?.type === "integer"
+                        ? Number(e.target.value) || 0
                         : e.target.value;
 
-                      // ✅ Validate using schema rules
                       if (validateProperty(key, newValue) || newValue === "") {
                         updateNodeProperty(node.id, key, newValue);
                       }

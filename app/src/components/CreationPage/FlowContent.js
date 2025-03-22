@@ -17,7 +17,6 @@ export default function FlowContent({ setNodes, reactFlowInstance }) {
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
-    console.log("🟡 Dragging over ReactFlow.");
   }, []);
 
   /**
@@ -27,7 +26,6 @@ export default function FlowContent({ setNodes, reactFlowInstance }) {
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-      console.log("🟢 Drop event detected");
 
       if (!reactFlowInstance) {
         console.error("❌ ReactFlow instance is not ready");
@@ -40,8 +38,6 @@ export default function FlowContent({ setNodes, reactFlowInstance }) {
         return;
       }
 
-      console.log("📩 Received data:", data);
-
       let module;
       try {
         module = JSON.parse(data);
@@ -49,15 +45,12 @@ export default function FlowContent({ setNodes, reactFlowInstance }) {
         console.error("❌ Failed to parse module data:", error);
         return;
       }
-
-      console.log("📌 Parsed module:", module);
     },
     [reactFlowInstance]
   );
 
   useEffect(() => {
     if (reactFlowInstance) {
-      console.log("✅ ReactFlow instance ready");
       fitView();
     }
   }, [fitView, reactFlowInstance]);

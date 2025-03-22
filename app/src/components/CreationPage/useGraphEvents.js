@@ -90,8 +90,6 @@ export function useGraphEvents(
 
   const onConnect = useCallback(
     (params) => {
-      console.log("🔗 New edge connected:", params);
-
       setEdges((eds) =>
         addEdge(
           {
@@ -163,6 +161,7 @@ export function useGraphEvents(
       nodes: nodes.map((node) => ({
         id: node.id,
         label: node.data.label,
+        name: node.data.name,
         type: node.type,
         x: node.position.x,
         y: node.position.y,
@@ -189,7 +188,6 @@ export function useGraphEvents(
 
     savePromise
       .then(() => {
-        console.log("✅ Pipeline saved successfully!");
         router.push(`/`); // Ensure redirect after saving
       })
       .catch((error) => {

@@ -65,14 +65,16 @@ export default function Canvas({
 
   const renderedNodes = useMemo(() => {
     if (!nodes || nodes.length === 0) return [];
-
     return nodes.map((node) => ({
       ...node,
       style: getNodeStyle(node, node.id === selectedNodeId),
       data: {
         ...node.data,
         label: node.data.expanded ? (
-          <ExpandedNode node={node} updateNodeProperty={updateNodeProperty} /> // ✅ Use the new component
+          <ExpandedNode
+            node={node}
+            updateNodeProperty={updateNodeProperty}
+          /> // ✅ Use the new component
         ) : (
           node.data.label
         ),
@@ -94,12 +96,10 @@ export default function Canvas({
         className="w-full h-full bg-gray-100"
         style={{ height: "100vh" }}
         onDrop={(event) => {
-          console.log("🟢 Drop event detected in Canvas!");
           onDrop(event);
         }}
         onDragOver={(event) => {
           event.preventDefault();
-          console.log("🟡 Dragging over Canvas!");
           onDragOver(event);
         }}
       >
