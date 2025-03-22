@@ -57,7 +57,7 @@ export default function Canvas({
 
     return {
       ...baseStyle,
-      ...(typeStyles[node.type] || typeStyles.default),
+      ...(typeStyles[node.type] || typeStyles.default)
       ...(isSelected && {
         border: "3px solid blue",
         backgroundColor: "#B3D7FF",
