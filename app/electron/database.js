@@ -126,7 +126,7 @@ const pipelines = [
         {
           id: 3,
           label: "Storage",
-          type: "Spin-Transfer Torque",
+          type: "storage",
           x: 900,
           y: 100,
           properties: {

@@ -4,7 +4,6 @@ import ReactFlow, {
   Background,
   Controls,
   ReactFlowProvider,
-  useReactFlow,
   addEdge,
 } from "reactflow";
 import "reactflow/dist/style.css";
@@ -12,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useGraphState } from "./useGraphState";
 import { useGraphEvents } from "./useGraphEvents";
 import { getNodeStyle, getEdgeStyle } from "./styles";
+import FlowContent from "./FlowContent"; // ✅ Import FlowContent
 
 export default function Canvas({
   graphData,
@@ -20,7 +20,6 @@ export default function Canvas({
   pipelineDescription,
 }) {
   if (!graphData) return <p>Loading...</p>;
-  console.log(graphData, "QQ");
 
   let parsedData;
   try {
@@ -30,8 +29,6 @@ export default function Canvas({
     console.error("Invalid graph data format:", error);
     return <p>Error loading graph.</p>;
   }
-
-  console.log(parsedData, "QQQ");
 
   const router = useRouter();
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
@@ -58,8 +55,6 @@ export default function Canvas({
     router,
     reactFlowInstance
   );
-
-  console.log(nodes);
 
   // ✅ Ensure nodes have styles and labels correctly set up
   const renderedNodes = useMemo(() => {
@@ -92,11 +87,6 @@ export default function Canvas({
     });
   }, [nodes, selectedNodeId]);
 
-  console.log(
-    "🔍 Rendered Nodes:",
-    nodes.map((node) => node.data)
-  );
-
   const renderedEdges = useMemo(() => {
     if (!edges || edges.length === 0) return [];
     return edges.map((edge) => ({
@@ -107,7 +97,19 @@ export default function Canvas({
 
   return (
     <>
-      <div className="w-full h-full bg-gray-100" style={{ height: "100vh" }}>
+      <div
+        className="w-full h-full bg-gray-100"
+        style={{ height: "100vh" }}
+        onDrop={(event) => {
+          console.log("🟢 Drop event detected in Canvas!");
+          onDrop(event);
+        }}
+        onDragOver={(event) => {
+          event.preventDefault();
+          console.log("🟡 Dragging over Canvas!");
+          onDragOver(event);
+        }}
+      >
         <ReactFlowProvider>
           <ReactFlow
             nodes={renderedNodes}
@@ -116,23 +118,18 @@ export default function Canvas({
             onEdgesChange={onEdgesChange}
             onNodeClick={onNodeClick} // ✅ Fixes node click issue
             onEdgeClick={onEdgeClick} // ✅ Fixes edge click issue
-            onConnect={(params) => setEdges((eds) => addEdge(params, eds))}
+            onConnect={onConnect}
             fitView
             style={{ width: "100%", height: "100%", zIndex: 1 }}
             onInit={(instance) => {
               setReactFlowInstance(instance);
-              console.log("✅ ReactFlow instance initialized:", instance);
             }}
           >
             <FlowContent
-              reactFlowInstance={reactFlowInstance}
               setNodes={setNodes}
-              setEdges={setEdges}
-              router={router}
-              pipelineId={pipelineId}
-              pipelineName={pipelineName}
-              pipelineDescription={pipelineDescription}
+              reactFlowInstance={reactFlowInstance}
             />
+
             <Controls />
             <Background />
           </ReactFlow>
@@ -146,36 +143,4 @@ export default function Canvas({
       </button>
     </>
   );
-}
-
-// ✅ Fixes FlowContent Blocking Clicks
-function FlowContent({
-  reactFlowInstance,
-  setNodes,
-  setEdges,
-  router,
-  pipelineId,
-  pipelineName,
-  pipelineDescription,
-}) {
-  const { fitView } = useReactFlow();
-
-  const { onDrop, onDragOver } = useGraphEvents(
-    setNodes,
-    setEdges,
-    reactFlowInstance,
-    pipelineId,
-    pipelineName,
-    pipelineDescription,
-    router
-  );
-
-  useEffect(() => {
-    if (reactFlowInstance) {
-      console.log("🔄 Running fitView()");
-      fitView();
-    }
-  }, [fitView, reactFlowInstance]);
-
-  return null; // ✅ No extra div blocking clicks
 }

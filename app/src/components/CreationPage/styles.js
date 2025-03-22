@@ -35,4 +35,5 @@ export const getEdgeStyle = (edge, isSelected) => ({
   strokeWidth: isSelected ? 3 : 2,
   markerEnd: "url(#arrow)",
   transition: "0.2s ease-in-out",
+  animated: true,
 });

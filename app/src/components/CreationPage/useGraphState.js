@@ -22,8 +22,6 @@ export function useGraphState(parsedData) {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
 
-  console.log("hello", nodes);
-
   const initialEdges = useMemo(() => {
     if (!parsedData || !parsedData.edges) return [];
     return parsedData.edges.map((edge) => ({

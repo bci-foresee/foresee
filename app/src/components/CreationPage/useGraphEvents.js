@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { addEdge } from "reactflow";
+import { getNodeStyle, getEdgeStyle } from "./styles";
 
 export function useGraphEvents(
   setNodes,
@@ -60,32 +61,43 @@ export function useGraphEvents(
   }, [onDeleteKey]);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    []
+    (params) => {
+      console.log("🔗 New edge connected:", params);
+
+      setEdges((eds) =>
+        addEdge(
+          {
+            ...params,
+            animated: true, // ✅ Ensure animation
+            style: getEdgeStyle(params, false), // ✅ Apply dynamic styling
+            markerEnd: { type: "arrowclosed" },
+          },
+          eds
+        )
+      );
+    },
+    [setEdges]
   );
 
   /** 🔹 Drag & Drop Handling */
   const onDragOver = (event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
-    console.log("🟢 Dragging over canvas");
   };
 
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-      console.log("🟢 Drop event detected");
-
-      if (!reactFlowInstance) {
-        console.error("❌ ReactFlow instance not initialized");
-        return;
-      }
-
       const reactFlowBounds = event.target.getBoundingClientRect();
       const data = event.dataTransfer.getData("module");
 
+      if (!reactFlowInstance) {
+        console.error("ReactFlow instance is not ready yet.");
+        return;
+      }
+
       if (!data) {
-        console.warn("⚠ No module data received.");
+        console.log("No module data received.");
         return;
       }
 
@@ -95,13 +107,20 @@ export function useGraphEvents(
         y: event.clientY - reactFlowBounds.top,
       });
 
-      console.log("📌 New node position:", position);
-
       const newNode = {
-        id: `${Date.now()}`,
+        id: `${Date.now()}`, // Unique ID
         type: module.type,
-        position,
-        data: { label: module.icon },
+        position: reactFlowInstance.project({
+          x: event.clientX,
+          y: event.clientY,
+        }),
+        data: {
+          label: module.name,
+          icon: module.icon,
+          properties: module.properties || {}, // ✅ Ensure properties are included
+          expanded: false,
+        },
+        style: getNodeStyle(module, false),
         sourcePosition: "right",
         targetPosition: "left",
       };
