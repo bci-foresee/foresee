@@ -24,7 +24,9 @@ export default function Canvas({
   pipelineId,
   pipelineName,
   pipelineDescription,
+  readOnly = false, // ← default false
 }) {
+
   if (!graphData) return <p>Loading...</p>;
 
   let parsedData;
@@ -104,20 +106,21 @@ export default function Canvas({
         }}
       >
         <ReactFlowProvider>
-          <ReactFlow
-            nodes={renderedNodes}
-            edges={renderedEdges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onNodeClick={onNodeClick} // ✅ Fixes node click issue
-            onEdgeClick={onEdgeClick} // ✅ Fixes edge click issue
-            onConnect={onConnect}
-            fitView
-            style={{ width: "100%", height: "100%", zIndex: 1 }}
-            onInit={(instance) => {
-              setReactFlowInstance(instance);
-            }}
-          >
+        <ReactFlow
+          nodes={renderedNodes.map((n) => ({
+            ...n,
+            draggable: !readOnly,
+          }))}
+          edges={renderedEdges}
+          onNodesChange={!readOnly ? onNodesChange : undefined}
+          onEdgesChange={!readOnly ? onEdgesChange : undefined}
+          onNodeClick={!readOnly ? onNodeClick : undefined}
+          onEdgeClick={!readOnly ? onEdgeClick : undefined}
+          onConnect={!readOnly ? onConnect : undefined}
+          fitView
+          style={{ width: "100%", height: "100%", zIndex: 1 }}
+          onInit={(instance) => setReactFlowInstance(instance)}
+        >
             <FlowContent
               setNodes={setNodes}
               reactFlowInstance={reactFlowInstance}
@@ -128,12 +131,14 @@ export default function Canvas({
           </ReactFlow>
         </ReactFlowProvider>
       </div>
-      <button
-        className="absolute bottom-4 right-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
-        onClick={saveData}
-      >
-        Save Pipeline
-      </button>
+      {!readOnly && (
+        <button
+          className="absolute bottom-4 right-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
+          onClick={saveData}
+        >
+          Save Pipeline
+        </button>
+      )}
     </>
   );
 }

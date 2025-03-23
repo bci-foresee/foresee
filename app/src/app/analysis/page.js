@@ -4,7 +4,7 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Canvas from "../../components/CreationPage/Canvas";
-import Navbar from "../../components/CreationPage/Navbar";
+import NavbarAnalysis from "../../components/AnalysisPage/NavbarAnalysis";
 
 const hardcodedMetrics = {
   runtime: "60.08s",
@@ -29,8 +29,7 @@ export default function AnalysisPage() {
 
   return (
     <div className="flex flex-col h-full w-full bg-gray-50">
-      <Navbar pipelineName={pipeline?.name} pipelineDescription={pipeline?.description} pipelineId={pipelineId} />
-
+      <NavbarAnalysis pipelineName={pipeline?.name} />
       <div className="flex-grow flex flex-col px-6">
         {/* Canvas (read-only) */}
         <div className="h-[400px] border rounded-lg overflow-hidden my-4 shadow-md bg-white">

@@ -58,6 +58,10 @@ export default function ImplementedPipelines() {
     router.push(`/creation?id=${pipelineId}`);
   };
 
+  const handleChartClick = (pipelineId) => {
+    router.push(`/analysis?id=${pipelineId}`);
+  }
+
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-300 flex flex-col flex-grow min-h-0 overflow-hidden col-span-2">
       <div className="flex items-center justify-between mb-4">
@@ -107,7 +111,7 @@ export default function ImplementedPipelines() {
                   </div>
                 </div>
                 <div className="flex justify-end text-xs text-gray-500 mt-2">
-                  <div className="mr-4">
+                  <div className="mr-4" onClick={() => handleChartClick(pipeline.id)}>
                     <ChartIcon />
                   </div>
                   <button onClick={() => handleEditClick(pipeline.id)}>
