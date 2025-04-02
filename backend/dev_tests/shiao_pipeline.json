@@ -1,0 +1,197 @@
+{
+    "nodes": [
+        {
+            "id": "1",
+            "label": "Input",
+            "name": "Signal Generator",
+            "type": "input",
+            "properties": {
+                "Frequencies": {
+                    "value": [10, 20, 40],
+                    "unit": "Hz"
+                },
+                "Amplitudes": {
+                    "value": [20, 15, 10],
+                    "unit": "V"
+                },
+                "Sampling Frequency": {
+                    "value": 400,
+                    "unit": "Hz"
+                },
+                "Number of Channels": {
+                    "value": 16,
+                    "unit": "int"
+                },
+                "Number of Samples": {
+                    "value": 8192,
+                    "unit": "int"
+                }
+            }
+        },
+        {
+            "id": "2",
+            "label": "BBF",
+            "name": "Berger Band Filter",
+            "type": "module",
+            "properties": {
+                "Sampling Frequency": {
+                    "value": 400,
+                    "unit": "Hz"
+                },
+                "Berger Bands": {
+                    "value": [[0.1, 4], [4, 8], [8, 12], [12, 30], [30, 80], [80, 180]],
+                    "unit": "Hz"
+                },
+                "Clock Frequency": {
+                    "value": 1,
+                    "unit": "MHz"
+                },
+                "Enable RTL Simulation": {
+                    "value": false,
+                    "unit": "boolean"
+                },
+                "Enable RTL Power Estimation": {
+                    "value": false,
+                    "unit": "boolean"
+                },
+                "Save Visualization": {
+                    "value": false,
+                    "unit": "boolean"
+                }
+            }
+        },
+        {
+            "id": "3",
+            "label": "PWXC",
+            "name": "Power Cross-Correlation",
+            "type": "module",
+            "properties": {
+                "Number of Channels": {
+                    "value": 16,
+                    "unit": "int"
+                },
+                "Clock Frequency": {
+                    "value": 1,
+                    "unit": "MHz"
+                },
+                "Enable RTL Simulation": {
+                    "value": false,
+                    "unit": "boolean"
+                },
+                "Enable RTL Power Estimation": {
+                    "value": false,
+                    "unit": "boolean"
+                },
+                "Save Visualization": {
+                    "value": false,
+                    "unit": "boolean"
+                }
+            }
+        },
+        {
+            "id": "4",
+            "label": "FFT",
+            "name": "Fast Fourier Transform",
+            "type": "module",
+            "properties": {
+                "Berger Bands": {
+                    "value": [[0.1, 4], [4, 8], [8, 12], [12, 30], [30, 80], [80, 180]],
+                    "unit": "Hz"
+                },
+                "Number of Samples": {
+                    "value": 8192,
+                    "unit": "int"
+                },
+                "Sampling Frequency": {
+                    "value": 400,
+                    "unit": "Hz"
+                },
+                "Clock Frequency": {
+                    "value": 1,
+                    "unit": "MHz"
+                },
+                "Enable RTL Simulation": {
+                    "value": false,
+                    "unit": "boolean"
+                },
+                "Enable RTL Power Estimation": {
+                    "value": false,
+                    "unit": "boolean"
+                },
+                "Save Visualization": {
+                    "value": false,
+                    "unit": "boolean"
+                }
+            }
+        },
+        {
+            "id": "5",
+            "label": "SVM",
+            "name": "Support Vector Machine",
+            "type": "module",
+            "properties": {
+                "Weights": {
+                    "value": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    "unit": "float"
+                },
+                "Clock Frequency": {
+                    "value": 1,
+                    "unit": "MHz"
+                },
+                "Enable RTL Simulation": {
+                    "value": false,
+                    "unit": "boolean"
+                },
+                "Enable RTL Power Estimation": {
+                    "value": false,
+                    "unit": "boolean"
+                },
+                "Save Visualization": {
+                    "value": false,
+                    "unit": "boolean"
+                }
+            }
+        },
+        {
+            "id": "6",
+            "label": "THR",
+            "name": "Threshold",
+            "type": "module",
+            "properties": {
+                "Lower Bound": {
+                    "value": 0,
+                    "unit": "float"
+                },
+                "Upper Bound": {
+                    "value": 9999999999,
+                    "unit": "float"
+                },
+                "Clock Frequency": {
+                    "value": 15700000,
+                    "unit": "Hz"
+                },
+                "Enable RTL Simulation": {
+                    "value": false,
+                    "unit": "boolean"
+                },
+                "Enable RTL Power Estimation": {
+                    "value": false,
+                    "unit": "boolean"
+                },
+                "Save Visualization": {
+                    "value": false,
+                    "unit": "boolean"
+                }
+            }
+        }
+    ],
+    "edges": [
+        {"source": "1", "target": "2"},
+        {"source": "1", "target": "3"},
+        {"source": "1", "target": "4"},
+        {"source": "2", "target": "5"},
+        {"source": "3", "target": "5"},
+        {"source": "4", "target": "5"},
+        {"source": "5", "target": "6"}
+    ]
+} 
