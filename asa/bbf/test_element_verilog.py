@@ -4,7 +4,7 @@ from asa.utils import INPUT_PE, generate_signal
 
 
 # run the pipeline to test the element
-def test_fft_basic() -> None:
+def test_bbf_basic() -> None:
 
     # input signal window
     input_fs = 400
