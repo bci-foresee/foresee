@@ -6,7 +6,7 @@ import numpy as np
 
 
 # run the pipeline to test the element
-def test_pwxc_basic() -> None:
+def test_svm_basic() -> None:
 
     # input
     input_arr = np.ones(312)

@@ -14,6 +14,7 @@
 **/plots/
 **/sim
 **/**_buffer.txt
+**/node_modules/
 
 # power estimation
 **/*_synth.v
@@ -31,3 +32,6 @@ pipelines/*
 !pipelines/sandbox/
 !pipelines/shiao/
 !pipelines/neo/
+
+# electron backend
+backend/venv/

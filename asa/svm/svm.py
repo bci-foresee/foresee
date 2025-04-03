@@ -58,7 +58,7 @@ class SVM(ProcessingElement):
         acc: float = 0
         for i in range(len(input)):
             acc += self.weights[i] * input[i]
-        return acc
+        return np.array([acc])
 
     def compute_verilog(self, input: NDArray[np.float32]) -> np.int64:
         """
