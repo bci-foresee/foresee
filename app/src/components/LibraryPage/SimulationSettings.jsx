@@ -1,17 +1,16 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SettingsIcon } from '../Icons/icons';
 
-
-export default function SimulationSettings() {
+export default function SimulationSettings({ selectedPipelineId }) {
   const [selectedOptions, setSelectedOptions] = useState({
     power: true,
     latency: true,
     accuracy: true,
-    storage: true, // Added Storage option
+    storage: true,
   });
   const [runs, setRuns] = useState(1);
-  const [progress, setProgress] = useState(100); // Example progress value
+  const [progress, setProgress] = useState(100);
 
   const toggleOption = (option) => {
     setSelectedOptions((prev) => ({
@@ -19,6 +18,43 @@ export default function SimulationSettings() {
       [option]: !prev[option],
     }));
   };
+
+const handleAnalyze = async () => {
+  if (!selectedPipelineId) {
+    console.log("No pipeline selected");
+    return;
+  }
+
+  try {
+    const pipeline = await window.electronAPI.getPipelineById(selectedPipelineId);
+    if (!pipeline) {
+      console.warn("Pipeline not found.");
+      return;
+    }
+
+    const graphData = typeof pipeline.graph_structure === 'string'
+      ? JSON.parse(pipeline.graph_structure)
+      : pipeline.graph_structure;
+    
+    const parsedGraphData = typeof graphData === 'string'
+      ? JSON.parse(graphData)
+      : graphData;
+  
+    const response = await fetch('http://localhost:5000/run-pipeline', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(parsedGraphData), // must be a JSON object, not a string of JSON
+    });
+  
+    const result = await response.json();
+    console.log("🧠 Flask pipeline result:", result);
+  } catch (error) {
+    console.error("❌ Error analyzing pipeline:", error);
+  }
+};
+
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-300 flex flex-col flex-grow">
@@ -30,12 +66,14 @@ export default function SimulationSettings() {
         <h2 className="text-lg font-semibold ml-3">Simulation Settings</h2>
       </div>
 
-      {/* Options (Vertical Stack) */}
+      {/* Options */}
       <div className="flex flex-col space-y-5">
         {["Power", "Latency", "Accuracy", "Storage"].map((option) => (
           <div key={option} className="flex items-center justify-between w-full">
-            <div className="px-3 py-1 w-24 text-center border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium"
-              onClick={() => toggleOption(option.toLowerCase())}>
+            <div
+              className="px-3 py-1 w-24 text-center border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium"
+              onClick={() => toggleOption(option.toLowerCase())}
+            >
               {option}
             </div>
             <input
@@ -47,7 +85,7 @@ export default function SimulationSettings() {
           </div>
         ))}
 
-        {/* Runs Input (Matching Checkbox Size) */}
+        {/* Runs Input */}
         <div className="flex items-center justify-between w-full">
           <div className="px-3 py-1 w-24 text-center border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium">
             Runs
@@ -61,9 +99,12 @@ export default function SimulationSettings() {
         </div>
       </div>
 
-      {/* Analyze Button & Progress Bar */}
+      {/* Analyze */}
       <div className="mt-auto pt-4">
-        <button className="w-full bg-red-600 text-white py-2 rounded-md shadow-md font-semibold hover:bg-red-700 transition">
+        <button
+          onClick={handleAnalyze}
+          className="w-full bg-red-600 text-white py-2 rounded-md shadow-md font-semibold hover:bg-red-700 transition"
+        >
           Analyze
         </button>
         <div className="flex items-center mt-2 space-x-2">
@@ -73,4 +114,4 @@ export default function SimulationSettings() {
       </div>
     </div>
   );
-};
+}

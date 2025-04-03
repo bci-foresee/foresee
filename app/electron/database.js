@@ -121,14 +121,11 @@ const pipelines = [
             "Number of Samples": { value: 10240, unit: "int" },
             "Sampling Frequency": { value: 512, unit: "Hz" },
             "Berger Bands": {
-              value: [
-                { min: 0.1, max: 4 },
-                { min: 4, max: 8 },
-              ],
+              value: [[0.1, 4], [4, 8], [8, 12], [12, 30], [30, 80], [80, 180]],
               unit: "Hz",
             },
-            "Enable RTL Simulation": { value: true, unit: "boolean" },
-            "Enable RTL Power Estimation": { value: true, unit: "boolean" },
+            "Enable RTL Simulation": { value: false, unit: "boolean" },
+            "Enable RTL Power Estimation": { value: false, unit: "boolean" },
           },
           expanded: false,
         },

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ImplementedPipelinesIcon, EditIcon, ChartIcon, DeleteIcon } from "../Icons/icons";
 
-export default function ImplementedPipelines() {
+export default function ImplementedPipelines({ selectedPipelineId, setSelectPipelineId }) {
   const [pipelines, setPipelines] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPipelines, setFilteredPipelines] = useState([]);
@@ -15,7 +15,6 @@ export default function ImplementedPipelines() {
         title: pipeline.name,
         description: pipeline.description,
         icon: "/icons/pipeline.png",
-        selected: false,
       }));
       setPipelines(formattedPipelines);
       setFilteredPipelines(formattedPipelines);
@@ -35,21 +34,11 @@ export default function ImplementedPipelines() {
 
   // Function to toggle selection state
   const handleCheckboxChange = (id) => {
-    console.log(id);
-    const updatedPipelines = pipelines.map((pipeline) =>
-      pipeline.id === id
-        ? { ...pipeline, selected: !pipeline.selected }
-        : pipeline
-    );
-
-    setPipelines(updatedPipelines);
-
-    // Ensure filteredPipelines is updated as well
-    setFilteredPipelines(
-      updatedPipelines.filter((pipeline) =>
-        pipeline.title.toLowerCase().includes(searchQuery)
-      )
-    );
+    if (selectedPipelineId === id) {
+      setSelectPipelineId(null);
+    } else {
+      setSelectPipelineId(id);
+    }
   };
 
   const router = useRouter();
@@ -87,7 +76,7 @@ export default function ImplementedPipelines() {
               {/* Added mb-4 for spacing */}
               <input
                 type="checkbox"
-                checked={pipeline.selected}
+                checked={pipeline.id === selectedPipelineId}
                 onChange={() => handleCheckboxChange(pipeline.id)}
                 className="mr-3 accent-red-500 h-6 w-6 cursor-pointer"
               />
