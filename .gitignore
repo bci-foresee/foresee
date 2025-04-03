@@ -32,3 +32,6 @@ pipelines/*
 !pipelines/sandbox/
 !pipelines/shiao/
 !pipelines/neo/
+
+# electron backend
+backend/venv/
