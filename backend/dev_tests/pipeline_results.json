@@ -559,7 +559,7 @@
     "5": "6"
   },
   "metrics": [],
-  "storage": {
+  "output_data": {
     "1": {
       "name": "Input PE",
       "simulation_type": "Python",
@@ -132354,8 +132354,12 @@
       "input_dimensions": [
         312
       ],
-      "output_dimensions": [],
-      "output_data": 1.4209096478652323e+248,
+      "output_dimensions": [
+        1
+      ],
+      "output_data": [
+        1.4209096478652323e+248
+      ],
       "power_dict": null,
       "clock_frequency": null,
       "latency": null
@@ -132364,6 +132368,7 @@
       "name": "THR",
       "simulation_type": "Python",
       "input_dimensions": [
+        1,
         1
       ],
       "output_dimensions": [],

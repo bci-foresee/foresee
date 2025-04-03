@@ -220,8 +220,13 @@ def run_pipeline(pipeline_data):
 def test_pipeline():
     ### this is just for testing, not for production
 
+    top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                                       capture_output=True,
+                                       text=True).stdout.strip()
+    
+
     # load pipeline file
-    pipeline_file = 'backend/dev_tests/shiao_pipeline.json'
+    pipeline_file = f"{top_level_dir}/backend/dev_tests/shiao_pipeline.json"
     try:
         with open(pipeline_file, 'r') as f:
             pipeline_data = json.load(f)
@@ -235,9 +240,7 @@ def test_pipeline():
     result = run_pipeline(pipeline_data)
 
 
-    top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
-                                       capture_output=True,
-                                       text=True).stdout.strip()
+    
 
 
     os.chdir(f"{top_level_dir}/backend/dev_tests/")
