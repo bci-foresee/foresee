@@ -4,7 +4,7 @@
  * This hook provides functions for modifying nodes and edges,
  * including click events, connecting nodes, deleting elements, and handling drag-and-drop.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { addEdge } from "reactflow";
 import { getNodeStyle, getEdgeStyle } from "./styles";
 
@@ -21,28 +21,38 @@ export function useGraphEvents(
 ) {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState(null);
-
+  const selectedNode = useMemo(
+    () => nodes.find((n) => n.id === selectedNodeId),
+    [nodes, selectedNodeId]
+  );
   const onNodeClick = useCallback(
     (event, node) => {
-      // ✅ Prevent collapsing when clicking inside an input field
       const tag = event.target.tagName.toLowerCase();
-      if (tag === "input" || tag === "textarea" || tag === "select") {
-        event.stopPropagation(); // ✅ Stop event from reaching the node
+      if (["input", "textarea", "select", "button"].includes(tag)) {
+        event.stopPropagation();
         return;
       }
 
-      setNodes((nds) =>
-        nds.map((n) =>
-          n.id === node.id
-            ? { ...n, data: { ...n.data, expanded: !n.data.expanded } }
-            : n
-        )
-      );
+      const clickedNode = nodes.find((n) => n.id === node.id);
+      if (!clickedNode || !reactFlowInstance) return;
+
+      const offsetX = -200;
+      const offsetY = 100;
+
+      const targetX = clickedNode.position.x - offsetX;
+      const targetY = clickedNode.position.y + offsetY;
+
+      setTimeout(() => {
+        reactFlowInstance.setCenter(targetX, targetY, {
+          zoom: 1.2,
+          duration: 300,
+        });
+      }, 50);
 
       setSelectedNodeId(node.id);
       setSelectedEdgeId(null);
     },
-    [setNodes]
+    [nodes, reactFlowInstance, setSelectedNodeId, setSelectedEdgeId]
   );
 
   const onEdgeClick = useCallback((event, edge) => {
@@ -74,6 +84,7 @@ export function useGraphEvents(
             )
           );
           setSelectedNodeId(null);
+          setSelectedNode(null);
         } else if (selectedEdgeId) {
           setEdges((eds) => eds.filter((edge) => edge.id !== selectedEdgeId));
           setSelectedEdgeId(null);
@@ -128,14 +139,9 @@ export function useGraphEvents(
       }
 
       const module = JSON.parse(data);
-      const position = reactFlowInstance.project({
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
-      });
 
       const newNode = {
         id: `${Date.now()}`, // Unique ID
-        type: module.type,
         position: reactFlowInstance.project({
           x: event.clientX,
           y: event.clientY,
@@ -144,7 +150,7 @@ export function useGraphEvents(
           label: module.label,
           name: module.name,
           properties: module.properties || {}, // ✅ Ensure properties are included
-          expanded: false,
+          nodeType: module.nodeType || "default",
         },
         style: getNodeStyle(module, false),
         sourcePosition: "right",
@@ -156,16 +162,34 @@ export function useGraphEvents(
     [reactFlowInstance, setNodes]
   );
 
-  const saveData = () => {
+  const saveData = (nodeId, updatedProperties) => {
+    setNodes((currentNodes) =>
+      currentNodes.map((node) =>
+        node.id === nodeId
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                properties: structuredClone(updatedProperties),
+              },
+            }
+          : node
+      )
+    );
+
+    // After setNodes resolves, you can also debounce or delay this:
     const graphData = {
       nodes: nodes.map((node) => ({
         id: node.id,
         label: node.data.label,
         name: node.data.name,
-        type: node.type,
+        nodeType: node.data.nodeType,
         x: node.position.x,
         y: node.position.y,
-        properties: node.data.properties || {}, // ✅ Ensure properties are saved
+        properties:
+          node.id === nodeId
+            ? structuredClone(updatedProperties)
+            : node.data.properties || {},
       })),
       edges: edges.map((edge) => ({
         source: edge.source,
@@ -186,13 +210,9 @@ export function useGraphEvents(
           graphData
         );
 
-    savePromise
-      .then(() => {
-        router.push(`/`); // Ensure redirect after saving
-      })
-      .catch((error) => {
-        console.error("❌ Failed to save pipeline:", error);
-      });
+    savePromise.catch((error) => {
+      console.error("❌ Failed to save pipeline:", error);
+    });
   };
 
   const updateNodeProperty = useCallback(
@@ -221,8 +241,10 @@ export function useGraphEvents(
   );
 
   return {
+    selectedNode,
     selectedNodeId,
     selectedEdgeId,
+    setSelectedNodeId,
     onNodeClick,
     onEdgeClick,
     onConnect,

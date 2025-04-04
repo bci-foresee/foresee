@@ -4,7 +4,7 @@
  */
 
 "use client";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -16,8 +16,8 @@ import { useRouter } from "next/navigation";
 import { useGraphState } from "./useGraphState";
 import { useGraphEvents } from "./useGraphEvents";
 import { getNodeStyle, getEdgeStyle } from "./styles";
-import { ExpandedNode } from "./ExpandedNode"; // ✅ Import the new component
-import FlowContent from "./FlowContent"; // ✅ Import FlowContent
+import { RightSidebar } from "./RightSidebar";
+import FlowContent from "./FlowContent";
 
 export default function Canvas({
   graphData,
@@ -26,7 +26,6 @@ export default function Canvas({
   pipelineDescription,
   readOnly = false, // ← default false
 }) {
-
   if (!graphData) return <p>Loading...</p>;
 
   let parsedData;
@@ -42,9 +41,10 @@ export default function Canvas({
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const { nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange } =
     useGraphState(parsedData);
-
   const {
     selectedNodeId,
+    selectedNode,
+    setSelectedNodeId,
     selectedEdgeId,
     onNodeClick,
     onEdgeClick,
@@ -66,22 +66,18 @@ export default function Canvas({
   );
 
   const renderedNodes = useMemo(() => {
-    if (!nodes || nodes.length === 0) return [];
-    return nodes.map((node) => ({
-      ...node,
-      style: getNodeStyle(node, node.id === selectedNodeId),
-      data: {
-        ...node.data,
-        label: node.data.expanded ? (
-          <ExpandedNode
-            node={node}
-            updateNodeProperty={updateNodeProperty}
-          /> // ✅ Use the new component
-        ) : (
-          node.data.label
-        ),
-      },
-    }));
+    return nodes.map((node) => {
+      const isSelected = node.id === selectedNodeId;
+      const style = getNodeStyle(node, isSelected);
+      return {
+        ...node,
+        style,
+        data: {
+          ...node.data,
+          label: node.data.label || node.data.name || "Unnamed Node",
+        },
+      };
+    });
   }, [nodes, selectedNodeId]);
 
   const renderedEdges = useMemo(() => {
@@ -91,6 +87,10 @@ export default function Canvas({
       style: getEdgeStyle(edge, edge.id === selectedEdgeId),
     }));
   }, [edges, selectedEdgeId]);
+
+  const handleInit = useCallback((instance) => {
+    setReactFlowInstance(instance);
+  }, []);
 
   return (
     <>
@@ -106,21 +106,26 @@ export default function Canvas({
         }}
       >
         <ReactFlowProvider>
-        <ReactFlow
-          nodes={renderedNodes.map((n) => ({
-            ...n,
-            draggable: !readOnly,
-          }))}
-          edges={renderedEdges}
-          onNodesChange={!readOnly ? onNodesChange : undefined}
-          onEdgesChange={!readOnly ? onEdgesChange : undefined}
-          onNodeClick={!readOnly ? onNodeClick : undefined}
-          onEdgeClick={!readOnly ? onEdgeClick : undefined}
-          onConnect={!readOnly ? onConnect : undefined}
-          fitView
-          style={{ width: "100%", height: "100%", zIndex: 1 }}
-          onInit={(instance) => setReactFlowInstance(instance)}
-        >
+          <ReactFlow
+            panOnDrag
+            nodesDraggable={!readOnly}
+            nodesConnectable={!readOnly}
+            snapToGrid
+            snapGrid={[16, 16]}
+            nodes={renderedNodes.map((n) => ({
+              ...n,
+              draggable: !readOnly,
+            }))}
+            edges={renderedEdges}
+            onNodesChange={!readOnly ? onNodesChange : undefined}
+            onEdgesChange={!readOnly ? onEdgesChange : undefined}
+            onNodeClick={!readOnly ? onNodeClick : undefined}
+            onEdgeClick={!readOnly ? onEdgeClick : undefined}
+            onConnect={!readOnly ? onConnect : undefined}
+            fitView
+            style={{ width: "100%", height: "100%", zIndex: 1 }}
+            onInit={handleInit}
+          >
             <FlowContent
               setNodes={setNodes}
               reactFlowInstance={reactFlowInstance}
@@ -131,6 +136,16 @@ export default function Canvas({
           </ReactFlow>
         </ReactFlowProvider>
       </div>
+
+      {!readOnly && selectedNode && (
+        <RightSidebar
+          node={selectedNode}
+          updateNodeProperty={updateNodeProperty}
+          onClose={() => setSelectedNodeId(null)}
+          saveData={saveData}
+        />
+      )}
+
       {!readOnly && (
         <button
           className="absolute bottom-4 right-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"

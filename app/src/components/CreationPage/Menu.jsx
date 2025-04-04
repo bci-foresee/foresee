@@ -14,7 +14,7 @@ const MODULES = {
       inputs: 1,
       outputs: 1,
       icon: "FFT",
-      type: "module",
+      nodeType: "module",
       properties: {
         "Clock Frequency": { value: 0, unit: "MHz" },
         "Number of Samples": { value: 0, unit: "count" },
@@ -37,7 +37,7 @@ const MODULES = {
       inputs: 1,
       outputs: 1,
       icon: "BBF",
-      type: "module",
+      nodeType: "module",
       properties: {
         "Sampling Frequency": { type: "number", unit: "Hz" },
         "Berger Bands": {
@@ -59,7 +59,7 @@ const MODULES = {
       inputs: 1,
       outputs: 1,
       icon: "PWXC",
-      type: "module",
+      nodeType: "module",
       properties: {
         "Number of Channels": { value: 0, unit: "count" },
         "Clock Frequency": { value: 0, unit: "MHz" },
@@ -73,7 +73,7 @@ const MODULES = {
       inputs: "multiple",
       outputs: 1,
       icon: "SVM",
-      type: "module",
+      nodeType: "module",
       properties: {
         "Model Weights": { value: 0, type: "file" },
         "Clock Frequency": { value: 0, unit: "MHz" },
@@ -87,7 +87,7 @@ const MODULES = {
       inputs: "multiple",
       outputs: 1,
       icon: "THR",
-      type: "module",
+      nodeType: "module",
       properties: {
         "Lower Bound": { value: 0, type: "number" },
         "Upper Bound": { value: 0, type: "number" },
@@ -102,7 +102,7 @@ const MODULES = {
       inputs: "multiple",
       outputs: 1,
       icon: "AVG",
-      type: "module",
+      nodeType: "module",
       properties: {
         "Number of Channels": { value: 0, unit: "count" },
         "Clock Frequency": { value: 0, unit: "MHz" },
@@ -116,7 +116,7 @@ const MODULES = {
       inputs: "single",
       outputs: 1,
       icon: "TKEO",
-      type: "module",
+      nodeType: "module",
       properties: {
         "Number of Channels": { value: 0, unit: "count" },
         "Clock Frequency": { value: 0, unit: "MHz" },
@@ -132,7 +132,7 @@ const MODULES = {
       inputs: 0,
       outputs: 1,
       icon: "Input",
-      type: "input",
+      nodeType: "input",
       properties: {
         Frequency: { type: "number", unit: "Hz" },
         "Number of Channels": { type: "number", unit: "count" },
@@ -146,7 +146,7 @@ const MODULES = {
       inputs: 0,
       outputs: 1,
       icon: "Input",
-      type: "input",
+      nodeType: "input",
       properties: {
         "File Path": { type: "text" },
       },
@@ -160,7 +160,7 @@ const MODULES = {
       inputs: 0,
       outputs: 1,
       icon: "storage",
-      type: "storage",
+      nodeType: "storage",
       properties: {
         "Storage Type": {
           type: "dropdown",
@@ -180,7 +180,7 @@ const MODULES = {
       inputs: 0,
       outputs: 1,
       icon: "storage",
-      type: "storage",
+      nodeType: "storage",
       properties: {
         "Storage Type": {
           type: "dropdown",
@@ -200,7 +200,7 @@ const MODULES = {
       inputs: 0,
       outputs: 1,
       icon: "storage",
-      type: "storage",
+      nodeType: "storage",
       properties: {
         "Storage Type": {
           type: "dropdown",
@@ -220,7 +220,7 @@ const MODULES = {
       inputs: 0,
       outputs: 1,
       icon: "storage",
-      type: "storage",
+      nodeType: "storage",
       properties: {
         "Storage Type": {
           type: "dropdown",

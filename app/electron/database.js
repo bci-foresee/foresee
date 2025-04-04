@@ -99,7 +99,7 @@ const pipelines = [
           id: 1,
           label: "Input", // ✅ Abbreviation
           name: "Custom Signal", // ✅ Full Name
-          type: "input",
+          nodeType: "input",
           x: 100,
           y: 100,
           properties: {
@@ -107,13 +107,12 @@ const pipelines = [
             "Number of Channels": { value: 16, unit: "int" },
             "Number of Samples": { value: 10240, unit: "int" },
           },
-          expanded: false,
         },
         {
           id: 2,
           label: "FFT", // ✅ Abbreviation
           name: "Fast Fourier Transform", // ✅ Full Name
-          type: "module",
+          nodeType: "module",
           x: 300,
           y: 100,
           properties: {
@@ -130,18 +129,16 @@ const pipelines = [
             "Enable RTL Simulation": { value: true, unit: "boolean" },
             "Enable RTL Power Estimation": { value: true, unit: "boolean" },
           },
-          expanded: false,
         },
         {
           id: 3,
           label: "Storage",
-          type: "storage",
+          nodeType: "storage",
           x: 900,
           y: 100,
           properties: {
             "Storage Type": { value: "Spin-Transfer Torque" },
           },
-          expanded: false,
         },
       ],
       edges: [

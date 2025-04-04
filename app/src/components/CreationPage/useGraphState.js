@@ -17,10 +17,9 @@ export function useGraphState(parsedData) {
       data: {
         label: node.label,
         name: node.name,
-        expanded: false,
         properties: node.properties || {},
+        nodeType: node.nodeType,
       },
-      type: node.type || "default", // Ensure type is always set
       position: { x: node.x || 0, y: node.y || 0 },
       style: getNodeStyle(node, false),
       sourcePosition: "right",

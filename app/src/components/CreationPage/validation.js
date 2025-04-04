@@ -12,6 +12,13 @@ export const PROPERTY_VALIDATIONS = {
   },
 
   // ✅ Numeric values (float)
+  Frequency: {
+    type: "number",
+    min: 0,
+    max: 1000,
+    unit: "Hz",
+    errorMessage: "Must be between 0 and 1000 Hz",
+  },
   "Clock Frequency": {
     type: "number",
     min: 0,
