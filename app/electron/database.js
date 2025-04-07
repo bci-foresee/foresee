@@ -38,12 +38,26 @@ db.prepare(
 
 // Function to insert a pipeline (modified to match schema)
 function savePipeline(name, description = null, graphData = null) {
-  db.prepare(
-    `
-    INSERT INTO pipelines (name, description, graph_structure)
-    VALUES (?, ?, ?)
-  `
-  ).run(name, description, graphData ? JSON.stringify(graphData) : null);
+  console.log("💾 Database: Saving pipeline...");
+  console.log("💾 Database: Name:", name);
+  console.log("💾 Database: Description:", description);
+  console.log("💾 Database: Graph data:", graphData);
+
+  try {
+    const stmt = db.prepare(
+      "INSERT INTO pipelines (name, description, graph_structure) VALUES (?, ?, ?)"
+    );
+    const result = stmt.run(
+      name,
+      description,
+      graphData ? JSON.stringify(graphData) : null
+    );
+    console.log("💾 Database: Save result:", result);
+    return result;
+  } catch (error) {
+    console.error("💾 Database: Error saving pipeline:", error);
+    throw error;
+  }
 }
 
 // Function to retrieve pipelines
@@ -66,21 +80,37 @@ function getPipelineById(id) {
 
 // Function to edit an existing pipeline by ID
 function editPipeline(id, name = null, description = null, graphData = null) {
+  console.log("💾 Database: Editing pipeline...");
+  console.log("💾 Database: ID:", id);
+  console.log("💾 Database: Name:", name);
+  console.log("💾 Database: Description:", description);
+  console.log("💾 Database: Graph data:", graphData);
+
   const existingPipeline = db
     .prepare("SELECT id FROM pipelines WHERE id = ?")
     .get(id);
 
   if (!existingPipeline) {
-    return;
+    console.error("❌ Database: Pipeline not found:", id);
+    throw new Error("Pipeline not found");
   }
 
-  db.prepare(
-    `
-      UPDATE pipelines
-      SET graph_structure = ?, name = ?, description = ?
-      WHERE id = ?
-    `
-  ).run(graphData ? JSON.stringify(graphData) : null, name, description, id);
+  try {
+    const stmt = db.prepare(
+      "UPDATE pipelines SET name = ?, description = ?, graph_structure = ? WHERE id = ?"
+    );
+    const result = stmt.run(
+      name || existingPipeline.name,
+      description || existingPipeline.description,
+      graphData ? JSON.stringify(graphData) : null,
+      id
+    );
+    console.log("💾 Database: Edit result:", result);
+    return result;
+  } catch (error) {
+    console.error("💾 Database: Error editing pipeline:", error);
+    throw error;
+  }
 }
 
 // Function to delete a pipeline by ID
@@ -103,9 +133,11 @@ const pipelines = [
           x: 100,
           y: 100,
           properties: {
-            Frequency: { value: 100, unit: "Hz" },
-            "Number of Channels": { value: 16, unit: "int" },
-            "Number of Samples": { value: 10240, unit: "int" },
+            Frequencies: { value: "10, 20, 40", type: "text" },
+            Amplitudes: { value: "20, 15, 10", type: "text" },
+            "Sampling Frequency": { value: 400, unit: "Hz" },
+            "Number of Channels": { value: 16, unit: "count" },
+            "Number of Samples": { value: 10240, unit: "count" },
           },
         },
         {
@@ -116,18 +148,12 @@ const pipelines = [
           x: 300,
           y: 100,
           properties: {
-            "Clock Frequency": { value: 100, unit: "MHz" },
-            "Number of Samples": { value: 10240, unit: "int" },
+            "Clock Frequency": { value: 100, unit: "Hz" },
+            "Number of Samples": { value: 10240, unit: "count" },
             "Sampling Frequency": { value: 512, unit: "Hz" },
-            "Berger Bands": {
-              value: [
-                { min: 0.1, max: 4 },
-                { min: 4, max: 8 },
-              ],
-              unit: "Hz",
-            },
-            "Enable RTL Simulation": { value: true, unit: "boolean" },
-            "Enable RTL Power Estimation": { value: true, unit: "boolean" },
+            "Berger Bands": { value: "0.1-4, 4-8", unit: "Hz" },
+            "Enable RTL Simulation": { value: true, type: "boolean" },
+            "Enable RTL Power Estimation": { value: true, type: "boolean" },
           },
         },
         {

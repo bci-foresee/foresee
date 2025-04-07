@@ -17,7 +17,8 @@ export function useGraphEvents(
   pipelineName,
   pipelineDescription,
   router,
-  reactFlowInstance
+  reactFlowInstance,
+  setHasUnsavedChanges
 ) {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState(null);
@@ -25,6 +26,7 @@ export function useGraphEvents(
     () => nodes.find((n) => n.id === selectedNodeId),
     [nodes, selectedNodeId]
   );
+
   const onNodeClick = useCallback(
     (event, node) => {
       const tag = event.target.tagName.toLowerCase();
@@ -112,8 +114,9 @@ export function useGraphEvents(
           eds
         )
       );
+      setHasUnsavedChanges(true);
     },
-    [setEdges]
+    [setEdges, setHasUnsavedChanges]
   );
 
   /** 🔹 Drag & Drop Handling */
@@ -125,120 +128,148 @@ export function useGraphEvents(
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-      const reactFlowBounds = event.target.getBoundingClientRect();
-      const data = event.dataTransfer.getData("module");
 
       if (!reactFlowInstance) {
-        console.error("ReactFlow instance is not ready yet.");
+        console.error("❌ ReactFlow instance is not ready");
         return;
       }
 
+      const data = event.dataTransfer.getData("module");
       if (!data) {
-        console.log("No module data received.");
+        console.warn("⚠ No module data received.");
         return;
       }
 
-      const module = JSON.parse(data);
+      let module;
+      try {
+        module = JSON.parse(data);
+      } catch (error) {
+        console.error("❌ Failed to parse module data:", error);
+        return;
+      }
+
+      const position = reactFlowInstance.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
 
       const newNode = {
-        id: `${Date.now()}`, // Unique ID
-        position: reactFlowInstance.project({
-          x: event.clientX,
-          y: event.clientY,
-        }),
-        data: {
-          label: module.label,
-          name: module.name,
-          properties: module.properties || {}, // ✅ Ensure properties are included
-          nodeType: module.nodeType || "default",
-        },
-        style: getNodeStyle(module, false),
+        id: `${module.name}-${Date.now()}`,
+        type: "module",
+        position,
+        data: module,
         sourcePosition: "right",
         targetPosition: "left",
       };
 
-      setNodes((nds) => [...nds, newNode]);
+      setNodes((nds) => nds.concat(newNode));
+      setHasUnsavedChanges(true);
     },
-    [reactFlowInstance, setNodes]
+    [reactFlowInstance, setNodes, setHasUnsavedChanges]
   );
 
-  const saveData = (nodeId, updatedProperties) => {
-    setNodes((currentNodes) =>
-      currentNodes.map((node) =>
-        node.id === nodeId
-          ? {
-              ...node,
-              data: {
-                ...node.data,
-                properties: structuredClone(updatedProperties),
-              },
+  const updateNodeProperty = useCallback(
+    async (nodeId, propertyName, value) => {
+      try {
+        // First, update the node in state and get the updated nodes
+        let updatedNodes;
+        setNodes((currentNodes) => {
+          updatedNodes = currentNodes.map((node) => {
+            if (node.id === nodeId) {
+              return {
+                ...node,
+                properties: {
+                  ...(node.properties || {}),
+                  [propertyName]: value,
+                },
+              };
             }
-          : node
-      )
-    );
+            return node;
+          });
+          return updatedNodes;
+        });
 
-    // After setNodes resolves, you can also debounce or delay this:
+        // Wait for state update to complete
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        // Then save to database with the updated nodes
+        const graphData = {
+          nodes: updatedNodes, // Use the updatedNodes we created
+          edges,
+        };
+
+        if (pipelineId) {
+          await window.electronAPI.editPipeline(
+            pipelineId,
+            pipelineName,
+            pipelineDescription,
+            JSON.stringify(graphData)
+          );
+        } else {
+          await window.electronAPI.savePipeline(
+            pipelineName,
+            pipelineDescription,
+            JSON.stringify(graphData)
+          );
+        }
+
+        setHasUnsavedChanges(false);
+      } catch (error) {
+        console.error("❌ Failed to update property:", error);
+        throw error;
+      }
+    },
+    [
+      setNodes,
+      setHasUnsavedChanges,
+      edges,
+      pipelineId,
+      pipelineName,
+      pipelineDescription,
+    ]
+  );
+
+  const saveData = async () => {
+    if (!nodes || nodes.length === 0) {
+      console.error("❌ No nodes to save!");
+      return;
+    }
+
     const graphData = {
-      nodes: nodes.map((node) => ({
-        id: node.id,
-        label: node.data.label,
-        name: node.data.name,
-        nodeType: node.data.nodeType,
-        x: node.position.x,
-        y: node.position.y,
-        properties:
-          node.id === nodeId
-            ? structuredClone(updatedProperties)
-            : node.data.properties || {},
-      })),
-      edges: edges.map((edge) => ({
-        source: edge.source,
-        target: edge.target,
-      })),
+      nodes: nodes.map((node) => {
+        return {
+          ...node,
+        };
+      }),
+      edges,
     };
 
-    const savePromise = pipelineId
-      ? window.electronAPI.editPipeline(
+    console.log(graphData);
+
+    try {
+      let result;
+      if (pipelineId) {
+        result = await window.electronAPI.editPipeline(
           pipelineId,
           pipelineName,
           pipelineDescription,
-          graphData
-        )
-      : window.electronAPI.savePipeline(
+          JSON.stringify(graphData)
+        );
+      } else {
+        result = await window.electronAPI.savePipeline(
           pipelineName,
           pipelineDescription,
-          graphData
+          JSON.stringify(graphData)
         );
+      }
 
-    savePromise.catch((error) => {
+      setHasUnsavedChanges(false);
+      return result;
+    } catch (error) {
       console.error("❌ Failed to save pipeline:", error);
-    });
+      throw error;
+    }
   };
-
-  const updateNodeProperty = useCallback(
-    (nodeId, propertyKey, newValue) => {
-      setNodes((nds) =>
-        nds.map((node) =>
-          node.id === nodeId
-            ? {
-                ...node,
-                data: {
-                  ...node.data,
-                  properties: {
-                    ...node.data.properties,
-                    [propertyKey]: {
-                      ...node.data.properties[propertyKey],
-                      value: newValue,
-                    },
-                  },
-                },
-              }
-            : node
-        )
-      );
-    },
-    [setNodes]
-  );
 
   return {
     selectedNode,

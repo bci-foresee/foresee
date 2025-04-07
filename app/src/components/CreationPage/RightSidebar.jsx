@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { PROPERTY_VALIDATIONS, validateProperty } from "./validation";
 import { GripVertical } from "lucide-react";
 
@@ -11,25 +11,56 @@ export function RightSidebar({ node, updateNodeProperty, onClose, saveData }) {
   const sidebarRef = useRef(null);
   const isResizing = useRef(false);
   const [localProperties, setLocalProperties] = useState({});
-
-  useEffect(() => {
-    console.log("🔍 localProperties changed:", localProperties);
-  }, [localProperties]);
-
-  const handleSave = () => {
-    if (!node) return;
-    Object.entries(localProperties).forEach(([key, prop]) => {
-      updateNodeProperty(node.id, key, prop.value);
-    });
-    saveData?.(); // ✅ only call if it exists
-  };
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
   useEffect(() => {
     if (node) {
-      // Avoid overwriting if node hasn't changed
-      setLocalProperties(structuredClone(node.data.properties || {}));
+      // Initialize local properties with the correct structure
+      const initialProperties = {};
+      Object.entries(node.properties || {}).forEach(([key, value]) => {
+        initialProperties[key] = {
+          value: value.value,
+          type: value.type,
+          unit: value.unit,
+        };
+      });
+      setLocalProperties(initialProperties);
     }
   }, [node?.id]); // ✅ only reinitialize when the selected node changes
+
+  const handleSave = async () => {
+    if (!node) return;
+
+    try {
+      setIsSaving(true);
+
+      // Update ALL properties, not just the first one
+      for (const [key, prop] of Object.entries(localProperties)) {
+        await updateNodeProperty(node.id, key, prop);
+      }
+
+      setIsSaving(false);
+      onClose?.();
+    } catch (error) {
+      console.error("❌ Failed to save properties:", error);
+      setSaveError("Failed to save properties");
+      setIsSaving(false);
+    }
+  };
+
+  // Handle RTL simulation/power estimation dependency
+  useEffect(() => {
+    if (localProperties["Enable RTL Simulation"]?.value === false) {
+      setLocalProperties((prev) => ({
+        ...prev,
+        "Enable RTL Power Estimation": {
+          ...prev["Enable RTL Power Estimation"],
+          value: false,
+        },
+      }));
+    }
+  }, [localProperties["Enable RTL Simulation"]?.value]);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -53,7 +84,8 @@ export function RightSidebar({ node, updateNodeProperty, onClose, saveData }) {
     };
   }, []);
 
-  const { label, name, properties } = node.data;
+  const { label, name } = node;
+  const properties = node.properties || {};
 
   return (
     <>
@@ -84,27 +116,31 @@ export function RightSidebar({ node, updateNodeProperty, onClose, saveData }) {
           <div className="flex gap-2">
             {saveData && (
               <button
-                onClick={() => {
-                  Object.entries(localProperties).forEach(([key, prop]) => {
-                    updateNodeProperty(node.id, key, prop.value);
-                  });
-                  saveData?.(node.id, localProperties); // ✅ pass changes
-                }}
-                className="px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+                onClick={handleSave}
+                disabled={isSaving}
+                className={`px-2 py-1 text-white text-xs rounded transition-colors ${
+                  isSaving
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-500 hover:bg-blue-600"
+                }`}
               >
-                Save
+                {isSaving ? "Saving..." : "Save"}
               </button>
             )}
 
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-black  text-xs "
+              className="text-gray-500 hover:text-black text-xs"
               title="Close sidebar"
             >
               ✕
             </button>
           </div>
         </div>
+
+        {saveError && (
+          <div className="p-2 bg-red-100 text-red-700 text-sm">{saveError}</div>
+        )}
 
         <div className="relative p-4 overflow-y-auto flex-1">
           {/* Properties */}
@@ -124,7 +160,7 @@ export function RightSidebar({ node, updateNodeProperty, onClose, saveData }) {
                       <select
                         value={prop.value}
                         onChange={(e) => {
-                          const newVal = e.target.value; // or Boolean(e.target.checked)
+                          const newVal = e.target.value;
                           setLocalProperties((prev) => ({
                             ...prev,
                             [key]: {
@@ -147,110 +183,27 @@ export function RightSidebar({ node, updateNodeProperty, onClose, saveData }) {
 
                 /** ✅ Special Handling for Berger Bands **/
                 if (key === "Berger Bands") {
-                  const bands = prop.value || [];
-
                   return (
-                    <div
-                      key={key}
-                      className="flex items-center gap-2 flex-wrap"
-                    >
-                      <label className="w-40 text-xs text-gray-700 font-semibold ">
+                    <div key={key} className="flex flex-col gap-2">
+                      <label className="font-semibold text-xs text-gray-700">
                         {key}:
                       </label>
-                      <div className="flex flex-col gap-2">
-                        {bands.map((range, index) => (
-                          <div key={index} className="flex items-center gap-2">
-                            {/* Min Input */}
-                            <div className="relative w-24">
-                              <input
-                                type="number"
-                                value={range.min}
-                                min={validationRule.minValue}
-                                max={validationRule.maxValue}
-                                onChange={(e) => {
-                                  const newBands = [...bands];
-                                  newBands[index] = {
-                                    ...newBands[index],
-                                    min: e.target.value,
-                                  };
-
-                                  setLocalProperties((prev) => ({
-                                    ...prev,
-                                    [key]: {
-                                      ...prev[key],
-                                      value: newBands,
-                                    },
-                                  }));
-                                }}
-                                className="border border-gray-300 rounded-lg px-3 py-2 text-xs w-full pr-8"
-                                placeholder="Min"
-                              />
-                              <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">
-                                Hz
-                              </span>
-                            </div>
-
-                            <span className="text-gray-700">-</span>
-
-                            {/* Max Input */}
-                            <div className="relative w-24">
-                              <input
-                                type="number"
-                                value={range.max}
-                                min={validationRule.minValue}
-                                max={validationRule.maxValue}
-                                onChange={(e) => {
-                                  const newBands = [...bands];
-                                  newBands[index] = {
-                                    ...newBands[index],
-                                    max: e.target.value,
-                                  };
-
-                                  setLocalProperties((prev) => ({
-                                    ...prev,
-                                    [key]: {
-                                      ...prev[key],
-                                      value: newBands,
-                                    },
-                                  }));
-                                }}
-                                className="border border-gray-300 rounded-lg px-3 py-2 text-xs w-full pr-8"
-                                placeholder="Max"
-                              />
-                              <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">
-                                Hz
-                              </span>
-                            </div>
-
-                            {/* Remove Button */}
-                            {/* <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const newBands = bands.filter(
-                                (_, i) => i !== index
-                              );
-                              updateNodeProperty(node.id, key, newBands);
-                            }}
-                            className="text-red-500 text-xs font-bold hover:text-red-700"
-                          >
-                            ✕
-                          </button> */}
-                          </div>
-                        ))}
-                      </div>
-                      {/* 
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateNodeProperty(node.id, key, [
-                            ...bands,
-                            { min: "", max: "" },
-                          ]);
+                      <input
+                        type="text"
+                        value={prop.value || ""}
+                        onChange={(e) => {
+                          const newVal = e.target.value;
+                          setLocalProperties((prev) => ({
+                            ...prev,
+                            [key]: {
+                              ...prev[key],
+                              value: newVal,
+                            },
+                          }));
                         }}
-                        className="text-blue-500 text-xs font-semibold hover:text-blue-700"
-                      >
-                        + Add Range
-                      </button> */}
+                        placeholder="e.g., 0.1-4, 4-8, 8-12"
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      />
                     </div>
                   );
                 }
@@ -277,7 +230,7 @@ export function RightSidebar({ node, updateNodeProperty, onClose, saveData }) {
                         type="checkbox"
                         checked={!!prop.value}
                         onChange={(e) => {
-                          const newVal = e.target.checked; // ✅ this is a boolean
+                          const newVal = e.target.checked;
                           setLocalProperties((prev) => ({
                             ...prev,
                             [key]: {

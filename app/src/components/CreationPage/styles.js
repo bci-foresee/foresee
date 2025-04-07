@@ -15,7 +15,7 @@ export const getNodeStyle = (node, isSelected) => {
     fontSize: "12px",
   };
 
-  const nodeType = node.data?.nodeType ?? "default";
+  const nodeType = node.nodeType ?? "default";
 
   const typeStyles = {
     input: { border: "2px solid gray", borderRadius: 10 },

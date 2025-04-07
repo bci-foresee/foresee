@@ -9,6 +9,9 @@ const CreationPage = () => {
   const searchParams = useSearchParams();
   const pipelineId = searchParams.get("id");
   const [pipeline, setPipeline] = useState(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
 
   useEffect(() => {
     if (pipelineId) {
@@ -16,23 +19,77 @@ const CreationPage = () => {
         .getPipelineById(pipelineId)
         .then((data) => {
           if (data && data.graph_structure) {
+            const parsedGraph = JSON.parse(data.graph_structure);
             setPipeline(data);
+            setNodes(parsedGraph.nodes);
+            setEdges(parsedGraph.edges);
           } else {
             console.error("Invalid pipeline data:", data);
-            setPipeline({ graph_structure: JSON.stringify({ nodes: [], edges: [] }) });
+            setPipeline({
+              graph_structure: JSON.stringify({ nodes: [], edges: [] }),
+            });
           }
         })
         .catch((err) => {
           console.error("Error fetching pipeline:", err);
-          setPipeline({ graph_structure: JSON.stringify({ nodes: [], edges: [] }) });
+          setPipeline({
+            graph_structure: JSON.stringify({ nodes: [], edges: [] }),
+          });
         });
     } else {
-      setPipeline({ name: 'Untitled', graph_structure: JSON.stringify({ nodes: [], edges: [] }) });
+      setPipeline({
+        name: "Untitled",
+        graph_structure: JSON.stringify({ nodes: [], edges: [] }),
+      });
     }
   }, [pipelineId]);
 
   const updatePipelineInfo = (newName, newDescription) => {
-    setPipeline((prev) => ({ ...prev, name: newName, description: newDescription }));
+    setPipeline((prev) => ({
+      ...prev,
+      name: newName,
+      description: newDescription,
+    }));
+  };
+
+  const handleSaveData = async () => {
+    try {
+      if (!pipeline) return;
+
+      const graphData = {
+        nodes: nodes.map((node) => {
+          const nodeData = node.data || {};
+          return {
+            ...node,
+            data: {
+              ...nodeData,
+              properties: nodeData.properties || {},
+            },
+            properties: undefined,
+          };
+        }),
+        edges,
+      };
+
+      if (pipelineId) {
+        await window.electronAPI.editPipeline(
+          pipelineId,
+          pipeline.name,
+          pipeline.description,
+          JSON.stringify(graphData)
+        );
+      } else {
+        await window.electronAPI.savePipeline(
+          pipeline.name,
+          pipeline.description,
+          JSON.stringify(graphData)
+        );
+      }
+
+      setHasUnsavedChanges(false);
+    } catch (error) {
+      console.error("❌ Failed to save pipeline:", error);
+    }
   };
 
   return (
@@ -43,6 +100,8 @@ const CreationPage = () => {
         pipelineDescription={pipeline?.description}
         updatePipelineInfo={updatePipelineInfo}
         pipelineId={pipelineId}
+        hasUnsavedChanges={hasUnsavedChanges}
+        saveData={handleSaveData}
       />
 
       <div className="flex-grow flex flex-col">
@@ -52,6 +111,9 @@ const CreationPage = () => {
             pipelineId={pipelineId}
             pipelineName={pipeline.name}
             pipelineDescription={pipeline.description}
+            setHasUnsavedChanges={setHasUnsavedChanges}
+            setNodes={setNodes}
+            setEdges={setEdges}
           />
         ) : (
           <p className="text-lg font-semibold p-6">Loading pipeline...</p>

@@ -33,12 +33,23 @@ app.whenReady().then(() => {
   // 💾 IPC handlers for SQLite database access
   ipcMain.handle("getPipelines", () => getPipelines());
   ipcMain.handle("savePipeline", (event, name, description, graphData) => {
-    savePipeline(name, description, graphData);
-    return "Pipeline saved!";
+    console.log("💾 Main: Saving pipeline...");
+    console.log("💾 Main: Graph data:", graphData);
+    const result = savePipeline(name, description, graphData);
+    console.log("💾 Main: Save result:", result);
+    return result;
   });
   ipcMain.handle("getPipelineById", async (event, id) => getPipelineById(id));
-  ipcMain.handle("editPipeline", async (event, id, name, description, graphData) =>
-    editPipeline(id, name, description, graphData)
+  ipcMain.handle(
+    "editPipeline",
+    async (event, id, name, description, graphData) => {
+      console.log("💾 Main: Editing pipeline...");
+      console.log("💾 Main: Pipeline ID:", id);
+      console.log("💾 Main: Graph data:", graphData);
+      const result = editPipeline(id, name, description, graphData);
+      console.log("💾 Main: Edit result:", result);
+      return result;
+    }
   );
   ipcMain.handle("deletePipeline", async (event, id) => deletePipeline(id));
 });

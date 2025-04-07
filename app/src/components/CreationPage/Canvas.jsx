@@ -24,7 +24,8 @@ export default function Canvas({
   pipelineId,
   pipelineName,
   pipelineDescription,
-  readOnly = false, // ← default false
+  readOnly = false,
+  setHasUnsavedChanges,
 }) {
   if (!graphData) return <p>Loading...</p>;
 
@@ -62,21 +63,26 @@ export default function Canvas({
     pipelineName,
     pipelineDescription,
     router,
-    reactFlowInstance
+    reactFlowInstance,
+    setHasUnsavedChanges
   );
 
   const renderedNodes = useMemo(() => {
     return nodes.map((node) => {
       const isSelected = node.id === selectedNodeId;
       const style = getNodeStyle(node, isSelected);
-      return {
+      const renderedNode = {
         ...node,
         style,
+        position: { x: node.x, y: node.y },
         data: {
-          ...node.data,
-          label: node.data.label || node.data.name || "Unnamed Node",
+          label: node.label || node.name || "Unnamed Node",
+          name: node.name,
+          nodeType: node.nodeType,
+          properties: node.properties || {},
         },
       };
+      return renderedNode;
     });
   }, [nodes, selectedNodeId]);
 

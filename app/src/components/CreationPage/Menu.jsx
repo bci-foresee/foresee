@@ -11,23 +11,17 @@ const MODULES = {
       id: "fft",
       label: "FFT",
       name: "Fast Fourier Transform",
-      inputs: 1,
+      inputs: "single",
       outputs: 1,
       icon: "FFT",
       nodeType: "module",
       properties: {
-        "Clock Frequency": { value: 0, unit: "MHz" },
+        "Clock Frequency": { value: 0, unit: "Hz" },
         "Number of Samples": { value: 0, unit: "count" },
         "Sampling Frequency": { value: 0, unit: "Hz" },
-        "Berger Bands": {
-          type: "range",
-          unit: "Hz",
-          value: [
-            { min: 0, max: 0 },
-            { min: 0, max: 0 },
-          ],
-        },
-        "Enable RTL Simulation": { type: "boolean" },
+        "Berger Bands": { value: "", unit: "Hz" },
+        "Enable RTL Simulation": { value: false, type: "boolean" },
+        "Enable RTL Power Estimation": { value: false, type: "boolean" },
       },
     },
     {
@@ -56,14 +50,15 @@ const MODULES = {
       id: "pcc",
       label: "PCC",
       name: "Pairwise Cross-Correlation",
-      inputs: 1,
+      inputs: "multiple",
       outputs: 1,
       icon: "PWXC",
       nodeType: "module",
       properties: {
         "Number of Channels": { value: 0, unit: "count" },
-        "Clock Frequency": { value: 0, unit: "MHz" },
-        "Enable RTL Simulation": { type: "boolean" },
+        "Clock Frequency": { value: 0, unit: "Hz" },
+        "Enable RTL Simulation": { value: false, type: "boolean" },
+        "Enable RTL Power Estimation": { value: false, type: "boolean" },
       },
     },
     {
@@ -75,9 +70,10 @@ const MODULES = {
       icon: "SVM",
       nodeType: "module",
       properties: {
-        "Model Weights": { value: 0, type: "file" },
-        "Clock Frequency": { value: 0, unit: "MHz" },
-        "Enable RTL Simulation": { type: "boolean" },
+        Weights: { value: "", type: "text" },
+        "Clock Frequency": { value: 0, unit: "Hz" },
+        "Enable RTL Simulation": { value: false, type: "boolean" },
+        "Enable RTL Power Estimation": { value: false, type: "boolean" },
       },
     },
     {
@@ -91,8 +87,9 @@ const MODULES = {
       properties: {
         "Lower Bound": { value: 0, type: "number" },
         "Upper Bound": { value: 0, type: "number" },
-        "Clock Frequency": { value: 0, unit: "MHz" },
-        "Enable RTL Simulation": { type: "boolean" },
+        "Clock Frequency": { value: 0, unit: "Hz" },
+        "Enable RTL Simulation": { value: false, type: "boolean" },
+        "Enable RTL Power Estimation": { value: false, type: "boolean" },
       },
     },
     {
@@ -105,8 +102,9 @@ const MODULES = {
       nodeType: "module",
       properties: {
         "Number of Channels": { value: 0, unit: "count" },
-        "Clock Frequency": { value: 0, unit: "MHz" },
-        "Enable RTL Simulation": { type: "boolean" },
+        "Clock Frequency": { value: 0, unit: "Hz" },
+        "Enable RTL Simulation": { value: false, type: "boolean" },
+        "Enable RTL Power Estimation": { value: false, type: "boolean" },
       },
     },
     {
@@ -119,8 +117,9 @@ const MODULES = {
       nodeType: "module",
       properties: {
         "Number of Channels": { value: 0, unit: "count" },
-        "Clock Frequency": { value: 0, unit: "MHz" },
-        "Enable RTL Simulation": { type: "boolean" },
+        "Clock Frequency": { value: 0, unit: "Hz" },
+        "Enable RTL Simulation": { value: false, type: "boolean" },
+        "Enable RTL Power Estimation": { value: false, type: "boolean" },
       },
     },
   ],
@@ -134,9 +133,42 @@ const MODULES = {
       icon: "Input",
       nodeType: "input",
       properties: {
-        Frequency: { type: "number", unit: "Hz" },
-        "Number of Channels": { type: "number", unit: "count" },
-        "Number of Samples": { type: "number", unit: "count" },
+        Frequencies: {
+          value: "",
+          type: "text",
+          regex: /^(\d+(\.\d+)?)(,\s*\d+(\.\d+)?)*$/,
+          errorMessage: "Must be comma-separated numbers (e.g., 1, 2, 3)",
+        },
+        Amplitudes: {
+          value: "",
+          type: "text",
+          regex: /^(\d+(\.\d+)?)(,\s*\d+(\.\d+)?)*$/,
+          errorMessage: "Must be comma-separated numbers (e.g., 1, 2, 3)",
+        },
+        "Sampling Frequency": {
+          value: 0,
+          unit: "Hz",
+          type: "number",
+          min: 0,
+          max: 1000,
+          errorMessage: "Must be between 0 and 1000 Hz",
+        },
+        "Number of Channels": {
+          value: 0,
+          unit: "count",
+          type: "integer",
+          min: 0,
+          max: 256,
+          errorMessage: "Must be a whole number between 0 and 256",
+        },
+        "Number of Samples": {
+          value: 0,
+          unit: "count",
+          type: "integer",
+          min: 0,
+          max: 1000000,
+          errorMessage: "Must be a whole number between 0 and 1,000,000",
+        },
       },
     },
     {
@@ -148,7 +180,7 @@ const MODULES = {
       icon: "Input",
       nodeType: "input",
       properties: {
-        "File Path": { type: "text" },
+        "File Path": { value: "", type: "text" },
       },
     },
   ],
@@ -239,6 +271,40 @@ const MODULES = {
 const handleDragStart = (e, module) => {
   e.dataTransfer.setData("module", JSON.stringify(module));
   e.dataTransfer.effectAllowed = "move";
+};
+
+const onDragStart = (event, nodeType) => {
+  event.dataTransfer.setData("application/reactflow", nodeType);
+  event.dataTransfer.effectAllowed = "move";
+};
+
+const onDragOver = (event) => {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
+};
+
+const onDrop = (event) => {
+  event.preventDefault();
+
+  const nodeType = event.dataTransfer.getData("application/reactflow");
+  const reactFlowBounds = event.target.getBoundingClientRect();
+  const position = reactFlowInstance.project({
+    x: event.clientX - reactFlowBounds.left,
+    y: event.clientY - reactFlowBounds.top,
+  });
+
+  const newNode = {
+    id: `${nodeType}-${Date.now()}`,
+    type: nodeType,
+    position,
+    data: {
+      label: nodeType,
+      properties: {},
+    },
+  };
+
+  setNodes((nds) => nds.concat(newNode));
+  setHasUnsavedChanges(true);
 };
 
 export function Menu({ label, className, onClick }) {

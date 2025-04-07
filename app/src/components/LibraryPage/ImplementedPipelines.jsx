@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ImplementedPipelinesIcon, EditIcon, ChartIcon, DeleteIcon } from "../Icons/icons";
+import {
+  ImplementedPipelinesIcon,
+  EditIcon,
+  ChartIcon,
+  DeleteIcon,
+} from "../Icons/icons";
 
 export default function ImplementedPipelines() {
   const [pipelines, setPipelines] = useState([]);
@@ -9,17 +14,27 @@ export default function ImplementedPipelines() {
 
   // Fetch pipelines from SQLite via Electron's IPC
   useEffect(() => {
-    window.electronAPI.getPipelines().then((data) => {
-      const formattedPipelines = data.map((pipeline) => ({
-        id: pipeline.id,
-        title: pipeline.name,
-        description: pipeline.description,
-        icon: "/icons/pipeline.png",
-        selected: false,
-      }));
-      setPipelines(formattedPipelines);
-      setFilteredPipelines(formattedPipelines);
-    });
+    if (!window.electronAPI) {
+      console.error("Electron API not available");
+      return;
+    }
+
+    window.electronAPI
+      .getPipelines()
+      .then((data) => {
+        const formattedPipelines = data.map((pipeline) => ({
+          id: pipeline.id,
+          title: pipeline.name,
+          description: pipeline.description,
+          icon: "/icons/pipeline.png",
+          selected: false,
+        }));
+        setPipelines(formattedPipelines);
+        setFilteredPipelines(formattedPipelines);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch pipelines:", error);
+      });
   }, []);
 
   // Search function
@@ -35,7 +50,6 @@ export default function ImplementedPipelines() {
 
   // Function to toggle selection state
   const handleCheckboxChange = (id) => {
-    console.log(id);
     const updatedPipelines = pipelines.map((pipeline) =>
       pipeline.id === id
         ? { ...pipeline, selected: !pipeline.selected }
@@ -60,7 +74,7 @@ export default function ImplementedPipelines() {
 
   const handleChartClick = (pipelineId) => {
     router.push(`/analysis?id=${pipelineId}`);
-  }
+  };
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-300 flex flex-col flex-grow min-h-0 overflow-hidden col-span-2">
@@ -111,7 +125,10 @@ export default function ImplementedPipelines() {
                   </div>
                 </div>
                 <div className="flex justify-end text-xs text-gray-500 mt-2">
-                  <div className="mr-4" onClick={() => handleChartClick(pipeline.id)}>
+                  <div
+                    className="mr-4"
+                    onClick={() => handleChartClick(pipeline.id)}
+                  >
                     <ChartIcon />
                   </div>
                   <button onClick={() => handleEditClick(pipeline.id)}>
