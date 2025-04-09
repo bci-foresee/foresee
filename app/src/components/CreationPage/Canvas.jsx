@@ -76,10 +76,11 @@ export default function Canvas({
         style,
         position: node.position || { x: 0, y: 0 },
         data: {
+          ...node.data,
           label: node.label || node.name || "Unnamed Node",
           name: node.name,
           nodeType: node.nodeType,
-          properties: node.properties || {},
+          properties: node.data?.properties || node.properties || {},
         },
       };
       return renderedNode;
