@@ -151,14 +151,17 @@ export function useGraphEvents(
       });
 
       const newNode = {
-        id: `${Date.now()}`,
-        ...module,
+        id: `${module.nodeType}-${Date.now()}`,
+        type: module.type,
+        label: module.label,
+        name: module.name,
+        nodeType: module.nodeType,
         position,
         data: {
-          label: module.label || module.name,
+          label: module.label,
           name: module.name,
           nodeType: module.nodeType,
-          properties: module.properties || {},
+          properties: JSON.parse(JSON.stringify(module.properties)) || {},
         },
         style: getNodeStyle(module, false),
         sourcePosition: "right",
