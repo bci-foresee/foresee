@@ -129,40 +129,43 @@ export function useGraphEvents(
     (event) => {
       event.preventDefault();
 
+      const reactFlowBounds = event.currentTarget.getBoundingClientRect();
+
       if (!reactFlowInstance) {
-        console.error("❌ ReactFlow instance is not ready");
+        console.error("❌ ReactFlow instance is not ready yet.");
         return;
       }
 
       const data = event.dataTransfer.getData("module");
+
       if (!data) {
-        console.warn("⚠ No module data received.");
+        console.log("No module data received.");
         return;
       }
 
-      let module;
-      try {
-        module = JSON.parse(data);
-      } catch (error) {
-        console.error("❌ Failed to parse module data:", error);
-        return;
-      }
+      const module = JSON.parse(data);
 
-      const position = reactFlowInstance.screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
+      const position = reactFlowInstance.project({
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top,
       });
 
       const newNode = {
-        id: `${module.name}-${Date.now()}`,
-        type: "module",
+        id: `${Date.now()}`,
+        ...module,
         position,
-        data: module,
+        data: {
+          label: module.label || module.name,
+          name: module.name,
+          nodeType: module.nodeType,
+          properties: module.properties || {},
+        },
+        style: getNodeStyle(module, false),
         sourcePosition: "right",
         targetPosition: "left",
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      setNodes((nds) => [...nds, newNode]);
       setHasUnsavedChanges(true);
     },
     [reactFlowInstance, setNodes, setHasUnsavedChanges]
@@ -243,8 +246,6 @@ export function useGraphEvents(
       }),
       edges,
     };
-
-    console.log(graphData);
 
     try {
       let result;

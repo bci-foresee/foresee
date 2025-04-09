@@ -11,7 +11,7 @@ const MODULES = {
       id: "fft",
       label: "FFT",
       name: "Fast Fourier Transform",
-      inputs: "single",
+      inputs: 1,
       outputs: 1,
       icon: "FFT",
       nodeType: "module",
@@ -50,7 +50,7 @@ const MODULES = {
       id: "pcc",
       label: "PCC",
       name: "Pairwise Cross-Correlation",
-      inputs: "multiple",
+      inputs: 1,
       outputs: 1,
       icon: "PWXC",
       nodeType: "module",
@@ -65,7 +65,7 @@ const MODULES = {
       id: "svm",
       label: "SVM",
       name: "Support Vector Machine",
-      inputs: "multiple",
+      inputs: 1,
       outputs: 1,
       icon: "SVM",
       nodeType: "module",
@@ -96,7 +96,7 @@ const MODULES = {
       id: "avg",
       label: "AVG",
       name: "Signal Average",
-      inputs: "multiple",
+      inputs: 1,
       outputs: 1,
       icon: "AVG",
       nodeType: "module",
@@ -111,7 +111,7 @@ const MODULES = {
       id: "tkeo",
       label: "TKEO",
       name: "Teager-Kaiser Energy Operator",
-      inputs: "single",
+      inputs: 1,
       outputs: 1,
       icon: "TKEO",
       nodeType: "module",
@@ -271,40 +271,6 @@ const MODULES = {
 const handleDragStart = (e, module) => {
   e.dataTransfer.setData("module", JSON.stringify(module));
   e.dataTransfer.effectAllowed = "move";
-};
-
-const onDragStart = (event, nodeType) => {
-  event.dataTransfer.setData("application/reactflow", nodeType);
-  event.dataTransfer.effectAllowed = "move";
-};
-
-const onDragOver = (event) => {
-  event.preventDefault();
-  event.dataTransfer.dropEffect = "move";
-};
-
-const onDrop = (event) => {
-  event.preventDefault();
-
-  const nodeType = event.dataTransfer.getData("application/reactflow");
-  const reactFlowBounds = event.target.getBoundingClientRect();
-  const position = reactFlowInstance.project({
-    x: event.clientX - reactFlowBounds.left,
-    y: event.clientY - reactFlowBounds.top,
-  });
-
-  const newNode = {
-    id: `${nodeType}-${Date.now()}`,
-    type: nodeType,
-    position,
-    data: {
-      label: nodeType,
-      properties: {},
-    },
-  };
-
-  setNodes((nds) => nds.concat(newNode));
-  setHasUnsavedChanges(true);
 };
 
 export function Menu({ label, className, onClick }) {

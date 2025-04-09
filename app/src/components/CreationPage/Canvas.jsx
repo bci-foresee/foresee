@@ -74,7 +74,7 @@ export default function Canvas({
       const renderedNode = {
         ...node,
         style,
-        position: { x: node.x, y: node.y },
+        position: node.position || { x: 0, y: 0 },
         data: {
           label: node.label || node.name || "Unnamed Node",
           name: node.name,
@@ -102,22 +102,19 @@ export default function Canvas({
     <>
       <div
         className="w-full h-full bg-gray-100"
-        style={{ height: "100vh" }}
+        style={{ height: "100vh", position: "relative" }}
         onDrop={(event) => {
           onDrop(event);
         }}
         onDragOver={(event) => {
           event.preventDefault();
-          onDragOver(event);
+          event.dataTransfer.dropEffect = "move";
         }}
       >
         <ReactFlowProvider>
           <ReactFlow
-            panOnDrag
             nodesDraggable={!readOnly}
             nodesConnectable={!readOnly}
-            snapToGrid
-            snapGrid={[16, 16]}
             nodes={renderedNodes.map((n) => ({
               ...n,
               draggable: !readOnly,
@@ -136,7 +133,6 @@ export default function Canvas({
               setNodes={setNodes}
               reactFlowInstance={reactFlowInstance}
             />
-
             <Controls />
             <Background />
           </ReactFlow>
