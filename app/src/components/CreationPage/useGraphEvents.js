@@ -86,13 +86,15 @@ export function useGraphEvents(
             )
           );
           setSelectedNodeId(null);
+          setHasUnsavedChanges(true);
         } else if (selectedEdgeId) {
           setEdges((eds) => eds.filter((edge) => edge.id !== selectedEdgeId));
           setSelectedEdgeId(null);
+          setHasUnsavedChanges(true);
         }
       }
     },
-    [selectedNodeId, selectedEdgeId, setNodes, setEdges]
+    [selectedNodeId, selectedEdgeId, setNodes, setEdges, setHasUnsavedChanges]
   );
 
   useEffect(() => {
