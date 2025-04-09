@@ -52,45 +52,6 @@ const CreationPage = () => {
     }));
   };
 
-  const handleSaveData = async () => {
-    try {
-      if (!pipeline) return;
-
-      const graphData = {
-        nodes: nodes.map((node) => {
-          const nodeData = node.data || {};
-          return {
-            ...node,
-            data: {
-              ...nodeData,
-              properties: nodeData.properties || {},
-            },
-            properties: undefined,
-          };
-        }),
-        edges,
-      };
-
-      if (pipelineId) {
-        await window.electronAPI.editPipeline(
-          pipelineId,
-          pipeline.name,
-          pipeline.description,
-          JSON.stringify(graphData)
-        );
-      } else {
-        await window.electronAPI.savePipeline(
-          pipeline.name,
-          pipeline.description,
-          JSON.stringify(graphData)
-        );
-      }
-
-      setHasUnsavedChanges(false);
-    } catch (error) {
-      console.error("❌ Failed to save pipeline:", error);
-    }
-  };
 
   return (
     <div className="flex flex-col h-full w-full bg-gray-100">
@@ -101,7 +62,6 @@ const CreationPage = () => {
         updatePipelineInfo={updatePipelineInfo}
         pipelineId={pipelineId}
         hasUnsavedChanges={hasUnsavedChanges}
-        saveData={handleSaveData}
       />
 
       <div className="flex-grow flex flex-col">

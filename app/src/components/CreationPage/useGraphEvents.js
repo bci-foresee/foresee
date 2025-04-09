@@ -86,7 +86,6 @@ export function useGraphEvents(
             )
           );
           setSelectedNodeId(null);
-          setSelectedNode(null);
         } else if (selectedEdgeId) {
           setEdges((eds) => eds.filter((edge) => edge.id !== selectedEdgeId));
           setSelectedEdgeId(null);

@@ -10,7 +10,6 @@ export default function Navbar({
   updatePipelineInfo,
   pipelineId,
   hasUnsavedChanges,
-  saveData,
 }) {
   const [isModulesOpen, setIsModulesOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,7 +24,6 @@ export default function Navbar({
     setIsModalOpen(true);
   };
 
-  // Handle Save
   const handleSave = () => {
     updatePipelineInfo(
       newName ? newName : "Untitled",
@@ -46,11 +44,16 @@ export default function Navbar({
 
   const handleForeseeClick = () => {
     if (hasUnsavedChanges) {
-      if (window.confirm("You have unsaved changes. Do you want to save before leaving?")) {
-        // Save changes and then navigate
-        saveData();
+      if (
+        !window.confirm(
+          "You have unsaved changes. Are you sure you want to leave without saving?"
+        )
+      ) {
+        // If user clicks "Cancel", stay on the page
+        return;
       }
     }
+    // Only navigate if user has no unsaved changes or clicked "OK" to leave without saving
     router.push(`/`);
   };
 
