@@ -3,34 +3,38 @@
  */
 
 export const getNodeStyle = (node, isSelected) => {
-  const isExpanded = node.data?.expanded ?? false;
-
   const baseStyle = {
-    transition: "0.2s ease-in-out",
-    padding: isExpanded ? "20px 20px" : "5px 10px",
-    width: isExpanded ? "fit-content" : "fit-content",
-    maxWidth: isExpanded ? "500px" : "250px",
+    padding: "5px 10px",
+    width: "fit-content",
+    maxWidth: "250px",
     minWidth: "30px",
     textAlign: "center",
     whiteSpace: "normal",
     wordBreak: "break-word",
-    backgroundColor: isExpanded ? "#FFF8DC" : "white",
+    backgroundColor: "white",
+    fontSize: "12px",
   };
+
+  const nodeType = node.nodeType ?? "default";
 
   const typeStyles = {
     input: { border: "2px solid gray", borderRadius: 10 },
     module: { border: "2px solid red", borderRadius: 10 },
-    storage: { border: "2px solid gray" },
-    default: { border: "2px solid red" },
+    storage: { border: "2px solid #999", borderRadius: 4 },
+    default: { border: "2px solid black", borderRadius: 4 },
   };
+
+  const selectedStyle = isSelected
+    ? {
+        border: "3px solid blue",
+        backgroundColor: "#B3D7FF",
+      }
+    : {};
 
   return {
     ...baseStyle,
-    ...(typeStyles[node.type] || typeStyles.default),
-    ...(isSelected && {
-      border: "3px solid blue",
-      backgroundColor: "#B3D7FF",
-    }),
+    ...(typeStyles[nodeType] || typeStyles.default),
+    ...selectedStyle,
   };
 };
 
@@ -38,6 +42,5 @@ export const getEdgeStyle = (edge, isSelected) => ({
   stroke: isSelected ? "blue" : "orange",
   strokeWidth: isSelected ? 3 : 2,
   markerEnd: "url(#arrow)",
-  transition: "0.2s ease-in-out",
   animated: true,
 });

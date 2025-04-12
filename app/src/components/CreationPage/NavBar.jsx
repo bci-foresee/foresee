@@ -2,38 +2,60 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Info, Edit } from "lucide-react";
 import { Menu } from "./Menu";
-import {DeleteIcon } from "../Icons/icons";
+import { DeleteIcon } from "../Icons/icons";
 
-
-export default function Navbar({ pipelineName, pipelineDescription, updatePipelineInfo, pipelineId }) {
+export default function Navbar({
+  pipelineName,
+  pipelineDescription,
+  updatePipelineInfo,
+  pipelineId,
+  hasUnsavedChanges,
+}) {
   const [isModulesOpen, setIsModulesOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const router = useRouter();
 
-  // **Update state when the modal opens**
+  // Update state when the modal opens
   const openModal = () => {
-    setNewName(pipelineName || "Untitled"); // Ensure there's always a default name
-    setNewDescription(pipelineDescription || ""); // Default to empty if no description
+    setNewName(pipelineName || "Untitled");
+    setNewDescription(pipelineDescription || "");
     setIsModalOpen(true);
   };
 
-  // **Handle Save**
   const handleSave = () => {
-    updatePipelineInfo(newName ? newName : "Untitled", newDescription ? newDescription : "");
+    updatePipelineInfo(
+      newName ? newName : "Untitled",
+      newDescription ? newDescription : ""
+    );
     setIsModalOpen(false);
   };
 
   const handleDelete = () => {
     if (pipelineId) {
       window.electronAPI
-      .deletePipeline(pipelineId)
-      .then(() => console.log("Pipeline deleted successfully!"))
-      .catch((error) => console.error("Failed to delete pipeline:", error));
+        .deletePipeline(pipelineId)
+        .then(() => console.log("Pipeline deleted successfully"))
+        .catch((error) => console.error("Failed to delete pipeline:", error));
     }
-    router.push(`/`)
-  }
+    router.push(`/`);
+  };
+
+  const handleForeseeClick = () => {
+    if (hasUnsavedChanges) {
+      if (
+        !window.confirm(
+          "You have unsaved changes. Are you sure you want to leave without saving?"
+        )
+      ) {
+        // If user clicks "Cancel", stay on the page
+        return;
+      }
+    }
+    // Only navigate if user has no unsaved changes or clicked "OK" to leave without saving
+    router.push(`/`);
+  };
 
   return (
     <div className="flex items-center justify-between px-6 py-3 bg-white shadow-md relative">
@@ -41,7 +63,7 @@ export default function Navbar({ pipelineName, pipelineDescription, updatePipeli
       <div className="flex items-center gap-4">
         <button
           className="bg-red-100 text-red-600 px-4 py-2 rounded-md font-semibold shadow-sm hover:bg-red-200"
-          onClick={() => router.push(`/`)}
+          onClick={handleForeseeClick}
         >
           <em>Foresee</em>
         </button>
@@ -59,8 +81,11 @@ export default function Navbar({ pipelineName, pipelineDescription, updatePipeli
       {/* Center Title - Hidden on Small Screens */}
       <div className="absolute left-1/2 transform -translate-x-1/2 hidden sm:flex items-center gap-2">
         <h1 className="text-xl font-bold">{pipelineName}</h1>
-        <button onClick={openModal} className="text-gray-600 hover:text-gray-800">
-          <Edit size={18} />
+        <button
+          onClick={openModal}
+          className="text-gray-500 hover:text-gray-800"
+        >
+          <Edit size={16} />
         </button>
       </div>
 
@@ -70,7 +95,7 @@ export default function Navbar({ pipelineName, pipelineDescription, updatePipeli
           onClick={handleDelete}
           className="text-red-600 hover:text-red-800 transition flex items-center gap-1"
         >
-          <DeleteIcon/>
+          <DeleteIcon />
         </button>
       </div>
 

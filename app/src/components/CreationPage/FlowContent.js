@@ -38,15 +38,35 @@ export default function FlowContent({ setNodes, reactFlowInstance }) {
         return;
       }
 
-      let module;
       try {
-        module = JSON.parse(data);
+        const module = JSON.parse(data);
+        const { top, left } = event.target.getBoundingClientRect();
+        const position = reactFlowInstance.project({
+          x: event.clientX - left,
+          y: event.clientY - top,
+        });
+
+        const newNode = {
+          id: `${Date.now()}`,
+          ...module,
+          position,
+          data: {
+            label: module.label || module.name,
+            name: module.name,
+            nodeType: module.nodeType,
+            properties: module.properties || {},
+          },
+          style: getNodeStyle(module, false),
+          sourcePosition: "right",
+          targetPosition: "left",
+        };
+
+        setNodes((nds) => [...nds, newNode]);
       } catch (error) {
         console.error("❌ Failed to parse module data:", error);
-        return;
       }
     },
-    [reactFlowInstance]
+    [reactFlowInstance, setNodes]
   );
 
   useEffect(() => {

@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ImplementedPipelinesIcon, EditIcon, ChartIcon, DeleteIcon } from "../Icons/icons";
+import {
+  ImplementedPipelinesIcon,
+  EditIcon,
+  ChartIcon,
+  DeleteIcon,
+} from "../Icons/icons";
 
 export default function ImplementedPipelines({ selectedPipelineId, setSelectPipelineId }) {
   const [pipelines, setPipelines] = useState([]);
@@ -49,7 +54,7 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
 
   const handleChartClick = (pipelineId) => {
     router.push(`/analysis?id=${pipelineId}`);
-  }
+  };
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-300 flex flex-col flex-grow min-h-0 overflow-hidden col-span-2">
@@ -100,7 +105,10 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
                   </div>
                 </div>
                 <div className="flex justify-end text-xs text-gray-500 mt-2">
-                  <div className="mr-4" onClick={() => handleChartClick(pipeline.id)}>
+                  <div
+                    className="mr-4"
+                    onClick={() => handleChartClick(pipeline.id)}
+                  >
                     <ChartIcon />
                   </div>
                   <button onClick={() => handleEditClick(pipeline.id)}>

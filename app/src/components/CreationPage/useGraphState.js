@@ -5,34 +5,34 @@
  * It does not handle updates—state changes should be managed using `useGraphEvents.js`.
  */
 
-import { useMemo } from "react";
-import { useNodesState, useEdgesState } from "reactflow";
+import { useMemo, useCallback } from "react";
+import {
+  useNodesState,
+  useEdgesState,
+  applyNodeChanges,
+  applyEdgeChanges,
+} from "reactflow";
 import { getNodeStyle, getEdgeStyle } from "./styles";
 
 export function useGraphState(parsedData) {
   const initialNodes = useMemo(() => {
     if (!parsedData || !parsedData.nodes) return [];
     return parsedData.nodes.map((node) => ({
+      ...node,
       id: node.id.toString(),
-      data: {
-        label: node.label,
-        name: node.name,
-        expanded: false,
-        properties: node.properties || {},
-      },
-      type: node.type || "default", // Ensure type is always set
-      position: { x: node.x || 0, y: node.y || 0 },
+      position: node.position || { x: 0, y: 0 },
       style: getNodeStyle(node, false),
       sourcePosition: "right",
       targetPosition: "left",
     }));
   }, [parsedData]);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes] = useNodesState(initialNodes);
 
   const initialEdges = useMemo(() => {
     if (!parsedData || !parsedData.edges) return [];
     return parsedData.edges.map((edge) => ({
+      ...edge,
       id: `${edge.source}-${edge.target}`,
       source: edge.source.toString(),
       target: edge.target.toString(),
@@ -41,7 +41,28 @@ export function useGraphState(parsedData) {
     }));
   }, [parsedData]);
 
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [edges, setEdges] = useEdgesState(initialEdges);
 
-  return { nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange };
+  const onNodesChange = useCallback(
+    (changes) => {
+      setNodes((nds) => applyNodeChanges(changes, nds));
+    },
+    [setNodes]
+  );
+
+  const onEdgesChange = useCallback(
+    (changes) => {
+      setEdges((eds) => applyEdgeChanges(changes, eds));
+    },
+    [setEdges]
+  );
+
+  return {
+    nodes,
+    setNodes,
+    onNodesChange,
+    edges,
+    setEdges,
+    onEdgesChange,
+  };
 }

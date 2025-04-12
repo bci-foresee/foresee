@@ -3,21 +3,39 @@
  * Each property type has a rule and validation function.
  */
 export const PROPERTY_VALIDATIONS = {
+  // ✅ Custom Signal properties
+  Frequencies: {
+    type: "text",
+    regex: /^(\d+(\.\d+)?)(,\s*\d+(\.\d+)?)*$/,
+    errorMessage: "Must be comma-separated numbers (e.g., 1, 2, 3)",
+  },
+  Amplitudes: {
+    type: "text",
+    regex: /^(\d+(\.\d+)?)(,\s*\d+(\.\d+)?)*$/,
+    errorMessage: "Must be comma-separated numbers (e.g., 1, 2, 3)",
+  },
+
   // ✅ Range inputs (e.g., "0.1-4, 4-8")
   "Berger Bands": {
-    type: "array", // ✅ Now treated as an array of min-max pairs
-    minValue: 0,
-    maxValue: 1000,
-    errorMessage: "Each value must be between 0 and 1000 Hz.",
+    type: "text", // Changed to text to accept string format
+    regex: /^(\d+(\.\d+)?-\d+(\.\d+)?)(,\s*\d+(\.\d+)?-\d+(\.\d+)?)*$/,
+    errorMessage: "Must be in format 'min-max, min-max' (e.g., '0.1-4, 4-8')",
   },
 
   // ✅ Numeric values (float)
+  Frequency: {
+    type: "number",
+    min: 0,
+    max: 1000,
+    unit: "Hz",
+    errorMessage: "Must be between 0 and 1000 Hz",
+  },
   "Clock Frequency": {
     type: "number",
     min: 0,
     max: 1000,
-    unit: "MHz",
-    errorMessage: "Must be between 0 and 1000 MHz",
+    unit: "Hz",
+    errorMessage: "Must be between 0 and 1000 Hz",
   },
   "Sampling Frequency": {
     type: "number",
@@ -37,6 +55,11 @@ export const PROPERTY_VALIDATIONS = {
     min: -1000,
     max: 1000,
     errorMessage: "Must be between -1000 and 1000",
+  },
+  Weights: {
+    type: "text",
+    regex: /^\[(\d+(\.\d+)?)(,\s*\d+(\.\d+)?)*\]$/,
+    errorMessage: "Must be in array format (e.g., [1, 1, 1])",
   },
 
   // ✅ Integer values
@@ -67,11 +90,6 @@ export const PROPERTY_VALIDATIONS = {
     regex: /^(\/?[\w\-. ]+)+\.\w{2,4}$/,
     errorMessage: "Must be a valid file path (e.g., /data/file.txt)",
   },
-  "Model Weights": {
-    type: "text",
-    regex: /^(\/?[\w\-. ]+)+\.\w{2,4}$/,
-    errorMessage: "Must be a valid file path (e.g., /models/weights.pth)",
-  },
   "Storage Type": {
     type: "dropdown",
     allowedValues: [
@@ -96,8 +114,11 @@ export function validateProperty(key, value) {
   if (!rule) return true; // No validation rule → always valid
 
   switch (rule.type) {
-    case "range":
-      return rule.regex.test(value);
+    case "text":
+      if (rule.regex) {
+        return rule.regex.test(value);
+      }
+      return true;
     case "number":
       const num = parseFloat(value);
       return !isNaN(num) && num >= rule.min && num <= rule.max;
@@ -106,11 +127,8 @@ export function validateProperty(key, value) {
       return Number.isInteger(int) && int >= rule.min && int <= rule.max;
     case "boolean":
       return typeof value === "boolean";
-    case "text":
-      if (rule.allowedValues) {
-        return rule.allowedValues.includes(value);
-      }
-      return rule.regex.test(value);
+    case "dropdown":
+      return rule.allowedValues.includes(value);
     default:
       return true;
   }
