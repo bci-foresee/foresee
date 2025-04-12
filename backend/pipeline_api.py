@@ -26,27 +26,19 @@ def convert_numpy_to_list(obj):
     return obj
 
 def parse_pipeline_config(pipeline_data):
-    # make sure got json otherwise error
     if isinstance(pipeline_data, str):
-        if pipeline_data.endswith('.json'):
-            try:
-                with open(pipeline_data, 'r') as file:
-                    pipeline_data = json.load(file)
-            except FileNotFoundError:
-                return None, f"Pipeline configuration file not found: {pipeline_data}"
-            except json.JSONDecodeError:
-                return None, f"Invalid JSON in pipeline configuration file: {pipeline_data}"
-        else:
-            try:
-                pipeline_data = json.loads(pipeline_data)
-            except json.JSONDecodeError:
-                return None, "Invalid JSON string provided"
+        try:
+            pipeline_data = json.loads(pipeline_data)
+        except json.JSONDecodeError:
+            return None, "Invalid JSON string provided"
 
-    # does json even make sense
-    if not pipeline_data or "nodes" not in pipeline_data or "edges" not in pipeline_data:
-        return None, "Invalid pipeline data structure"
+    # Check for basic structure
+    if not isinstance(pipeline_data, dict):
+        return None, "Pipeline data is not a dictionary"
+
+    if "nodes" not in pipeline_data or "edges" not in pipeline_data:
+        return None, "Missing 'nodes' or 'edges' in pipeline data"
     
-    # do nodes and edges make sense
     for node in pipeline_data["nodes"]:
         if "id" not in node or "type" not in node:
             return None, f"Invalid node structure: {node}"
@@ -69,11 +61,11 @@ def generate_pipeline(pipeline_data):
         
         # bunch of if statements for different types of PEs, input special case
         if node_type == "input":
-            frequencies = properties["Frequencies"]["value"]
-            amplitudes = properties["Amplitudes"]["value"]
-            fs = properties["Sampling Frequency"]["value"]
-            n_channels = properties["Number of Channels"]["value"]
-            n_samples = properties["Number of Samples"]["value"]
+            frequencies = properties.get("Frequencies", {}).get("value", [10, 20, 40])
+            amplitudes = properties.get("Amplitudes", {}).get("value", [20, 15, 10])
+            fs = properties.get("Sampling Frequency", {}).get("value", 400)
+            n_channels = properties.get("Number of Channels", {}).get("value", 1)
+            n_samples = properties.get("Number of Samples", {}).get("value", 8192)
             
             input_signal = generate_signal(
                 frequencies=frequencies,
@@ -81,8 +73,7 @@ def generate_pipeline(pipeline_data):
                 fs=fs,
                 n_channels=n_channels,
                 n_samples=n_samples
-            )
-            
+            )            
             processing_elements[node_id] = INPUT_PE(input=input_signal, clk=0)
             
         # all other PEs
@@ -90,7 +81,7 @@ def generate_pipeline(pipeline_data):
             clk = properties["Clock Frequency"]["value"]
             rtl_sim = properties["Enable RTL Simulation"]["value"]
             rtl_power = properties["Enable RTL Power Estimation"]["value"]
-            save_viz = properties["Save Visualization"]["value"]
+            save_viz=False
 
             if node["label"] == "TKEO":
                 n_channels = properties["Number of Channels"]["value"]
@@ -188,7 +179,9 @@ def run_pipeline(pipeline_data):
     # parse json
     pipeline_data, error = parse_pipeline_config(pipeline_data)
     if error:
+        print("❌ Pipeline parse error:", error)
         return jsonify({"error": error}), 400
+    print(f'Parsed pipeline data: {pipeline_data}')
 
     # instantiate python PEs
     processing_elements = generate_pipeline(pipeline_data)
@@ -196,6 +189,7 @@ def run_pipeline(pipeline_data):
     # run the PEs
     for pe in processing_elements.values():
         pe.run()
+        print(f'RAN {pe}')
 
     # Get results
     results = {

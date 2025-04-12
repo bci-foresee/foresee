@@ -1,15 +1,20 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from pipeline_api import run_pipeline
+import json
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes and origins
 
 @app.route('/run-pipeline', methods=['POST'])
 def run_pipeline_api():
     try:
         pipeline_json = request.get_json(force=True)
+        print("🧩 Type of pipeline_json:", type(pipeline_json))
+        print("🧩 Pipeline received:", pipeline_json)
+        
         result = run_pipeline(pipeline_json)
 
-        # If run_pipeline already returns a Response (like with jsonify + status), pass it through
         if isinstance(result, tuple) and isinstance(result[0], dict):
             return jsonify(result[0]), result[1]
         return jsonify(result)

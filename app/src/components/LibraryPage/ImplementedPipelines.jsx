@@ -7,34 +7,23 @@ import {
   DeleteIcon,
 } from "../Icons/icons";
 
-export default function ImplementedPipelines() {
+export default function ImplementedPipelines({ selectedPipelineId, setSelectPipelineId }) {
   const [pipelines, setPipelines] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPipelines, setFilteredPipelines] = useState([]);
 
   // Fetch pipelines from SQLite via Electron's IPC
   useEffect(() => {
-    if (!window.electronAPI) {
-      console.error("Electron API not available");
-      return;
-    }
-
-    window.electronAPI
-      .getPipelines()
-      .then((data) => {
-        const formattedPipelines = data.map((pipeline) => ({
-          id: pipeline.id,
-          title: pipeline.name,
-          description: pipeline.description,
-          icon: "/icons/pipeline.png",
-          selected: false,
-        }));
-        setPipelines(formattedPipelines);
-        setFilteredPipelines(formattedPipelines);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch pipelines:", error);
-      });
+    window.electronAPI.getPipelines().then((data) => {
+      const formattedPipelines = data.map((pipeline) => ({
+        id: pipeline.id,
+        title: pipeline.name,
+        description: pipeline.description,
+        icon: "/icons/pipeline.png",
+      }));
+      setPipelines(formattedPipelines);
+      setFilteredPipelines(formattedPipelines);
+    });
   }, []);
 
   // Search function
@@ -50,20 +39,11 @@ export default function ImplementedPipelines() {
 
   // Function to toggle selection state
   const handleCheckboxChange = (id) => {
-    const updatedPipelines = pipelines.map((pipeline) =>
-      pipeline.id === id
-        ? { ...pipeline, selected: !pipeline.selected }
-        : pipeline
-    );
-
-    setPipelines(updatedPipelines);
-
-    // Ensure filteredPipelines is updated as well
-    setFilteredPipelines(
-      updatedPipelines.filter((pipeline) =>
-        pipeline.title.toLowerCase().includes(searchQuery)
-      )
-    );
+    if (selectedPipelineId === id) {
+      setSelectPipelineId(null);
+    } else {
+      setSelectPipelineId(id);
+    }
   };
 
   const router = useRouter();
@@ -101,7 +81,7 @@ export default function ImplementedPipelines() {
               {/* Added mb-4 for spacing */}
               <input
                 type="checkbox"
-                checked={pipeline.selected}
+                checked={pipeline.id === selectedPipelineId}
                 onChange={() => handleCheckboxChange(pipeline.id)}
                 className="mr-3 accent-red-500 h-6 w-6 cursor-pointer"
               />
