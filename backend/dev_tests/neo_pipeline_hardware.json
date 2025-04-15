@@ -1,0 +1,154 @@
+{
+    "nodes": [
+        {
+            "id": "1",
+            "label": "Input",
+            "name": "Signal Generator",
+            "type": "input",
+            "properties": {
+                "Frequencies": {
+                    "value": [10, 20, 40],
+                    "unit": "Hz"
+                },
+                "Amplitudes": {
+                    "value": [20, 15, 10],
+                    "unit": "V"
+                },
+                "Sampling Frequency": {
+                    "value": 400,
+                    "unit": "Hz"
+                },
+                "Number of Channels": {
+                    "value": 2,
+                    "unit": "int"
+                },
+                "Number of Samples": {
+                    "value": 8192,
+                    "unit": "int"
+                }
+            }
+        },
+        {
+            "id": "2",
+            "label": "TKEO",
+            "name": "Teager-Kaiser Energy Operator",
+            "type": "module",
+            "properties": {
+                "Number of Channels": {
+                    "value": 2,
+                    "unit": "int"
+                },
+                "Clock Frequency": {
+                    "value": 1000000,
+                    "unit": "Hz"
+                },
+                "Enable RTL Simulation": {
+                    "value": true,
+                    "unit": "boolean"
+                },
+                "Enable RTL Power Estimation": {
+                    "value": true,
+                    "unit": "boolean"
+                },
+                "Save Visualization": {
+                    "value": false,
+                    "unit": "boolean"
+                }
+            }
+        },
+        {
+            "id": "3",
+            "label": "AVG",
+            "name": "Average",
+            "type": "module",
+            "properties": {
+                "Number of Channels": {
+                    "value": 2,
+                    "unit": "int"
+                },
+                "Clock Frequency": {
+                    "value": 1000000,
+                    "unit": "Hz"
+                },
+                "Enable RTL Simulation": {
+                    "value": true,
+                    "unit": "boolean"
+                },
+                "Enable RTL Power Estimation": {
+                    "value": true,
+                    "unit": "boolean"
+                },
+                "Save Visualization": {
+                    "value": false,
+                    "unit": "boolean"
+                }
+            }
+        },
+        {
+            "id": "4",
+            "label": "SVM",
+            "name": "Support Vector Machine",
+            "type": "module",
+            "properties": {
+                "Weights": {
+                    "value": [1, 1],
+                    "unit": "float"
+                },
+                "Clock Frequency": {
+                    "value": 1000000,
+                    "unit": "Hz"
+                },
+                "Enable RTL Simulation": {
+                    "value": true,
+                    "unit": "boolean"
+                },
+                "Enable RTL Power Estimation": {
+                    "value": true,
+                    "unit": "boolean"
+                },
+                "Save Visualization": {
+                    "value": false,
+                    "unit": "boolean"
+                }
+            }
+        },
+        {
+            "id": "5",
+            "label": "THR",
+            "name": "Threshold",
+            "type": "module",
+            "properties": {
+                "Lower Bound": {
+                    "value": 0,
+                    "unit": "float"
+                },
+                "Upper Bound": {
+                    "value": 9999999,
+                    "unit": "float"
+                },
+                "Clock Frequency": {
+                    "value": 1000000,
+                    "unit": "Hz"
+                },
+                "Enable RTL Simulation": {
+                    "value": true,
+                    "unit": "boolean"
+                },
+                "Enable RTL Power Estimation": {
+                    "value": true,
+                    "unit": "boolean"
+                },
+                "Save Visualization": {
+                    "value": false,
+                    "unit": "boolean"
+                }
+            }
+        }
+    ],
+    "edges": [
+        {"source": "1", "target": "2"},
+        {"source": "2", "target": "3"},
+        {"source": "3", "target": "4"},
+        {"source": "4", "target": "5"}
+    ]
+} 

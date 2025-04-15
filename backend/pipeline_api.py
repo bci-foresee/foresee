@@ -220,7 +220,7 @@ def test_pipeline():
     
 
     # load pipeline file
-    pipeline_file = f"{top_level_dir}/backend/dev_tests/shiao_pipeline.json"
+    pipeline_file = f"{top_level_dir}/backend/dev_tests/neo_pipeline_hardware.json"
     try:
         with open(pipeline_file, 'r') as f:
             pipeline_data = json.load(f)
