@@ -30,6 +30,7 @@
     "electron-rebuild": "^3.2.9",
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
+    "license-checker": "^25.0.1",
     "tailwindcss": "^4",
     "wait-on": "^8.0.2"
   }
