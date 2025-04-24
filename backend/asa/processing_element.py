@@ -157,7 +157,7 @@ class ProcessingElement:
         subprocess.run(yosys_cmd, shell=True, check=True, timeout=None)
 
         # Run OpenSTA
-        opensta_cmd = "../../external/OpenSTA/app/sta power_analysis.tcl"
+        opensta_cmd = "../external/OpenSTA/app/sta power_analysis.tcl"
         result = subprocess.run(opensta_cmd,
                                 shell=True,
                                 check=True,
@@ -216,7 +216,7 @@ class ProcessingElement:
                                        text=True).stdout.strip()
 
         # Change the directory in Python
-        os.chdir(f"{top_level_dir}/asa/{self.name.lower()}")
+        os.chdir(f"{top_level_dir}/backend/asa/{self.name.lower()}")
 
         # load input data
         input_data = self.load_inputs()
@@ -231,7 +231,7 @@ class ProcessingElement:
                                        text=True).stdout.strip()
 
         # Change the directory in Python
-        os.chdir(f"{top_level_dir}/asa/{self.name.lower()}")
+        os.chdir(f"{top_level_dir}/backend/asa/{self.name.lower()}")
 
         # validate dimensions
         self.dimension_validate(input=input_data)
@@ -247,7 +247,7 @@ class ProcessingElement:
                 power_estimate = self.run_rtl_power_estimation(
                     verilog_file=self.name.lower(),
                     process_library=
-                    "../../hardware_lib/sky130_fd_sc_hd__ff_n40C_1v65",
+                    "../hardware_lib/sky130_fd_sc_hd__ff_n40C_1v65",
                     clock_freq=self.clk)
 
                 # multiply power by number of rtl runs

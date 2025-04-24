@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Canvas from "../../components/CreationPage/Canvas";
 import NavbarAnalysis from "../../components/AnalysisPage/NavbarAnalysis";
 import {
@@ -23,7 +23,7 @@ const hardcodedMetrics = {
   cost: "0.10 cents",
 };
 
-export default function AnalysisPage() {
+function AnalysisContent() {
   const searchParams = useSearchParams();
   const pipelineId = searchParams.get("id");
   const [pipeline, setPipeline] = useState(null);
@@ -157,6 +157,14 @@ export default function AnalysisPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AnalysisPage() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <AnalysisContent />
+    </Suspense>
   );
 }
 

@@ -144,7 +144,7 @@ export function useGraphEvents(
         return;
       }
 
-      const module = JSON.parse(data);
+      const moduleData = JSON.parse(data);
 
       const position = reactFlowInstance.project({
         x: event.clientX - reactFlowBounds.left,
@@ -152,20 +152,20 @@ export function useGraphEvents(
       });
 
       const newNode = {
-        id: `${module.nodeType}-${Date.now()}`,
-        type: module.type,
-        label: module.label,
-        name: module.name,
-        nodeType: module.nodeType,
+        id: `${moduleData.nodeType}-${Date.now()}`,
+        type: moduleData.type,
+        label: moduleData.label,
+        name: moduleData.name,
+        nodeType: moduleData.nodeType,
         position,
         data: {
-          label: module.label,
-          name: module.name,
-          nodeType: module.nodeType,
-          properties: module.properties || {},
+          label: moduleData.label,
+          name: moduleData.name,
+          nodeType: moduleData.nodeType,
+          properties: moduleData.properties || {},
         },
-        properties: module.properties || {},
-        style: getNodeStyle(module, false),
+        properties: moduleData.properties || {},
+        style: getNodeStyle(moduleData, false),
         sourcePosition: "right",
         targetPosition: "left",
       };

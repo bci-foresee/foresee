@@ -39,7 +39,7 @@ export default function FlowContent({ setNodes, reactFlowInstance }) {
       }
 
       try {
-        const module = JSON.parse(data);
+        const moduleData = JSON.parse(data);
         const { top, left } = event.target.getBoundingClientRect();
         const position = reactFlowInstance.project({
           x: event.clientX - left,
@@ -48,15 +48,15 @@ export default function FlowContent({ setNodes, reactFlowInstance }) {
 
         const newNode = {
           id: `${Date.now()}`,
-          ...module,
+          ...moduleData,
           position,
           data: {
-            label: module.label || module.name,
-            name: module.name,
-            nodeType: module.nodeType,
-            properties: module.properties || {},
+            label: moduleData.label || moduleData.name,
+            name: moduleData.name,
+            nodeType: moduleData.nodeType,
+            properties: moduleData.properties || {},
           },
-          style: getNodeStyle(module, false),
+          style: getNodeStyle(moduleData, false),
           sourcePosition: "right",
           targetPosition: "left",
         };

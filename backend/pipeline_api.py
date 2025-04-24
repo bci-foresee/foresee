@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 # Add the project root directory to the Python path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from flask import jsonify
 import json

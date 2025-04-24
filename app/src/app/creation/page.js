@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Canvas from "../../components/CreationPage/Canvas";
 import Navbar from "../../components/CreationPage/Navbar";
 
-const CreationPage = () => {
+function CreationContent() {
   const searchParams = useSearchParams();
   const pipelineId = searchParams.get("id");
   const [pipeline, setPipeline] = useState(null);
@@ -52,7 +52,6 @@ const CreationPage = () => {
     }));
   };
 
-
   return (
     <div className="flex flex-col h-full w-full bg-gray-100">
       {/* Navbar with Modules Dropdown */}
@@ -80,6 +79,14 @@ const CreationPage = () => {
         )}
       </div>
     </div>
+  );
+}
+
+const CreationPage = () => {
+  return (
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <CreationContent />
+    </Suspense>
   );
 };
 
