@@ -11,6 +11,7 @@ import numpy as np
 from asa import TKEO, AVG, SVM, THR, FFT, BBF, PWXC
 from asa.utils import INPUT_PE, generate_signal
 
+
 def convert_numpy_to_list(obj):
     # numpy -> python arrays
     if isinstance(obj, np.ndarray):
@@ -20,10 +21,14 @@ def convert_numpy_to_list(obj):
     elif isinstance(obj, np.floating):
         return float(obj)
     elif isinstance(obj, dict):
-        return {key: convert_numpy_to_list(value) for key, value in obj.items()}
+        return {
+            key: convert_numpy_to_list(value)
+            for key, value in obj.items()
+        }
     elif isinstance(obj, list):
         return [convert_numpy_to_list(item) for item in obj]
     return obj
+
 
 def parse_pipeline_config(pipeline_data):
     if isinstance(pipeline_data, str):
@@ -38,50 +43,53 @@ def parse_pipeline_config(pipeline_data):
 
     if "nodes" not in pipeline_data or "edges" not in pipeline_data:
         return None, "Missing 'nodes' or 'edges' in pipeline data"
-    
+
     for node in pipeline_data["nodes"]:
         if "id" not in node or "type" not in node:
             return None, f"Invalid node structure: {node}"
-    
+
     for edge in pipeline_data["edges"]:
         if "source" not in edge or "target" not in edge:
             return None, f"Invalid edge structure: {edge}"
-    
+
     return pipeline_data, None
+
 
 def generate_pipeline(pipeline_data):
     # instantiating python PEs
     processing_elements = {}
-    
+
     # creat ethe processing elements
     for node in pipeline_data["nodes"]:
         node_id = node["id"]
         node_type = node["type"]
         properties = node.get("properties", {})
-        
+
         # bunch of if statements for different types of PEs, input special case
         if node_type == "input":
-            frequencies = properties.get("Frequencies", {}).get("value", [10, 20, 40])
-            amplitudes = properties.get("Amplitudes", {}).get("value", [20, 15, 10])
+            frequencies = properties.get("Frequencies",
+                                         {}).get("value", [10, 20, 40])
+            amplitudes = properties.get("Amplitudes",
+                                        {}).get("value", [20, 15, 10])
             fs = properties.get("Sampling Frequency", {}).get("value", 400)
-            n_channels = properties.get("Number of Channels", {}).get("value", 1)
-            n_samples = properties.get("Number of Samples", {}).get("value", 8192)
-            
-            input_signal = generate_signal(
-                frequencies=frequencies,
-                amplitudes=amplitudes,
-                fs=fs,
-                n_channels=n_channels,
-                n_samples=n_samples
-            )            
+            n_channels = properties.get("Number of Channels",
+                                        {}).get("value", 1)
+            n_samples = properties.get("Number of Samples",
+                                       {}).get("value", 8192)
+
+            input_signal = generate_signal(frequencies=frequencies,
+                                           amplitudes=amplitudes,
+                                           fs=fs,
+                                           n_channels=n_channels,
+                                           n_samples=n_samples)
             processing_elements[node_id] = INPUT_PE(input=input_signal, clk=0)
-            
+
         # all other PEs
         elif node_type == "module":
             clk = properties["Clock Frequency"]["value"]
             rtl_sim = properties["Enable RTL Simulation"]["value"]
             rtl_power = properties["Enable RTL Power Estimation"]["value"]
-            save_viz=False
+            save_viz = False
 
             if node["label"] == "TKEO":
                 n_channels = properties["Number of Channels"]["value"]
@@ -90,9 +98,8 @@ def generate_pipeline(pipeline_data):
                     clk=clk,
                     rtl_sim=rtl_sim,
                     rtl_power_estimation=rtl_power,
-                    save_visualization=save_viz
-                )
-                
+                    save_visualization=save_viz)
+
             elif node["label"] == "AVG":
                 n_channels = properties["Number of Channels"]["value"]
                 processing_elements[node_id] = AVG(
@@ -100,9 +107,8 @@ def generate_pipeline(pipeline_data):
                     clk=clk,
                     rtl_sim=rtl_sim,
                     rtl_power_estimation=rtl_power,
-                    save_visualization=save_viz
-                )
-                
+                    save_visualization=save_viz)
+
             elif node["label"] == "SVM":
                 weights = np.array(properties["Weights"]["value"])
                 processing_elements[node_id] = SVM(
@@ -110,9 +116,8 @@ def generate_pipeline(pipeline_data):
                     clk=clk,
                     rtl_sim=rtl_sim,
                     rtl_power_estimation=rtl_power,
-                    save_visualization=save_viz
-                )
-                
+                    save_visualization=save_viz)
+
             elif node["label"] == "THR":
                 lower_bound = properties["Lower Bound"]["value"]
                 upper_bound = properties["Upper Bound"]["value"]
@@ -122,21 +127,18 @@ def generate_pipeline(pipeline_data):
                     clk=clk,
                     rtl_sim=rtl_sim,
                     rtl_power_estimation=rtl_power,
-                    save_visualization=save_viz
-                )
+                    save_visualization=save_viz)
 
             elif node["label"] == "FFT":
                 berger_bands = properties["Berger Bands"]["value"]
                 n_samples = properties["Number of Samples"]["value"]
                 fs = properties["Sampling Frequency"]["value"]
-                processing_elements[node_id] = FFT(
-                    berger_bands=berger_bands,
-                    n_samples=n_samples,
-                    fs=fs,
-                    clk=clk,
-                    rtl_sim=rtl_sim,
-                    save_visualization=save_viz
-                )
+                processing_elements[node_id] = FFT(berger_bands=berger_bands,
+                                                   n_samples=n_samples,
+                                                   fs=fs,
+                                                   clk=clk,
+                                                   rtl_sim=rtl_sim,
+                                                   save_visualization=save_viz)
 
             elif node["label"] == "BBF":
                 fs = properties["Sampling Frequency"]["value"]
@@ -147,8 +149,7 @@ def generate_pipeline(pipeline_data):
                     clk=clk,
                     rtl_sim=rtl_sim,
                     rtl_power_estimation=rtl_power,
-                    save_visualization=save_viz
-                )
+                    save_visualization=save_viz)
 
             elif node["label"] == "PWXC":
                 n_channels = properties["Number of Channels"]["value"]
@@ -157,22 +158,22 @@ def generate_pipeline(pipeline_data):
                     clk=clk,
                     save_visualization=save_viz,
                     rtl_sim=rtl_sim,
-                    rtl_power_estimation=rtl_power
-                )
+                    rtl_power_estimation=rtl_power)
 
     #make the connections
     for edge in pipeline_data["edges"]:
         source_id = edge["source"]
         target_id = edge["target"]
-        
+
         if source_id in processing_elements and target_id in processing_elements:
             source_pe = processing_elements[source_id]
             target_pe = processing_elements[target_id]
-            
+
             source_pe.add_output(target_pe)
             target_pe.add_input(source_pe)
-    
+
     return processing_elements
+
 
 def run_pipeline(pipeline_data):
     """Main pipeline execution function that orchestrates the three stages."""
@@ -194,30 +195,37 @@ def run_pipeline(pipeline_data):
     # Get results
     results = {
         "message": "Pipeline run successfully",
-        "node_properties": {node["id"]: {
-            "label": node["label"],
-            "name": node.get("name", ""),
-            "type": node["type"],
-            "properties": node.get("properties", {})
-        } for node in pipeline_data["nodes"]},
-        "connections": {edge["source"]: edge["target"] for edge in pipeline_data["edges"]},
+        "node_properties": {
+            node["id"]: {
+                "label": node["label"],
+                "name": node.get("name", ""),
+                "type": node["type"],
+                "properties": node.get("properties", {})
+            }
+            for node in pipeline_data["nodes"]
+        },
+        "connections": {
+            edge["source"]: edge["target"]
+            for edge in pipeline_data["edges"]
+        },
         "metrics": [],
         "output_data": {}
     }
 
     # store sim data
     for node_id, pe in processing_elements.items():
-        results["output_data"][node_id] = convert_numpy_to_list(pe.simulation_data)
+        results["output_data"][node_id] = convert_numpy_to_list(
+            pe.simulation_data)
 
     return results
+
 
 def test_pipeline():
     ### this is just for testing, not for production
 
     top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
-                                       capture_output=True,
-                                       text=True).stdout.strip()
-    
+                                   capture_output=True,
+                                   text=True).stdout.strip()
 
     # load pipeline file
     pipeline_file = f"{top_level_dir}/backend/dev_tests/neo_pipeline_hardware.json"
@@ -233,12 +241,7 @@ def test_pipeline():
 
     result = run_pipeline(pipeline_data)
 
-
-    
-
-
     os.chdir(f"{top_level_dir}/backend/dev_tests/")
-    
 
     output_file = 'pipeline_results.json'
     try:
@@ -247,8 +250,9 @@ def test_pipeline():
         print(f"Pipeline results written to {output_file}")
     except IOError as e:
         print(f"Error writing results to file: {e}")
-    
+
     return result
+
 
 if __name__ == "__main__":
     test_pipeline()
