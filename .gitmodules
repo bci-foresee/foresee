@@ -1,7 +1,6 @@
-
-[submodule "external/cudd"]
-	path = external/cudd
+[submodule "backend/external/cudd"]
+	path = backend/external/cudd
 	url = https://github.com/ivmai/cudd.git
-[submodule "external/OpenSTA"]
-	path = external/OpenSTA
+[submodule "backend/external/OpenSTA"]
+	path = backend/external/OpenSTA
 	url = https://github.com/The-OpenROAD-Project/OpenSTA.git
