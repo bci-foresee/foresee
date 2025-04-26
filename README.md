@@ -1,4 +1,4 @@
-# FORESEE: BCI Pipeline Design & Analysis Tool
+# Foresee: BCI Pipeline Design & Analysis Tool
 
 ### Tool Status
 
@@ -14,7 +14,7 @@ Readme last updated: 24 April 2025
 
 ## Overview
 
-FORESEE is a comprehensive Brain-Computer Interface (BCI) pipeline design and analysis tool. It enables researchers and engineers to design, test, and implement BCI pipelines through an intuitive graphical interface. The tool is built on a growing library of processing elements (PEs) that can be easily integrated into a pipeline for rapid prototyping and testing.
+Foresee is a comprehensive Brain-Computer Interface (BCI) pipelFORESEE: BCI Pipeline Design & Analysis Toooine design and analysis tool. It enables researchers and engineers to design, test, and implement BCI pipelines through an intuitive graphical interface. The tool is built on a growing library of modules that can be easily integrated into a pipeline for rapid prototyping and testing.
 
 Key features include:
 - Graphical pipeline editor
@@ -22,13 +22,18 @@ Key features include:
 - Hardware simulation capabilities
 - Integration of RTL with high-level simulation
 
+
+## Installation
+
+Go to the releases tab and download the executable for your platform. If you are on macOS, make sure you download the x86 or ARM variation, depending on what CPU your computer has
+
 ## Project Structure
 
 The project is organized into two main components:
 - `app/` - Contains the Electron frontend
-- `backend/` - Contains the Python backend including processing elements, pipeline execution, and analysis tools
+- `backend/` - Contains the Python backend including modules, pipeline execution, and analysis tools
 
-## Installation
+## Developer Installation
 
 ### Linux
 
@@ -119,9 +124,9 @@ Once both the backend and frontend are running, you can access the FORESEE appli
 The main interface allows you to:
 1. Create new pipelines
 2. Import existing pipeline configurations
-3. Add processing elements to your pipeline
-4. Connect processing elements to form a complete pipeline
-5. Configure processing element parameters
+3. Add modules to your pipeline
+4. Connect modules to form a complete pipeline
+5. Configure modules parameters
 6. Run simulations
 7. Analyze performance metrics
 
@@ -129,23 +134,23 @@ The main interface allows you to:
 
 The backend is divided into multiple components, each with a specific purpose:
 
-**backend/asa/**: This is the accelerator set architecture (ASA) directory. This directory contains all of the processing elements that are used in pipelines.
+**backend/asa/**: This is the accelerator set architecture (ASA) directory. This directory contains all of the modules that are used in pipelines.
 
-**backend/pipelines/**: This directory contains all of the pipelines that are used in the simulator. These pipelines are built using the processing elements in the ASA directory.
+**backend/pipelines/**: This directory contains all of the pipelines that are used in the simulator. These pipelines are built using the modules in the ASA directory.
 
 **backend/signals/**: This directory contains the management of input signals for the simulator. This includes generating test signals and importing iEEG signals measured in real life.
 
 ### ASA (Accelerator Set Architecture)
 
-ASA stands for accelerator set architecture. This directory contains all of the processing elements that are used in pipelines created by the simulator. For example, let's say you wanted to create a pipeline for detecting seizures from iEEG data. One method (inspired by [Shiao et al.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5359075/)) is to use the pipeline depicted in the logo image above.
+ASA stands for accelerator set architecture. This directory contains all of the modules that are used in pipelines created by the simulator. For example, let's say you wanted to create a pipeline for detecting seizures from iEEG data. One method (inspired by [Shiao et al.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5359075/)) is to use the pipeline depicted in the logo image above.
 
-To create such a pipeline, we would first implement all of the individual processing elements such as the FFT, SVM, etc. In `backend/asa/processing_element.py` you can find the parent class which every processing element inherits from. This class defines all the necessary methods and attributes a processing element must contain.
+To create such a pipeline, we would first implement all of the individual modules such as the FFT, SVM, etc. In `backend/asa/processing_element.py` you can find the parent class which every module inherits from. This class defines all the necessary methods and attributes a module must contain.
 
-Within the directory, there are subdirectories for each processing element (e.g., `backend/asa/fft/`). Each directory contains the necessary files to implement the processing element, including the Python implementation, the RTL implementation (when available), and tests.
+Within the directory, there are subdirectories for each module (e.g., `backend/asa/fft/`). Each directory contains the necessary files to implement the module, including the Python implementation, the RTL implementation (when available), and tests.
 
-### Processing Element Structure
+### Module Structure
 
-When creating a new processing element, you need to:
+When creating a new module, you need to:
 
 1. **Create a Class**: Define a class that inherits from ProcessingElement, with appropriate typed parameters:
 
@@ -167,14 +172,14 @@ class FFT(ProcessingElement):
 
 2. **Implement Required Methods**:
    - `run()`: Main orchestration method
-   - `load_inputs()`: Loads input data from connected PEs
+   - `load_inputs()`: Loads input data from connected modules
    - `dimension_validate()`: Validates input dimensions
    - `compute()`: Performs the actual computation
    - `visualize()`: Generates visualizations (if needed)
 
-### Testing Processing Elements
+### Testing Modules
 
-After creating a processing element, you should test it:
+After creating a module, you should test it:
 
 ```bash
 cd backend/asa/your_pe
@@ -234,9 +239,9 @@ For developers looking to extend FORESEE, please refer to the following resource
 
 We welcome contributions to FORESEE! There are several ways you can contribute:
 
-### Contributing Processing Elements
+### Contributing Modules
 
-Processing elements (PEs) are the building blocks of BCI pipelines. To contribute a new PE:
+Modules are the building blocks of BCI pipelines. To contribute a new PE:
 
 1. Follow the structure outlined in the Processing Element Structure section
 2. Implement all required methods (`run()`, `load_inputs()`, `dimension_validate()`, etc.)
