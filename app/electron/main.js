@@ -1,12 +1,19 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
-const path = require("path");
-const {
+import { app, BrowserWindow, ipcMain } from "electron";
+import path from "path";
+import { fileURLToPath } from "url";
+import { createServer } from "http";
+import serveStatic from "serve-static";
+import {
   savePipeline,
   getPipelines,
   getPipelineById,
   editPipeline,
   deletePipeline,
-} = require("./database"); // ✅ Import database functions
+} from "./database.js";
+
+// __dirname is not available in ES modules; recreate it manually
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let mainWindow;
 
@@ -20,11 +27,37 @@ app.whenReady().then(() => {
       contextIsolation: true, // Required for secure IPC communication
     },
   });
+  mainWindow.webContents.openDevTools()
 
   const devServerURL = "http://localhost:3000"; // Dev mode
-  const prodServerURL = `file://${path.join(__dirname, "../out/index.html")}`; // Production
 
-  mainWindow.loadURL(app.isPackaged ? prodServerURL : devServerURL);
+  const isDev = process.env.NODE_ENV !== "production";
+
+  if (isDev) {
+    console.log("Loading dev server →", devServerURL);
+    mainWindow.loadURL(devServerURL);
+  } else {
+    // Start a tiny static file server serving the exported build in ../out
+    const staticPath = path.join(__dirname, "../out");
+    const serve = serveStatic(staticPath, {
+      index: ["index.html"],
+    });
+
+    // Create HTTP server on a random free port
+    const httpServer = createServer((req, res) => {
+      serve(req, res, () => {
+        res.statusCode = 404;
+        res.end("Not Found");
+      });
+    });
+
+    httpServer.listen(0, "127.0.0.1", () => {
+      const { port } = httpServer.address();
+      const prodURL = `http://localhost:${port}`;
+      console.log("Static server listening →", prodURL);
+      mainWindow.loadURL(prodURL);
+    });
+  }
 
   mainWindow.on("closed", () => {
     mainWindow = null;

@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -12,18 +13,32 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPipelines, setFilteredPipelines] = useState([]);
 
-  // Fetch pipelines from SQLite via Electron's IPC
+  // Fetch pipelines from SQLite via Electron's IPC – guard for non-Electron environments
   useEffect(() => {
-    window.electronAPI.getPipelines().then((data) => {
-      const formattedPipelines = data.map((pipeline) => ({
-        id: pipeline.id,
-        title: pipeline.name,
-        description: pipeline.description,
-        icon: "/icons/pipeline.png",
-      }));
-      setPipelines(formattedPipelines);
-      setFilteredPipelines(formattedPipelines);
-    });
+    const fetchPipelines = async () => {
+      if (typeof window !== 'undefined' && window?.electronAPI?.getPipelines) {
+        try {
+          const data = await window.electronAPI.getPipelines();
+          const formattedPipelines = data.map((pipeline) => ({
+            id: pipeline.id,
+            title: pipeline.name,
+            description: pipeline.description,
+            icon: "/icons/pipeline.png",
+          }));
+          setPipelines(formattedPipelines);
+          setFilteredPipelines(formattedPipelines);
+        } catch (err) {
+          console.error("Failed to load pipelines via Electron IPC:", err);
+        }
+      } else {
+        // Running outside of Electron (e.g. Next.js dev in browser). Avoid hard-crash by using empty list.
+        console.warn("Electron API unavailable – skipping pipeline fetch.");
+        setPipelines([]);
+        setFilteredPipelines([]);
+      }
+    };
+
+    fetchPipelines();
   }, []);
 
   // Search function

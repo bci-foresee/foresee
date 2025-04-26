@@ -1,6 +1,11 @@
-const Database = require("better-sqlite3");
-const path = require("path");
-const { app } = require("electron");
+import Database from "better-sqlite3";
+import path from "path";
+import { app } from "electron";
+import { fileURLToPath } from "url";
+
+// __dirname recreation for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const dbPath = path.join(app.getPath("userData"), "pipelines.sqlite");
 const db = new Database(dbPath);
@@ -217,7 +222,7 @@ pipelines.forEach((pipeline) => {
 
 console.log("✅ Pipelines table initialized with three entries.");
 
-module.exports = {
+export {
   db,
   savePipeline,
   getPipelines,
