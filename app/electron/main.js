@@ -22,7 +22,7 @@ app.whenReady().then(() => {
     width: 1200,
     height: 800,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"), // Securely expose database functions
+      preload: path.join(__dirname, "preload.cjs"), // Securely expose database functions
       nodeIntegration: false, // Keep Node.js disabled in the renderer for security
       contextIsolation: true, // Required for secure IPC communication
     },
