@@ -35,3 +35,11 @@ pipelines/*
 
 # electron backend
 backend/venv/
+
+# Python byte-code cache files
+**/*.py[cod]
+*.py[cod]
+
+# Mac metadata files
+._*
+.___pycache__

@@ -156,14 +156,19 @@ class ProcessingElement:
         yosys_cmd = "yosys -s synth.ys"
         subprocess.run(yosys_cmd, shell=True, check=True, timeout=None)
 
-        # Run OpenSTA
+        # Run OpenSTA (optional – skip if tool not available)
         opensta_cmd = "../external/OpenSTA/app/sta power_analysis.tcl"
-        result = subprocess.run(opensta_cmd,
-                                shell=True,
-                                check=True,
-                                capture_output=True,
-                                text=True,
-                                timeout=None)
+        try:
+            result = subprocess.run(opensta_cmd,
+                                    shell=True,
+                                    check=True,
+                                    capture_output=True,
+                                    text=True,
+                                    timeout=None)
+            opensta_output = result.stdout
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            # If OpenSTA is not installed or the command fails, continue without power/latency data.
+            opensta_output = ""
 
         # Pattern to match each row of the power data
         pattern = re.compile(
@@ -174,7 +179,7 @@ class ProcessingElement:
         power_data = {}
 
         # Find all matches and store them in the dictionary
-        for match in pattern.findall(result.stdout):
+        for match in pattern.findall(opensta_output):
             group_name = match[0]
             internal_power = float(match[1])
             switching_power = float(match[2])
@@ -197,16 +202,19 @@ class ProcessingElement:
 
         # Find all matches and extract the data arrival times
         arrival_times = [
-            float(match.group(1)) for match in pattern.finditer(result.stdout)
+            float(match.group(1)) for match in pattern.finditer(opensta_output)
         ]
 
-        max_latency = max(arrival_times)
+        if arrival_times:
+            self.simulation_data["latency"] = max(arrival_times)
 
-        self.simulation_data["latency"] = max_latency
+        if 'Total' in power_data:
+            self.simulation_data["power_dict"] = power_data['Total']
+        else:
+            # fallback if power data not available
+            self.simulation_data["power_dict"] = {}
 
-        self.simulation_data["power_dict"] = power_data['Total']
-
-        return power_data
+        return power_data if power_data else {}
 
     # necessary method to run the processing element
     def run(self) -> NDArray[np.float32]:
@@ -247,7 +255,7 @@ class ProcessingElement:
                 power_estimate = self.run_rtl_power_estimation(
                     verilog_file=self.name.lower(),
                     process_library=
-                    "../hardware_lib/sky130_fd_sc_hd__ff_n40C_1v65",
+                    "../../hardware_lib/sky130_fd_sc_hd__ff_n40C_1v65",
                     clock_freq=self.clk)
 
                 # multiply power by number of rtl runs
@@ -256,14 +264,11 @@ class ProcessingElement:
                     # self.simulation_data["power_dict"][key] = value * self.rtl_module_runs
                     # self.simulation_data["power_dict"]
                     if key != 'Percentage':
-                        self.simulation_data["power_dict"][
-                            key] = value * self.rtl_module_runs * max(
-                                1, self.rtl_single_module_runs)
+                        self.simulation_data["power_dict"][key] = value * self.rtl_module_runs * max(1, self.rtl_single_module_runs)
 
-                # multiply latency by how many times module has to be repeated to get one valid output
-                self.simulation_data[
-                    "latency"] = self.simulation_data["latency"] * max(
-                        1, self.rtl_single_module_runs)
+                # multiply latency by how many times module has to be repeated
+                if self.simulation_data["latency"] is not None:
+                    self.simulation_data["latency"] *= max(1, self.rtl_single_module_runs)
 
         else:
             output = self.compute(input=input_data)

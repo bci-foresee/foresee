@@ -10,14 +10,44 @@ import {
   editPipeline,
   deletePipeline,
 } from "./database.js";
+import { spawn } from "child_process";
 
 // __dirname is not available in ES modules; recreate it manually
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
+let backendProcess;
+
+function startBackend() {
+  const pythonExecutable = process.env.PYTHON_PATH || "python3"; // Allow override via env
+  const backendScript = path.resolve(__dirname, "../../backend/app.py");
+  console.log("🚀 Starting backend →", pythonExecutable, backendScript);
+
+  backendProcess = spawn(pythonExecutable, [backendScript]);
+
+  backendProcess.stdout.on("data", (data) => {
+    console.log(`[Backend] ${data}`.trim());
+  });
+
+  backendProcess.stderr.on("data", (data) => {
+    console.error(`[Backend error] ${data}`.trim());
+  });
+
+  backendProcess.on("exit", (code, signal) => {
+    console.log(`⚠️  Backend exited with code ${code} and signal ${signal}`);
+  });
+}
+
+function stopBackend() {
+  if (backendProcess && !backendProcess.killed) {
+    console.log("🛑 Stopping backend...");
+    backendProcess.kill();
+  }
+}
 
 app.whenReady().then(() => {
+  startBackend();
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -89,4 +119,8 @@ app.whenReady().then(() => {
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
+});
+
+app.on("will-quit", () => {
+  stopBackend();
 });
