@@ -307,3 +307,14 @@ function ChartCard({ title, children }) {
     </div>
   );
 }
+
+// Exported page component – wraps main content in a Suspense fallback like other pages
+const AnalysisPage = () => {
+  return (
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <AnalysisContent />
+    </Suspense>
+  );
+};
+
+export default AnalysisPage;
