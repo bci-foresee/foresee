@@ -4,10 +4,12 @@ from pipeline_api import run_pipeline
 import json
 
 app = Flask(__name__)
-# Enable CORS for all routes during development with credentials
-CORS(app, 
-     resources={r"/*": {"origins": "http://localhost:3000"}},
-     supports_credentials=True)
+# Accept any http://localhost:<port> origin, keep credentials support
+CORS(
+    app,
+    resources={r"/*": {"origins": r"http://localhost:\d+"}},
+    supports_credentials=True,
+)
 
 @app.route('/run-pipeline', methods=['POST', 'OPTIONS'])
 def run_pipeline_api():
