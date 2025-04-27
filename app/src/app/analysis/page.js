@@ -193,7 +193,7 @@ function AnalysisContent() {
 
   return (
     <div className="flex flex-col h-full w-full bg-gray-50">
-      <NavbarAnalysis pipelineName={pipeline?.name} />
+      <NavBarAnalysis pipelineName={pipeline?.name} />
       <div className="flex-grow flex flex-col px-6">
         {/* Canvas */}
         <div className="h-[25vh] border border-gray-200 rounded-lg overflow-hidden my-4 shadow-sm bg-white flex items-center justify-center">
