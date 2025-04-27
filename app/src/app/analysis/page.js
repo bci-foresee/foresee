@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import Canvas from "../../components/CreationPage/Canvas";
-import NavbarAnalysis from "../../components/AnalysisPage/NavbarAnalysis";
+import NavBarAnalysis from "../../components/AnalysisPage/NavBarAnalysis";
 import {
   BarChart,
   Bar,
