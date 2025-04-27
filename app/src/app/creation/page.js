@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Canvas from "../../components/CreationPage/Canvas";
-import Navbar from "../../components/CreationPage/Navbar";
+import NavBar from "../../components/CreationPage/NavBar";
 
 function CreationContent() {
   const searchParams = useSearchParams();
@@ -55,8 +55,8 @@ function CreationContent() {
 
   return (
     <div className="flex flex-col h-full w-full bg-gray-100" onClick={() => setIsModulesOpen(false)}>
-      {/* Navbar with Modules Dropdown */}
-      <Navbar
+      {/* NavBar with Modules Dropdown */}
+      <NavBar
         pipelineName={pipeline?.name}
         pipelineDescription={pipeline?.description}
         updatePipelineInfo={updatePipelineInfo}
