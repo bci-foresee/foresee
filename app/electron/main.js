@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, session } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createServer } from "http";
@@ -55,9 +55,32 @@ app.whenReady().then(() => {
       preload: path.join(__dirname, "preload.cjs"), // Securely expose database functions
       nodeIntegration: false, // Keep Node.js disabled in the renderer for security
       contextIsolation: true, // Required for secure IPC communication
+      webSecurity: true,
+      allowRunningInsecureContent: false,
     },
   });
-  mainWindow.webContents.openDevTools()
+
+  // Set Content Security Policy
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [
+          "default-src 'self' http://localhost:3000 http://localhost:5001; " +
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+          "style-src 'self' 'unsafe-inline'; " +
+          "img-src 'self' data:; " +
+          "connect-src 'self' http://localhost:3000 http://localhost:5001;",
+        ],
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Accept'
+      }
+    });
+  });
+
+  mainWindow.webContents.openDevTools();
 
   const devServerURL = "http://localhost:3000"; // Dev mode
 

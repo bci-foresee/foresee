@@ -10,8 +10,9 @@ export default function Navbar({
   updatePipelineInfo,
   pipelineId,
   hasUnsavedChanges,
+  isModulesOpen,
+  setIsModulesOpen,
 }) {
-  const [isModulesOpen, setIsModulesOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDescription, setNewDescription] = useState("");
@@ -22,6 +23,11 @@ export default function Navbar({
     setNewName(pipelineName || "Untitled");
     setNewDescription(pipelineDescription || "");
     setIsModalOpen(true);
+  };
+
+  const handleModulesClick = (e) => {
+    e.stopPropagation(); // Prevent click from bubbling up to page
+    setIsModulesOpen((prev) => !prev);
   };
 
   const handleSave = () => {
@@ -67,10 +73,10 @@ export default function Navbar({
         >
           <em>Foresee</em>
         </button>
-        <div className="relative">
+        <div className="relative" onClick={(e) => e.stopPropagation()}>
           <button
             className="bg-red-100 text-red-600 px-4 py-2 rounded-md font-semibold shadow-sm hover:bg-red-200 flex items-center"
-            onClick={() => setIsModulesOpen((prev) => !prev)}
+            onClick={handleModulesClick}
           >
             Modules <span className="ml-1">▼</span>
           </button>

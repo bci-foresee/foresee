@@ -12,6 +12,7 @@ function CreationContent() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
+  const [isModulesOpen, setIsModulesOpen] = useState(false);
 
   useEffect(() => {
     if (pipelineId) {
@@ -53,7 +54,7 @@ function CreationContent() {
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-gray-100">
+    <div className="flex flex-col h-full w-full bg-gray-100" onClick={() => setIsModulesOpen(false)}>
       {/* Navbar with Modules Dropdown */}
       <Navbar
         pipelineName={pipeline?.name}
@@ -61,6 +62,8 @@ function CreationContent() {
         updatePipelineInfo={updatePipelineInfo}
         pipelineId={pipelineId}
         hasUnsavedChanges={hasUnsavedChanges}
+        isModulesOpen={isModulesOpen}
+        setIsModulesOpen={setIsModulesOpen}
       />
 
       <div className="flex-grow flex flex-col">

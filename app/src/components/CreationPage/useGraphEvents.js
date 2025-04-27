@@ -270,6 +270,7 @@ export function useGraphEvents(
       }
 
       setHasUnsavedChanges(false);
+      router.push('/'); // Redirect to home page after saving
       return result;
     } catch (error) {
       console.error("❌ Failed to save pipeline:", error);

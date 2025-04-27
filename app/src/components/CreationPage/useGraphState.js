@@ -36,7 +36,9 @@ export function useGraphState(parsedData) {
       id: `${edge.source}-${edge.target}`,
       source: edge.source.toString(),
       target: edge.target.toString(),
+      type: 'default',
       animated: true,
+      markerEnd: undefined,
       style: getEdgeStyle(edge, false),
     }));
   }, [parsedData]);

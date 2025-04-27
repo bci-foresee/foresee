@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "main": "electron/main.js",
   "scripts": {
     "rebuild": "electron-rebuild -f -w better-sqlite3",
     "setup": "npm install && npm run rebuild",
     "dev": "concurrently \"next dev\" \"wait-on http://localhost:3000 && electron electron/main.js\"",
     "build": "next build",
     "start": "cross-env NODE_ENV=production electron electron/main.js",
-    "preview": "npx serve -s out"
+    "preview": "npx serve -s out",
+    "electron": "PYTHON_PATH=$(which python) concurrently \"next dev\" \"wait-on http://localhost:3000 && electron electron/main.js\""
   },
   "dependencies": {
     "better-sqlite3": "^11.8.1",

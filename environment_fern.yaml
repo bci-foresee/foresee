@@ -1,0 +1,18 @@
+name: foresee_fern
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10.4
+  - numpy
+  - pandas
+  - matplotlib
+  - scipy
+  - seaborn
+  - pip
+  - pip:
+      - flask==3.0.3
+      - flask-cors
+      - networkx==3.4.0
+      - pennprov==2.2.4
+      - pytest

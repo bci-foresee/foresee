@@ -45,7 +45,7 @@ def parse_pipeline_config(pipeline_data):
         return None, "Missing 'nodes' or 'edges' in pipeline data"
 
     for node in pipeline_data["nodes"]:
-        if "id" not in node or "type" not in node:
+        if "id" not in node or "nodeType" not in node:
             return None, f"Invalid node structure: {node}"
 
     for edge in pipeline_data["edges"]:
@@ -59,18 +59,25 @@ def generate_pipeline(pipeline_data):
     # instantiating python PEs
     processing_elements = {}
 
-    # creat ethe processing elements
+    # create the processing elements
     for node in pipeline_data["nodes"]:
         node_id = node["id"]
-        node_type = node["type"]
+        node_type = node["nodeType"]
         properties = node.get("properties", {})
 
         # bunch of if statements for different types of PEs, input special case
         if node_type == "input":
-            frequencies = properties.get("Frequencies",
-                                         {}).get("value", [10, 20, 40])
-            amplitudes = properties.get("Amplitudes",
-                                        {}).get("value", [20, 15, 10])
+            # Parse frequencies and amplitudes from strings
+            frequencies_str = properties.get("Frequencies", {}).get("value", "10, 20, 40")
+            amplitudes_str = properties.get("Amplitudes", {}).get("value", "20, 15, 10")
+            
+            # Convert string values to lists of integers
+            # print(frequencies_str)
+            # frequencies = [int(f.strip()) for f in frequencies_str.split(',')]
+            frequencies = [int(f) for f in frequencies_str]
+            # amplitudes = [int(a.strip()) for a in amplitudes_str.split(',')]
+            amplitudes = [int(a) for a in amplitudes_str]
+            
             fs = properties.get("Sampling Frequency", {}).get("value", 400)
             n_channels = properties.get("Number of Channels",
                                         {}).get("value", 1)
@@ -181,7 +188,7 @@ def run_pipeline(pipeline_data):
     pipeline_data, error = parse_pipeline_config(pipeline_data)
     if error:
         print("❌ Pipeline parse error:", error)
-        return jsonify({"error": error}), 400
+        return {"error": error}, 400
     print(f'Parsed pipeline data: {pipeline_data}')
 
     # instantiate python PEs
@@ -199,7 +206,7 @@ def run_pipeline(pipeline_data):
             node["id"]: {
                 "label": node["label"],
                 "name": node.get("name", ""),
-                "type": node["type"],
+                "nodeType": node["nodeType"],
                 "properties": node.get("properties", {})
             }
             for node in pipeline_data["nodes"]

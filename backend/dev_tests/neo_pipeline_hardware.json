@@ -4,7 +4,7 @@
             "id": "1",
             "label": "Input",
             "name": "Signal Generator",
-            "type": "input",
+            "nodeType": "input",
             "properties": {
                 "Frequencies": {
                     "value": [10, 20, 40],
@@ -32,7 +32,7 @@
             "id": "2",
             "label": "TKEO",
             "name": "Teager-Kaiser Energy Operator",
-            "type": "module",
+            "nodeType": "module",
             "properties": {
                 "Number of Channels": {
                     "value": 2,
@@ -60,7 +60,7 @@
             "id": "3",
             "label": "AVG",
             "name": "Average",
-            "type": "module",
+            "nodeType": "module",
             "properties": {
                 "Number of Channels": {
                     "value": 2,
@@ -88,7 +88,7 @@
             "id": "4",
             "label": "SVM",
             "name": "Support Vector Machine",
-            "type": "module",
+            "nodeType": "module",
             "properties": {
                 "Weights": {
                     "value": [1, 1],
@@ -116,7 +116,7 @@
             "id": "5",
             "label": "THR",
             "name": "Threshold",
-            "type": "module",
+            "nodeType": "module",
             "properties": {
                 "Lower Bound": {
                     "value": 0,

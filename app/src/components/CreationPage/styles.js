@@ -40,7 +40,6 @@ export const getNodeStyle = (node, isSelected) => {
 
 export const getEdgeStyle = (edge, isSelected) => ({
   stroke: isSelected ? "blue" : "orange",
-  strokeWidth: isSelected ? 3 : 2,
-  markerEnd: "url(#arrow)",
+  strokeWidth: isSelected ? 4 : 3,
   animated: true,
 });

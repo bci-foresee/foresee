@@ -4,7 +4,7 @@
             "id": "1",
             "label": "Input",
             "name": "Signal Generator",
-            "type": "input",
+            "nodeType": "input",
             "properties": {
                 "Frequencies": {
                     "value": [10, 20, 40],
@@ -32,7 +32,7 @@
             "id": "2",
             "label": "BBF",
             "name": "Berger Band Filter",
-            "type": "module",
+            "nodeType": "module",
             "properties": {
                 "Sampling Frequency": {
                     "value": 400,
@@ -64,7 +64,7 @@
             "id": "3",
             "label": "PWXC",
             "name": "Power Cross-Correlation",
-            "type": "module",
+            "nodeType": "module",
             "properties": {
                 "Number of Channels": {
                     "value": 16,
@@ -92,7 +92,7 @@
             "id": "4",
             "label": "FFT",
             "name": "Fast Fourier Transform",
-            "type": "module",
+            "nodeType": "module",
             "properties": {
                 "Berger Bands": {
                     "value": [[0.1, 4], [4, 8], [8, 12], [12, 30], [30, 80], [80, 180]],
@@ -128,7 +128,7 @@
             "id": "5",
             "label": "SVM",
             "name": "Support Vector Machine",
-            "type": "module",
+            "nodeType": "module",
             "properties": {
                 "Weights": {
                     "value": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -156,7 +156,7 @@
             "id": "6",
             "label": "THR",
             "name": "Threshold",
-            "type": "module",
+            "nodeType": "module",
             "properties": {
                 "Lower Bound": {
                     "value": 0,

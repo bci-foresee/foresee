@@ -79,8 +79,18 @@ function getPipelines() {
 }
 
 function getPipelineById(id) {
-  const parsedId = parseInt(id, 10);
-  return db.prepare("SELECT * FROM pipelines WHERE id = ?").get(parsedId);
+  console.log("💾 Database: Getting pipeline by ID:", id);
+  const pipeline = db.prepare("SELECT * FROM pipelines WHERE id = ?").get(id);
+  console.log("💾 Database: Found pipeline:", pipeline);
+  if (pipeline && pipeline.graph_structure) {
+    try {
+      const parsedGraph = JSON.parse(pipeline.graph_structure);
+      console.log("💾 Database: Parsed graph structure:", parsedGraph);
+    } catch (e) {
+      console.error("💾 Database: Error parsing graph structure:", e);
+    }
+  }
+  return pipeline;
 }
 
 // Function to edit an existing pipeline by ID
@@ -105,8 +115,8 @@ function editPipeline(id, name = null, description = null, graphData = null) {
       "UPDATE pipelines SET name = ?, description = ?, graph_structure = ? WHERE id = ?"
     );
     const result = stmt.run(
-      name || existingPipeline.name,
-      description || existingPipeline.description,
+      name,
+      description,
       graphData ? JSON.stringify(graphData) : null,
       id
     );
@@ -120,10 +130,18 @@ function editPipeline(id, name = null, description = null, graphData = null) {
 
 // Function to delete a pipeline by ID
 function deletePipeline(id) {
-  db.prepare("DELETE FROM pipelines WHERE id = ?").run(id);
-  console.log(`🗑️ Pipeline with ID ${id} deleted.`);
+  console.log("💾 Database: Deleting pipeline:", id);
+  try {
+    const result = db.prepare("DELETE FROM pipelines WHERE id = ?").run(id);
+    console.log("💾 Database: Delete result:", result);
+    return result;
+  } catch (error) {
+    console.error("💾 Database: Error deleting pipeline:", error);
+    throw error;
+  }
 }
 
+// Default pipeline
 const pipelines = [
   {
     name: "Epileptic Seizure Prediction",
@@ -153,7 +171,7 @@ const pipelines = [
           properties: {
             "Clock Frequency": { value: 100, unit: "Hz" },
             "Number of Samples": { value: 10240, unit: "count" },
-            "Sampling Frequency": { value: 512, unit: "Hz" },
+            "Sampling Frequency": { value: 400, unit: "Hz" },
             "Berger Bands": {
               value: [
                 [0.1, 4],
@@ -165,8 +183,8 @@ const pipelines = [
               ],
               unit: "Hz",
             },
-            "Enable RTL Simulation": { value: false, unit: "boolean" },
-            "Enable RTL Power Estimation": { value: false, unit: "boolean" },
+            "Enable RTL Simulation": { value: true, unit: "boolean" },
+            "Enable RTL Power Estimation": { value: true, unit: "boolean" },
           },
         },
         {

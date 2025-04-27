@@ -91,6 +91,7 @@ export default function Canvas({
     if (!edges || edges.length === 0) return [];
     return edges.map((edge) => ({
       ...edge,
+      type: 'default',
       style: getEdgeStyle(edge, edge.id === selectedEdgeId),
     }));
   }, [edges, selectedEdgeId]);
@@ -103,7 +104,7 @@ export default function Canvas({
     <>
       <div
         className="w-full h-full bg-gray-100"
-        style={{ height: "100vh", position: "relative" }}
+        style={{ height: readOnly ? "100%" : "100vh", position: "relative" }}
         onDrop={(event) => {
           onDrop(event);
         }}
@@ -126,7 +127,14 @@ export default function Canvas({
             onNodeClick={!readOnly ? onNodeClick : undefined}
             onEdgeClick={!readOnly ? onEdgeClick : undefined}
             onConnect={!readOnly ? onConnect : undefined}
+            defaultEdgeOptions={{ markerEnd: undefined }}
             fitView
+            fitViewOptions={{
+              padding: readOnly ? 0.5 : 0.2,
+              minZoom: 0.1,
+              maxZoom: 1.5,
+              includeHiddenNodes: true
+            }}
             style={{ width: "100%", height: "100%", zIndex: 1 }}
             onInit={handleInit}
           >

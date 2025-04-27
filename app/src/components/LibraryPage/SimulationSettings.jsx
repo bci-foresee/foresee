@@ -39,13 +39,39 @@ const handleAnalyze = async () => {
     const parsedGraphData = typeof graphData === 'string'
       ? JSON.parse(graphData)
       : graphData;
+      
+      // Validate the pipeline structure
+      if (!parsedGraphData.nodes || !parsedGraphData.edges) {
+        console.error("Invalid pipeline structure: missing nodes or edges");
+        return;
+      }
   
-    const response = await fetch('http://localhost:5000/run-pipeline', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(parsedGraphData), // must be a JSON object, not a string of JSON
+      // Ensure each node has the required fields
+      for (const node of parsedGraphData.nodes) {
+        if (!node.id || !node.nodeType) {
+          console.error("Invalid node structure: missing id or nodeType", node);
+          return;
+        }
+      }
+  
+      // Ensure each edge has the required fields
+      for (const edge of parsedGraphData.edges) {
+        if (!edge.source || !edge.target) {
+          console.error("Invalid edge structure: missing source or target", edge);
+          return;
+        }
+      }
+  
+      console.log("📦 Sending to backend:", parsedGraphData);
+      const response = await fetch('http://localhost:5001/run-pipeline', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        mode: 'cors',
+        credentials: 'same-origin',
+        body: JSON.stringify(parsedGraphData),
     });
   
     const result = await response.json();
