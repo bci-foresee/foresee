@@ -1,8 +1,8 @@
-// components/CreationPage/NavbarAnalysis.jsx
+// components/AnalysisPage/NavBarAnalysis.jsx
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-export default function NavbarAnalysis({ pipelineName }) {
+export default function NavBarAnalysis({ pipelineName }) {
   const router = useRouter();
 
   const handleDownload = () => {
