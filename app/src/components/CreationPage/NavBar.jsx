@@ -4,7 +4,7 @@ import { Info, Edit } from "lucide-react";
 import { Menu } from "./Menu";
 import { DeleteIcon } from "../Icons/icons";
 
-export default function Navbar({
+export default function NavBar({
   pipelineName,
   pipelineDescription,
   updatePipelineInfo,
