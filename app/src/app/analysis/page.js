@@ -15,122 +15,181 @@ import {
   Legend,
 } from "recharts";
 
-// 🔢 Hardcoded metrics
-// Import dummy data
-import { dummyHardwareResults } from "../../mock_data/dummyHardwareResults";
-import { dummyComparisonData } from "../../mock_data/dummyComparisonData";
+// Real analysis results will be fetched from the Python backend (Flask)
+// running in Electron. We therefore remove the dummy imports above.
 
-// Calculate total power and latency for current pipeline
-const totalPower = Object.values(dummyHardwareResults.output_data)
-  .reduce((sum, module) => sum + module.power_dict["Total Power"], 0)
-  .toFixed(6);
-
-const totalLatency = Object.values(dummyHardwareResults.output_data)
-  .reduce((sum, module) => sum + module.latency, 0)
-  .toFixed(2);
-
-// Calculate total power and latency for comparison pipeline
-const comparisonTotalPower = Object.values(dummyComparisonData.output_data)
-  .reduce((sum, module) => sum + module.power_dict["Total Power"], 0)
-  .toFixed(6);
-
-const comparisonTotalLatency = Object.values(dummyComparisonData.output_data)
-  .reduce((sum, module) => sum + module.latency, 0)
-  .toFixed(2);
-
-// New metrics
-const pipelineMetrics = {
-  "Power": totalPower + " mW",
-  "Latency": totalLatency + " ns",
-  "Accuracy": "-- %",
-  "Simulation Time": "-- s",
-}
+// No global dummy metrics – metrics are computed dynamically once the
+// backend responds with real results.
 
 function AnalysisContent() {
   const searchParams = useSearchParams();
   const pipelineId = searchParams.get("id");
   const [pipeline, setPipeline] = useState(null);
   const [activeTab, setActiveTab] = useState("Summary");
+  const [analysisResults, setAnalysisResults] = useState(null);
+  const [comparisonResults, setComparisonResults] = useState(null);
   const [comparisonPipeline, setComparisonPipeline] = useState(null);
   const [availablePipelines, setAvailablePipelines] = useState([]);
 
+  // Load pipeline(s) metadata from SQLite and trigger backend runs
   useEffect(() => {
-    if (pipelineId) {
-      window.electronAPI.getPipelineById(pipelineId).then((data) => {
-        setPipeline(data);
-      });
+    if (!pipelineId) return;
 
-      // Get all pipelines for comparison
-      window.electronAPI.getPipelines().then((pipelines) => {
-        setAvailablePipelines(pipelines);
-        // Set first pipeline as default comparison
-        if (pipelines.length > 0) {
-          setComparisonPipeline(pipelines[0]);
-        }
-      });
-    }
+    // Fetch selected pipeline metadata
+    window.electronAPI.getPipelineById(pipelineId).then((data) => {
+      setPipeline(data);
+
+      // Once we have pipeline and its graph structure, request analysis
+      if (data?.graph_structure) {
+        // Parse text JSON into object before sending to backend
+        const graphObj = typeof data.graph_structure === "string" ? JSON.parse(data.graph_structure) : data.graph_structure;
+        runBackendPipeline(graphObj).then((res) => {
+          setAnalysisResults(res);
+        });
+      }
+    });
+
+    // Get all pipelines for comparison list
+    window.electronAPI.getPipelines().then((pipelines) => {
+      setAvailablePipelines(pipelines);
+      if (pipelines.length > 0) {
+        // default: first pipeline not equal to current maybe
+        const defaultComparison = pipelines.find((p) => p.id !== parseInt(pipelineId));
+        if (defaultComparison) setComparisonPipeline(defaultComparison);
+      }
+    });
   }, [pipelineId]);
 
-   // Process dummy data for charts
-   const powerData = Object.entries(dummyHardwareResults.output_data)
-   .map(([id, data]) => ({
-     name: data.name,
-     "Total Power": data.power_dict["Total Power"],
-     "Internal Power": data.power_dict["Internal Power"],
-     "Switching Power": data.power_dict["Switching Power"],
-     "Leakage Power": data.power_dict["Leakage Power"],
-   }));
+  // When comparisonPipeline changes, fetch its results
+  useEffect(() => {
+    if (!comparisonPipeline || !comparisonPipeline.graph_structure) return;
 
- const latencyData = Object.entries(dummyHardwareResults.output_data)
-   .map(([id, data]) => ({
-     name: data.name,
-     latency: data.latency,
-   }));
+    const compGraph = typeof comparisonPipeline.graph_structure === "string" ? JSON.parse(comparisonPipeline.graph_structure) : comparisonPipeline.graph_structure;
 
- // Prepare comparison data
- const comparisonData = {
-   power: [
-     {
-       name: pipeline?.name || "Current Pipeline",
-       "Total Power": parseFloat(totalPower),
-     },
-     {
-       name: comparisonPipeline?.name || "Comparison Pipeline",
-       "Total Power": parseFloat(comparisonTotalPower),
-     },
-   ],
-   latency: [
-     {
-       name: pipeline?.name || "Current Pipeline",
-       "Total Latency": parseFloat(totalLatency),
-     },
-     {
-       name: comparisonPipeline?.name || "Comparison Pipeline",
-       "Total Latency": parseFloat(comparisonTotalLatency),
-     },
-   ],
-   accuracy: [
-     {
-       name: pipeline?.name || "Current Pipeline",
-       "Accuracy": 95, // Dummy accuracy data
-     },
-     {
-       name: comparisonPipeline?.name || "Comparison Pipeline",
-       "Accuracy": 92, // Dummy accuracy data
-     },
-   ],
- };
+    runBackendPipeline(compGraph).then((res) => {
+      setComparisonResults(res);
+    });
+  }, [comparisonPipeline]);
 
- const tabs = ["Summary", "Comparison"];
+  // Helper to call Flask backend via fetch
+  const runBackendPipeline = async (graphStructure) => {
+    try {
+      const response = await fetch("http://localhost:5001/run-pipeline", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(graphStructure),
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err?.error || "Backend error");
+      }
+      const data = await response.json();
+      return data;
+    } catch (e) {
+      console.error("Pipeline run error", e);
+      return null;
+    }
+  };
 
+  // If backend has responded, transform results into chart-friendly arrays
+  const powerData = analysisResults
+    ? Object.entries(analysisResults.output_data).map(([id, data]) => ({
+        name: data.name,
+        "Total Power": data.power_dict?.["Total Power"] ?? 0,
+        "Internal Power": data.power_dict?.["Internal Power"] ?? 0,
+        "Switching Power": data.power_dict?.["Switching Power"] ?? 0,
+        "Leakage Power": data.power_dict?.["Leakage Power"] ?? 0,
+      }))
+    : [];
 
+  const latencyData = analysisResults
+    ? Object.entries(analysisResults.output_data).map(([id, data]) => ({
+        name: data.name,
+        latency: data.latency ?? 0,
+      }))
+    : [];
 
- const handleComparisonChange = (e) => {
-   const selectedPipeline = availablePipelines.find(
-     (p) => p.id === parseInt(e.target.value)
-   );
-   setComparisonPipeline(selectedPipeline);
- };
+  // Compute overall metrics for current and comparison pipelines
+  const totalPowerCurrent = analysisResults
+    ? Object.values(analysisResults.output_data).reduce(
+        (sum, m) => sum + (m.power_dict?.["Total Power"] ?? 0),
+        0
+      )
+    : 0;
+
+  const totalLatencyCurrent = analysisResults
+    ? Object.values(analysisResults.output_data).reduce(
+        (sum, m) => sum + (m.latency ?? 0),
+        0
+      )
+    : 0;
+
+  const totalPowerComparison = comparisonResults
+    ? Object.values(comparisonResults.output_data).reduce(
+        (sum, m) => sum + (m.power_dict?.["Total Power"] ?? 0),
+        0
+      )
+    : 0;
+
+  const totalLatencyComparison = comparisonResults
+    ? Object.values(comparisonResults.output_data).reduce(
+        (sum, m) => sum + (m.latency ?? 0),
+        0
+      )
+    : 0;
+
+  // Metrics to display in the summary cards
+  const pipelineMetrics = {
+    Power: analysisResults ? `${totalPowerCurrent.toFixed(6)} mW` : "--",
+    Latency: analysisResults ? `${totalLatencyCurrent.toFixed(2)} ns` : "--",
+    Accuracy: "-- %", // TODO: wire up when available
+    "Simulation Time": "-- s", // TODO
+  };
+
+  // Data for comparison charts (current vs selected comparison pipeline)
+  const comparisonData = {
+    power: [
+      {
+        name: pipeline?.name || "Current Pipeline",
+        "Total Power": parseFloat(totalPowerCurrent.toFixed(6)),
+      },
+      {
+        name: comparisonPipeline?.name || "Comparison Pipeline",
+        "Total Power": parseFloat(totalPowerComparison.toFixed(6)),
+      },
+    ],
+    latency: [
+      {
+        name: pipeline?.name || "Current Pipeline",
+        "Total Latency": parseFloat(totalLatencyCurrent.toFixed(2)),
+      },
+      {
+        name: comparisonPipeline?.name || "Comparison Pipeline",
+        "Total Latency": parseFloat(totalLatencyComparison.toFixed(2)),
+      },
+    ],
+    accuracy: [
+      {
+        name: pipeline?.name || "Current Pipeline",
+        Accuracy: 95,
+      },
+      {
+        name: comparisonPipeline?.name || "Comparison Pipeline",
+        Accuracy: 92,
+      },
+    ],
+  };
+
+  const tabs = ["Summary", "Comparison"];
+
+  const handleComparisonChange = (e) => {
+    const selectedPipeline = availablePipelines.find(
+      (p) => p.id === parseInt(e.target.value)
+    );
+    setComparisonPipeline(selectedPipeline);
+  };
 
   return (
     <div className="flex flex-col h-full w-full bg-gray-50">

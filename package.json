@@ -1,0 +1,14 @@
+{
+  "name": "foresee-root",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm --prefix app install",
+    "rebuild": "npm --prefix app run rebuild",
+    "setup": "npm --prefix app run setup",
+    "dev": "npm --prefix app run dev",
+    "build": "npm --prefix app run build",
+    "start": "npm --prefix app run start",
+    "preview": "npm --prefix app run preview",
+    "electron": "npm --prefix app run electron"
+  }
+} 
