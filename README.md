@@ -87,7 +87,7 @@ The main interface allows you to:
 
 ## End-User Installation
 
-Go to the releases tab and download the executable for your platform. If you are on macOS, make sure you download the x86 or ARM variation, depending on what CPU your computer has.
+Go to the [releases](https://github.com/bci-foresee/foresee/releases) tab and download the executable for your platform. If you are on macOS, make sure you download the x86 or ARM variation, depending on what CPU your computer has.
 
 ## Developer Installation
 
