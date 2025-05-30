@@ -14,7 +14,7 @@ Readme last updated: 24 April 2025
 
 ## Overview
 
-Foresee is a comprehensive Brain-Computer Interface (BCI) pipelFORESEE: BCI Pipeline Design & Analysis Toooine design and analysis tool. It enables researchers and engineers to design, test, and implement BCI pipelines through an intuitive graphical interface. The tool is built on a growing library of modules that can be easily integrated into a pipeline for rapid prototyping and testing.
+Foresee is a comprehensive Brain-Computer Interface (BCI) pipeline design and analysis tool. It enables researchers and engineers to design, test, and implement BCI pipelines through an intuitive graphical interface. The tool is built on a growing library of modules that can be easily integrated into a pipeline for rapid prototyping and testing.
 
 Key features include:
 - Graphical pipeline editor
@@ -22,16 +22,72 @@ Key features include:
 - Hardware simulation capabilities
 - Integration of RTL with high-level simulation
 
-
 ## Installation
 
-Go to the releases tab and download the executable for your platform. If you are on macOS, make sure you download the x86 or ARM variation, depending on what CPU your computer has
+Go to the releases tab and download the executable for your platform. If you are on macOS, make sure you download the x86 or ARM variation, depending on what CPU your computer has.
 
-## Project Structure
+## Usage
 
-The project is organized into two main components:
-- `app/` - Contains the Electron frontend
-- `backend/` - Contains the Python backend including modules, pipeline execution, and analysis tools
+The main interface allows you to:
+1. Create new pipelines
+2. Import existing pipeline configurations
+3. Add modules to your pipeline
+4. Connect modules to form a complete pipeline
+5. Configure modules parameters
+6. Run simulations
+7. Analyze performance metrics
+
+
+## Creating a Pipeline
+
+1. **From the *Overview* page**  
+   - (Optional) Expand the type of pipelines you can create by using the *Import Module* feature, or pre-load pipelines from a peer researcher using the *Import Pipeline* tool.
+   - Click **Custom Pipeline** to start a fresh workspace.
+
+2. **Add Modules**  
+   - Drag items from the **Modules** panel onto the canvas—for example, an *Input* block, an *FFT* block, and an *Output* block.  
+   - **Optional:** If the module you need isn’t listed, click **Import Module** and select its Python (and, if available, Verilog) file. Imported modules appear in the panel for future use.
+
+3. **Connect the Modules**  
+   Draw wires between the blocks to define the signal flow (e.g., *Input → FFT → Output*). The arrows show how data moves through the pipeline.
+
+4. **Set Module Options**  
+   Select a block to see its settings—sample rate, window size, classifier parameters, etc.—and adjust them as needed.
+
+5. **Save the Pipeline**  
+   Click **Save**, give the pipeline a clear name (e.g., “Seizure Detector v1”), and it will appear in your project list for later analysis.
+
+## Analyzing a Pipeline
+
+1. **Select Your Pipeline**  
+   From the *Overview* page, choose one or more of the pipelines you just saved.
+
+2. **From the Configuration Panel, Pick What to Measure**  
+   - **Algorithm Accuracy**: runs the pipeline to check detection performance.  
+   - **Hardware Latency**: simulates each module clock‑by‑clock to estimate processing delay.  
+   - **Hardware Power**: produces an energy breakdown using built‑in power‑analysis tools.
+
+3. **Run the Analysis**  
+   On the configuration panel, run the analysis. Progress bars will show you when each measurement is complete.
+
+4. **Review Results**  
+   For each of the simulated pipelines you can click on the analysis button, which takes the user to a view with charts and tables that display accuracy, latency, and power in one screen. Click **Export CSV** if you want the raw numbers for deeper inspection in a third-party tool.
+
+## Comparing a Pipeline
+
+1. **Choose Multiple Pipelines**  
+   In the *Overview* page, open the *Analysis* page of any of the pipelines you want to compare.
+
+2. **Chose a Second Pipeline**  
+   Go to the comparison tab and open the contextual menu to select a second pipeline against which to compare power, latency, and accuracy.
+
+3. **Interpret the Dashboard**  
+   - **Bar charts** visualize which design is fastest, most energy‑efficient, or most accurate.  
+   - Use **Export CSV** to export data to third-party tools.
+
+4. **Itereate!**  
+   Apply the learnings you've got to your pipelines' design and re-run through the production cycle.
+
 
 ## Developer Installation
 
@@ -78,6 +134,12 @@ The project is organized into two main components:
 
 *Detailed installation instructions for Apple Silicon macOS will be added soon. The basic approach will be similar to Linux but with macOS-specific package management.*
 
+## Project Structure
+
+The project is organized into two main components:
+- `app/` - Contains the Electron frontend
+- `backend/` - Contains the Python backend including modules, pipeline execution, and analysis tools
+
 ## Running FORESEE
 
 FORESEE requires both the Python backend and Electron frontend to be running simultaneously.
@@ -116,19 +178,6 @@ npm run start
 ```
 
 Note: The `npm run dev` and `npm run start` commands only launch the frontend components - they do not automatically start the Python backend.
-
-## Using FORESEE
-
-Once both the backend and frontend are running, you can access the FORESEE application through the Electron window that opens automatically.
-
-The main interface allows you to:
-1. Create new pipelines
-2. Import existing pipeline configurations
-3. Add modules to your pipeline
-4. Connect modules to form a complete pipeline
-5. Configure modules parameters
-6. Run simulations
-7. Analyze performance metrics
 
 ## Backend Architecture
 
