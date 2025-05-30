@@ -22,11 +22,7 @@ Key features include:
 - Hardware simulation capabilities
 - Integration of RTL with high-level simulation
 
-## Installation
-
-Go to the releases tab and download the executable for your platform. If you are on macOS, make sure you download the x86 or ARM variation, depending on what CPU your computer has.
-
-## Usage
+# Usage
 
 The main interface allows you to:
 1. Create new pipelines
@@ -85,9 +81,13 @@ The main interface allows you to:
    - **Bar charts** visualize which design is fastest, most energy‑efficient, or most accurate.  
    - Use **Export CSV** to export data to third-party tools.
 
-4. **Itereate!**  
+4. **Iterate!**  
    Apply the learnings you've got to your pipelines' design and re-run through the production cycle.
 
+
+## End-User Installation
+
+Go to the releases tab and download the executable for your platform. If you are on macOS, make sure you download the x86 or ARM variation, depending on what CPU your computer has.
 
 ## Developer Installation
 
