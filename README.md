@@ -14,7 +14,7 @@ Readme last updated: 24 April 2025
 
 ## Overview
 
-Foresee is a comprehensive Brain-Computer Interface (BCI) pipeline design and analysis tool. It enables researchers and engineers to design, test, and implement BCI pipelines through an intuitive graphical interface. The tool is built on a growing library of modules that can be easily integrated into a pipeline for rapid prototyping and testing.
+Foresee is a comprehensive Brain-Computer Interface (BCI) pipeline design and analysis tool for algorithm and hardware co-design and exploration. It enables researchers and engineers to design, test, and implement BCI pipelines in Python and Verilog through an intuitive graphical interface. The tool is built on a growing library of modules that can be easily integrated into a pipeline for rapid prototyping and testing.
 
 Key features include:
 - Graphical pipeline editor
