@@ -28,15 +28,13 @@ db.prepare(
 `
 ).run();
 
-// Create images table
+// Create pipeline output table
 db.prepare(
   `
-  CREATE TABLE IF NOT EXISTS pipeline_images (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    pipeline_id INTEGER NOT NULL,
-    metric TEXT NOT NULL,  -- e.g., "latency", "power", "accuracy"
-    image_path TEXT NOT NULL,
-    FOREIGN KEY (pipeline_id) REFERENCES pipelines(id) ON DELETE CASCADE
+  CREATE TABLE IF NOT EXISTS pipeline_output (
+    id INTEGER PRIMARY KEY,
+    output TEXT,  -- JSON string of output object
+    FOREIGN KEY (id) REFERENCES pipelines(id) ON DELETE CASCADE
   )
 `
 ).run();
@@ -137,6 +135,46 @@ function deletePipeline(id) {
     return result;
   } catch (error) {
     console.error("💾 Database: Error deleting pipeline:", error);
+    throw error;
+  }
+}
+
+// Function to save pipeline output
+function savePipelineOutput(id, outputObject) {
+  console.log("💾 Database: Saving pipeline output...");
+  console.log("💾 Database: Pipeline ID:", id);
+  console.log("💾 Database: Output object:", outputObject);
+
+  try {
+    const stmt = db.prepare(
+      "INSERT OR REPLACE INTO pipeline_output (id, output) VALUES (?, ?)"
+    );
+    const result = stmt.run(
+      id,
+      outputObject ? JSON.stringify(outputObject) : null
+    );
+    console.log("💾 Database: Save output result:", result);
+    return result;
+  } catch (error) {
+    console.error("💾 Database: Error saving pipeline output:", error);
+    throw error;
+  }
+}
+
+// Function to get pipeline output by ID
+function getPipelineOutput(id) {
+  console.log("💾 Database: Getting pipeline output for ID:", id);
+  try {
+    const output = db.prepare("SELECT * FROM pipeline_output WHERE id = ?").get(id);
+    if (output && output.output) {
+      const parsedOutput = JSON.parse(output.output);
+      console.log("💾 Database: Found pipeline output:", parsedOutput);
+      return parsedOutput;
+    }
+    console.log("💾 Database: No output found for pipeline ID:", id);
+    return null;
+  } catch (error) {
+    console.error("💾 Database: Error getting pipeline output:", error);
     throw error;
   }
 }
@@ -247,4 +285,6 @@ export {
   getPipelineById,
   editPipeline,
   deletePipeline,
+  savePipelineOutput,
+  getPipelineOutput,
 };

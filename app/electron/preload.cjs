@@ -6,4 +6,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getPipelineById: (id) => ipcRenderer.invoke("getPipelineById", id),
   editPipeline: (id, name, description, graphData) => ipcRenderer.invoke("editPipeline", id, name, description, graphData),
   deletePipeline: (id) => ipcRenderer.invoke("deletePipeline", id),
+  savePipelineOutput: (id, outputObject) => ipcRenderer.invoke("savePipelineOutput", id, outputObject),
+  getPipelineOutput: (id) => ipcRenderer.invoke("getPipelineOutput", id),
 }); 

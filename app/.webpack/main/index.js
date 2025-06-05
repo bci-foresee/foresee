@@ -965,7 +965,7 @@ const createWindow = () => {
     height: 700,
     // Increased from 600 to give more room
     webPreferences: {
-      preload: '/Users/annaxu/Desktop/temp_gui/app/.webpack/renderer/main_window/preload.js'
+      preload: '/Users/annaxu/Desktop/temp_gui/app/.webpack/renderer/main_window/preload.cjs'
     },
     minWidth: 800,
     // Set minimum window size

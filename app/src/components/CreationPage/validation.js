@@ -33,9 +33,9 @@ export const PROPERTY_VALIDATIONS = {
   "Clock Frequency": {
     type: "number",
     min: 0,
-    max: 1000,
+    max: 1000000,
     unit: "Hz",
-    errorMessage: "Must be between 0 and 1000 Hz",
+    errorMessage: "Must be between 0 and 1000000 Hz",
   },
   "Sampling Frequency": {
     type: "number",

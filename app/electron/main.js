@@ -9,6 +9,8 @@ import {
   getPipelineById,
   editPipeline,
   deletePipeline,
+  savePipelineOutput,
+  getPipelineOutput,
 } from "./database.js";
 import { spawn } from "child_process";
 
@@ -20,7 +22,7 @@ let mainWindow;
 let backendProcess;
 
 function startBackend() {
-  const pythonExecutable = process.env.PYTHON_PATH || "python3"; // Allow override via env
+  const pythonExecutable = process.env.PYTHON_PATH || "python"; // Allow override via env
   const backendScript = path.resolve(__dirname, "../../backend/app.py");
   console.log("🚀 Starting backend →", pythonExecutable, backendScript);
 
@@ -118,6 +120,8 @@ app.whenReady().then(() => {
     }
   );
   ipcMain.handle("deletePipeline", async (event, id) => deletePipeline(id));
+  ipcMain.handle("savePipelineOutput", async (event, id, outputObject) => savePipelineOutput(id, outputObject));
+  ipcMain.handle("getPipelineOutput", async (event, id) => getPipelineOutput(id));
 });
 
 app.on("window-all-closed", () => {

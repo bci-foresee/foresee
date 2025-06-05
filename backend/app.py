@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pipeline_api import run_pipeline
 import json
+import logging
 
 app = Flask(__name__)
 # Accept any http://localhost:<port> origin, keep credentials support
@@ -11,14 +12,15 @@ CORS(
     supports_credentials=True,
 )
 
+logging.basicConfig(filename='backend.log', level=logging.DEBUG)
+
 @app.route('/run-pipeline', methods=['POST', 'OPTIONS'])
 def run_pipeline_api():
     if request.method == 'OPTIONS':
         return '', 200
     try:
         pipeline_json = request.get_json(force=True)
-        print("🧩 Type of pipeline_json:", type(pipeline_json))
-        print("🧩 Pipeline received:", pipeline_json)
+        logging.debug("🧩 Pipeline received: %s", pipeline_json)
 
         result = run_pipeline(pipeline_json)
 
@@ -26,7 +28,7 @@ def run_pipeline_api():
             return jsonify(result[0]), result[1]
         return jsonify(result)
     except Exception as e:
-        print("❌ Error in pipeline API:", str(e))
+        logging.error("❌ Error in pipeline API: %s", str(e))
         return jsonify({"error": str(e)}), 500
 
 

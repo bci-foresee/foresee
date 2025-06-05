@@ -31,21 +31,21 @@ function AnalysisContent() {
   const [comparisonPipeline, setComparisonPipeline] = useState(null);
   const [availablePipelines, setAvailablePipelines] = useState([]);
 
-  // Load pipeline(s) metadata from SQLite and trigger backend runs
+  // Load pipeline(s) metadata from SQLite and get stored output data
   useEffect(() => {
     if (!pipelineId) return;
 
-    // Fetch selected pipeline metadata
-    window.electronAPI.getPipelineById(pipelineId).then((data) => {
+    // Fetch selected pipeline metadata and its stored output
+    window.electronAPI.getPipelineById(pipelineId).then(async (data) => {
       setPipeline(data);
 
-      // Once we have pipeline and its graph structure, request analysis
-      if (data?.graph_structure) {
-        // Parse text JSON into object before sending to backend
-        const graphObj = typeof data.graph_structure === "string" ? JSON.parse(data.graph_structure) : data.graph_structure;
-        runBackendPipeline(graphObj).then((res) => {
-          setAnalysisResults(res);
-        });
+      // Get stored output data from database instead of running backend
+      const outputData = await window.electronAPI.getPipelineOutput(pipelineId);
+      if (outputData) {
+        setAnalysisResults({ output_data: outputData });
+        console.log("✅ Loaded pipeline output from database:", outputData);
+      } else {
+        console.log("⚠️ No stored output data found for pipeline:", pipelineId);
       }
     });
 
@@ -60,38 +60,20 @@ function AnalysisContent() {
     });
   }, [pipelineId]);
 
-  // When comparisonPipeline changes, fetch its results
+  // When comparisonPipeline changes, fetch its stored results
   useEffect(() => {
-    if (!comparisonPipeline || !comparisonPipeline.graph_structure) return;
+    if (!comparisonPipeline) return;
 
-    const compGraph = typeof comparisonPipeline.graph_structure === "string" ? JSON.parse(comparisonPipeline.graph_structure) : comparisonPipeline.graph_structure;
-
-    runBackendPipeline(compGraph).then((res) => {
-      setComparisonResults(res);
+    // Get stored output data for comparison pipeline
+    window.electronAPI.getPipelineOutput(comparisonPipeline.id).then((outputData) => {
+      if (outputData) {
+        setComparisonResults({ output_data: outputData });
+        console.log("✅ Loaded comparison pipeline output from database:", outputData);
+      } else {
+        console.log("⚠️ No stored output data found for comparison pipeline:", comparisonPipeline.id);
+      }
     });
   }, [comparisonPipeline]);
-
-  // Helper to call Flask backend via fetch
-  const runBackendPipeline = async (graphStructure) => {
-    try {
-      const response = await fetch("http://localhost:5001/run-pipeline", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(graphStructure),
-      });
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err?.error || "Backend error");
-      }
-      const data = await response.json();
-      return data;
-    } catch (e) {
-      console.error("Pipeline run error", e);
-      return null;
-    }
-  };
 
   // If backend has responded, transform results into chart-friendly arrays
   const powerData = analysisResults

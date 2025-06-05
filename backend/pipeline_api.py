@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import subprocess
@@ -10,6 +11,8 @@ import numpy as np
 
 from asa import TKEO, AVG, SVM, THR, FFT, BBF, PWXC
 from asa.utils import INPUT_PE, generate_signal
+
+logging.basicConfig(filename='backend.log', level=logging.DEBUG)
 
 
 def convert_numpy_to_list(obj):
@@ -71,13 +74,26 @@ def generate_pipeline(pipeline_data):
             frequencies_str = properties.get("Frequencies", {}).get("value", "10, 20, 40")
             amplitudes_str = properties.get("Amplitudes", {}).get("value", "20, 15, 10")
             
-            # Convert string values to lists of integers
-            # print(frequencies_str)
-            # frequencies = [int(f.strip()) for f in frequencies_str.split(',')]
-            frequencies = [int(f) for f in frequencies_str]
-            # amplitudes = [int(a.strip()) for a in amplitudes_str.split(',')]
-            amplitudes = [int(a) for a in amplitudes_str]
+            # Convert string values to lists of integers with error handling
+            logging.debug(f"Frequencies: {frequencies_str}")
             
+            try:
+                # Split and filter out empty strings, then convert to integers
+                frequencies = [int(f.strip()) for f in frequencies_str.split(',') if f.strip()]
+                amplitudes = [int(a.strip()) for a in amplitudes_str.split(',') if a.strip()]
+                
+                # Ensure we have at least one frequency and amplitude
+                if not frequencies:
+                    frequencies = [10, 20, 40]  # Default values
+                if not amplitudes:
+                    amplitudes = [20, 15, 10]  # Default values
+                    
+            except (ValueError, AttributeError) as e:
+                logging.error(f"Error parsing frequencies/amplitudes: {e}")
+                # Use default values if parsing fails
+                frequencies = [10, 20, 40]
+                amplitudes = [20, 15, 10]
+
             fs = properties.get("Sampling Frequency", {}).get("value", 400)
             n_channels = properties.get("Number of Channels",
                                         {}).get("value", 1)
@@ -97,6 +113,7 @@ def generate_pipeline(pipeline_data):
             rtl_sim = properties["Enable RTL Simulation"]["value"]
             rtl_power = properties["Enable RTL Power Estimation"]["value"]
             save_viz = False
+            logging.debug(f'rtl_sim: {rtl_sim}, rtl_power: {rtl_power}, clk: {clk}')
 
             if node["label"] == "TKEO":
                 n_channels = properties["Number of Channels"]["value"]

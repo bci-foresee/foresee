@@ -206,22 +206,21 @@ export function useGraphEvents(
           edges,
         };
 
-        if (pipelineId) {
+        // Only save to database if we have a valid pipelineId (editing existing pipeline)
+        if (pipelineId && pipelineId !== null && pipelineId !== undefined) {
+          console.log("🔧 Editing existing pipeline with ID:", pipelineId);
           await window.electronAPI.editPipeline(
             pipelineId,
             pipelineName,
             pipelineDescription,
-            JSON.stringify(graphData)
+            graphData
           );
         } else {
-          await window.electronAPI.savePipeline(
-            pipelineName,
-            pipelineDescription,
-            JSON.stringify(graphData)
-          );
+          console.log("🔧 No valid pipelineId found, not saving to database during property update");
+          // Don't save new pipeline during property updates - only when explicitly saving
         }
 
-        setHasUnsavedChanges(false);
+        setHasUnsavedChanges(true); // Mark as having unsaved changes instead
       } catch (error) {
         console.error("❌ Failed to update property:", error);
         throw error;
@@ -254,7 +253,7 @@ export function useGraphEvents(
 
     try {
       let result;
-      if (pipelineId) {
+      if (pipelineId && pipelineId !== null && pipelineId !== undefined) {
         result = await window.electronAPI.editPipeline(
           pipelineId,
           pipelineName,

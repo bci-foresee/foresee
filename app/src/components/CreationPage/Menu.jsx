@@ -25,8 +25,8 @@ const MODULES = {
       },
     },
     {
-      id: "bpf",
-      label: "BPF",
+      id: "bbf",
+      label: "BBF",
       name: "Butterworth Bandpass Filter",
       inputs: 1,
       outputs: 1,
@@ -47,8 +47,8 @@ const MODULES = {
       },
     },
     {
-      id: "pcc",
-      label: "PCC",
+      id: "pwxc",
+      label: "PWXC",
       name: "Pairwise Cross-Correlation",
       inputs: 1,
       outputs: 1,

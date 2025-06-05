@@ -12,9 +12,11 @@ import re
 import numpy as np
 import struct
 import os
+import logging
 
 from numpy.typing import NDArray
 
+logging.basicConfig(filename='backend.log', level=logging.DEBUG)
 
 class ProcessingElement:
 
@@ -157,7 +159,7 @@ class ProcessingElement:
         subprocess.run(yosys_cmd, shell=True, check=True, timeout=None)
 
         # Run OpenSTA (optional – skip if tool not available)
-        opensta_cmd = "../../external/OpenSTA/app/sta power_analysis.tcl"
+        opensta_cmd = "../../external/OpenSTA/build/sta power_analysis.tcl"
         try:
             result = subprocess.run(opensta_cmd,
                                     shell=True,
@@ -169,6 +171,7 @@ class ProcessingElement:
         except (subprocess.CalledProcessError, FileNotFoundError):
             # If OpenSTA is not installed or the command fails, continue without power/latency data.
             opensta_output = ""
+            logging.debug(f"OpenSTA command failed: {opensta_cmd}")
 
         # Pattern to match each row of the power data
         pattern = re.compile(

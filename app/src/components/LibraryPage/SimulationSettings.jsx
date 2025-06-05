@@ -89,7 +89,7 @@ export default function SimulationSettings({ selectedPipelineId }) {
         }
       }
 
-      console.log("📦 Sending to backend:", parsedGraphData);
+      // console.log("📦 Sending to backend:", parsedGraphData);
       const response = await fetch("http://localhost:5001/run-pipeline", {
         method: "POST",
         headers: {
@@ -103,6 +103,14 @@ export default function SimulationSettings({ selectedPipelineId }) {
 
       const result = await response.json();
       console.log("🧠 Flask pipeline result:", result);
+
+      // Save the output data to the pipeline_output table
+      if (result.output_data) {
+        await window.electronAPI.savePipelineOutput(selectedPipelineId, result.output_data);
+        console.log("✅ Pipeline output saved to database");
+      }
+
+      
     } catch (error) {
       console.error("❌ Error analyzing pipeline:", error);
     }
