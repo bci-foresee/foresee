@@ -134,7 +134,20 @@ def generate_pipeline(pipeline_data):
                     save_visualization=save_viz)
 
             elif node["label"] == "SVM":
-                weights = np.array(properties["Weights"]["value"])
+                weights_value = properties["Weights"]["value"]
+                
+                # Parse weights if it's a string representation of an array
+                if isinstance(weights_value, str):
+                    try:
+                        import json
+                        weights_list = json.loads(weights_value)
+                        weights = np.array(weights_list)
+                    except (json.JSONDecodeError, ValueError) as e:
+                        logging.error(f"Error parsing weights: {e}")
+                        weights = np.array([1, 1, 1, 1, 1])  # Default weights
+                else:
+                    weights = np.array(weights_value)
+                    
                 processing_elements[node_id] = SVM(
                     weights=weights,
                     clk=clk,
