@@ -279,6 +279,12 @@ For developers looking to extend FORESEE, please refer to the following resource
 - Make sure both the backend and frontend are running
 - Check if port 5000 is available for the backend server
 - Verify that all dependencies are installed correctly
+- better-sqlite3 is not compatible with some architectures (e.g. Apple M1), killing the electron process silently. To troubleshoot, run:
+```python
+npm uninstall better-sqlite3
+npm install better-sqlite3 --build-from-source
+npm run rebuild
+```
 
 **Processing elements fail to run:**
 - Ensure the conda environment is activated (`conda activate foresee`)
