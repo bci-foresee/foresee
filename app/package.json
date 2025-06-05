@@ -14,7 +14,7 @@
     "electron": "PYTHON_PATH=$(which python) concurrently \"next dev\" \"wait-on http://localhost:3000 && electron electron/main.js\""
   },
   "dependencies": {
-    "better-sqlite3": "^11.8.1",
+    "better-sqlite3": "^11.10.0",
     "lucide-react": "^0.483.0",
     "next": "^15.2.4",
     "react": "^19.1.0",
