@@ -8,11 +8,28 @@ import {
   DeleteIcon,
 } from "../Icons/icons";
 
-export default function ImplementedPipelines({ selectedPipelineId, setSelectPipelineId }) {
+export default function ImplementedPipelines({ selectedPipelineId, setSelectPipelineId, refreshTrigger }) {
   const [pipelines, setPipelines] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPipelines, setFilteredPipelines] = useState([]);
   const [pipelinesWithData, setPipelinesWithData] = useState(new Set());
+
+  // Function to fetch pipeline outputs and update pipelinesWithData
+  const refreshPipelineData = async () => {
+    if (typeof window !== 'undefined' && window?.electronAPI?.getPipelineOutputs) {
+      try {
+        const outputs = await window.electronAPI.getPipelineOutputs();
+        const pipelineIdsWithData = new Set(outputs.map(output => output.pipeline_id));
+        setPipelinesWithData(pipelineIdsWithData);
+      } catch (err) {
+        console.error("Failed to load pipeline outputs:", err);
+        setPipelinesWithData(new Set());
+      }
+    } else {
+      console.warn("getPipelineOutputs API unavailable");
+      setPipelinesWithData(new Set());
+    }
+  };
 
   // Fetch pipelines from SQLite via Electron's IPC – guard for non-Electron environments
   useEffect(() => {
@@ -29,20 +46,8 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
           setPipelines(formattedPipelines);
           setFilteredPipelines(formattedPipelines);
 
-          // Check which pipelines have output data
-          if (window?.electronAPI?.getPipelineOutputs) {
-            try {
-              const outputs = await window.electronAPI.getPipelineOutputs();
-              const pipelineIdsWithData = new Set(outputs.map(output => output.pipeline_id));
-              setPipelinesWithData(pipelineIdsWithData);
-            } catch (err) {
-              console.error("Failed to load pipeline outputs:", err);
-              setPipelinesWithData(new Set());
-            }
-          } else {
-            console.warn("getPipelineOutputs API unavailable");
-            setPipelinesWithData(new Set());
-          }
+          // Initial load of pipeline outputs
+          await refreshPipelineData();
         } catch (err) {
           console.error("Failed to load pipelines via Electron IPC:", err);
         }
@@ -57,6 +62,13 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
 
     fetchPipelines();
   }, []);
+
+  // Refresh pipeline data when refreshTrigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      refreshPipelineData();
+    }
+  }, [refreshTrigger]);
 
   // Search function
   const handleSearchChange = (event) => {
@@ -97,7 +109,7 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
         </div>
         <input
           type="text"
-          placeholder="Search pipelines..."
+          placeholder="Search..."
           value={searchQuery}
           onChange={handleSearchChange}
           className="border border-gray-300 p-1 text-sm rounded-md w-48 pl-2"

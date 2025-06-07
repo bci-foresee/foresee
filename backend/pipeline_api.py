@@ -33,6 +33,43 @@ def convert_numpy_to_list(obj):
     return obj
 
 
+def parse_berger_bands(berger_bands_str):
+    """
+    Parse berger bands from string format to List[Tuple[float, float]]
+    Input: "0.1-4, 4-8, 8-12" or "0.1-4,4-8,8-12"
+    Output: [(0.1, 4), (4, 8), (8, 12)]
+    """
+    if isinstance(berger_bands_str, list):
+        # Already in correct format (from legacy data)
+        return berger_bands_str
+    
+    if not isinstance(berger_bands_str, str) or not berger_bands_str.strip():
+        # Default berger bands if empty or invalid
+        return [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)]
+    
+    try:
+        bands = []
+        # Split by comma and process each range
+        for band_str in berger_bands_str.split(','):
+            band_str = band_str.strip()
+            if '-' in band_str:
+                min_val, max_val = band_str.split('-', 1)
+                min_val = float(min_val.strip())
+                max_val = float(max_val.strip())
+                bands.append((min_val, max_val))
+        
+        if bands:
+            return bands
+        else:
+            # Fallback to default if no valid bands found
+            return [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)]
+            
+    except (ValueError, AttributeError) as e:
+        logging.error(f"Error parsing berger bands '{berger_bands_str}': {e}")
+        # Return default berger bands on error
+        return [(0.1, 4), (4, 8), (8, 12), (12, 30), (30, 80), (80, 180)]
+
+
 def parse_pipeline_config(pipeline_data):
     if isinstance(pipeline_data, str):
         try:
@@ -59,202 +96,358 @@ def parse_pipeline_config(pipeline_data):
 
 
 def generate_pipeline(pipeline_data):
-    # instantiating python PEs
+    """Generate processing elements with comprehensive error handling."""
     processing_elements = {}
 
-    # create the processing elements
-    for node in pipeline_data["nodes"]:
-        node_id = node["id"]
-        node_type = node["nodeType"]
-        properties = node.get("properties", {})
-
-        # bunch of if statements for different types of PEs, input special case
-        if node_type == "input":
-            # Parse frequencies and amplitudes from strings
-            frequencies_str = properties.get("Frequencies", {}).get("value", "10, 20, 40")
-            amplitudes_str = properties.get("Amplitudes", {}).get("value", "20, 15, 10")
-            
-            # Convert string values to lists of integers with error handling
-            logging.debug(f"Frequencies: {frequencies_str}")
-            
+    try:
+        # create the processing elements
+        for node in pipeline_data["nodes"]:
             try:
-                # Split and filter out empty strings, then convert to integers
-                frequencies = [int(f.strip()) for f in frequencies_str.split(',') if f.strip()]
-                amplitudes = [int(a.strip()) for a in amplitudes_str.split(',') if a.strip()]
-                
-                # Ensure we have at least one frequency and amplitude
-                if not frequencies:
-                    frequencies = [10, 20, 40]  # Default values
-                if not amplitudes:
-                    amplitudes = [20, 15, 10]  # Default values
-                    
-            except (ValueError, AttributeError) as e:
-                logging.error(f"Error parsing frequencies/amplitudes: {e}")
-                # Use default values if parsing fails
-                frequencies = [10, 20, 40]
-                amplitudes = [20, 15, 10]
+                node_id = node["id"]
+                node_type = node["nodeType"]
+                properties = node.get("properties", {})
+                node_label = node.get("label", "Unknown")
 
-            fs = properties.get("Sampling Frequency", {}).get("value", 400)
-            n_channels = properties.get("Number of Channels",
-                                        {}).get("value", 1)
-            n_samples = properties.get("Number of Samples",
-                                       {}).get("value", 8192)
+                logging.debug(f"Processing node {node_id}: {node_label} ({node_type})")
 
-            input_signal = generate_signal(frequencies=frequencies,
-                                           amplitudes=amplitudes,
-                                           fs=fs,
-                                           n_channels=n_channels,
-                                           n_samples=n_samples)
-            processing_elements[node_id] = INPUT_PE(input=input_signal, clk=0)
-
-        # all other PEs
-        elif node_type == "module":
-            clk = properties["Clock Frequency"]["value"]
-            rtl_sim = properties["Enable RTL Simulation"]["value"]
-            rtl_power = properties["Enable RTL Power Estimation"]["value"]
-            save_viz = False
-            logging.debug(f'rtl_sim: {rtl_sim}, rtl_power: {rtl_power}, clk: {clk}')
-
-            if node["label"] == "TKEO":
-                n_channels = properties["Number of Channels"]["value"]
-                processing_elements[node_id] = TKEO(
-                    n_channels=n_channels,
-                    clk=clk,
-                    rtl_sim=rtl_sim,
-                    rtl_power_estimation=rtl_power,
-                    save_visualization=save_viz)
-
-            elif node["label"] == "AVG":
-                n_channels = properties["Number of Channels"]["value"]
-                processing_elements[node_id] = AVG(
-                    n_channels=n_channels,
-                    clk=clk,
-                    rtl_sim=rtl_sim,
-                    rtl_power_estimation=rtl_power,
-                    save_visualization=save_viz)
-
-            elif node["label"] == "SVM":
-                weights_value = properties["Weights"]["value"]
-                
-                # Parse weights if it's a string representation of an array
-                if isinstance(weights_value, str):
+                # Handle input nodes
+                if node_type == "input":
                     try:
-                        import json
-                        weights_list = json.loads(weights_value)
-                        weights = np.array(weights_list)
-                    except (json.JSONDecodeError, ValueError) as e:
-                        logging.error(f"Error parsing weights: {e}")
-                        weights = np.array([1, 1, 1, 1, 1])  # Default weights
+                        # Parse frequencies and amplitudes from strings
+                        frequencies_str = properties.get("Frequencies", {}).get("value", "10, 20, 40")
+                        amplitudes_str = properties.get("Amplitudes", {}).get("value", "20, 15, 10")
+                        
+                        # Convert string values to lists of integers with error handling
+                        logging.debug(f"Frequencies: {frequencies_str}, type: {type(frequencies_str)}")
+                        logging.debug(f"Amplitudes: {amplitudes_str}, type: {type(amplitudes_str)}")
+                        
+                        try:
+                            # Split and filter out empty strings, then convert to integers
+                            frequencies = [int(f.strip()) for f in frequencies_str.split(',') if f.strip()]
+                            amplitudes = [int(a.strip()) for a in amplitudes_str.split(',') if a.strip()]
+                            
+                            # Ensure we have at least one frequency and amplitude
+                            if not frequencies:
+                                frequencies = [10, 20, 40]  # Default values
+                            if not amplitudes:
+                                amplitudes = [20, 15, 10]  # Default values
+                                
+                        except (ValueError, AttributeError) as e:
+                            raise ValueError(f"Invalid frequencies or amplitudes format in Input node {node_id}. Expected comma-separated numbers (e.g., '10, 20, 40'). Error: {e}")
+
+                        # Validate other input parameters
+                        try:
+                            fs = int(properties.get("Sampling Frequency", {}).get("value", 400))
+                            n_channels = int(properties.get("Number of Channels", {}).get("value", 1))
+                            n_samples = int(properties.get("Number of Samples", {}).get("value", 8192))
+                            
+                            if fs <= 0:
+                                raise ValueError(f"Sampling frequency must be positive, got {fs}")
+                            if n_channels <= 0:
+                                raise ValueError(f"Number of channels must be positive, got {n_channels}")
+                            if n_samples <= 0:
+                                raise ValueError(f"Number of samples must be positive, got {n_samples}")
+                                
+                        except (ValueError, TypeError) as e:
+                            raise ValueError(f"Invalid numeric parameters in Input node {node_id}: {e}")
+
+                        logging.debug(f'input_signal: {frequencies}, {amplitudes}, {fs}, {n_channels}, {n_samples}')
+                        
+                        try:
+                            input_signal = generate_signal(frequencies=frequencies,
+                                                         amplitudes=amplitudes,
+                                                         fs=fs,
+                                                         n_channels=n_channels,
+                                                         n_samples=n_samples)
+                            processing_elements[node_id] = INPUT_PE(input=input_signal, clk=0)
+                        except Exception as e:
+                            raise RuntimeError(f"Failed to generate input signal for node {node_id}: {e}")
+                            
+                    except Exception as e:
+                        raise RuntimeError(f"Error creating input node {node_id} ({node_label}): {e}")
+
+                # Handle processing module nodes
+                elif node_type == "module":
+                    try:
+                        # Validate common properties
+                        try:
+                            clk = properties["Clock Frequency"]["value"]
+                            rtl_sim = properties["Enable RTL Simulation"]["value"]
+                            rtl_power = properties["Enable RTL Power Estimation"]["value"]
+                            
+                            if not isinstance(clk, (int, float)) or clk < 0:
+                                raise ValueError(f"Clock frequency must be a non-negative number, got {clk}")
+                            if not isinstance(rtl_sim, bool):
+                                raise ValueError(f"RTL Simulation setting must be true/false, got {rtl_sim}")
+                            if not isinstance(rtl_power, bool):
+                                raise ValueError(f"RTL Power Estimation setting must be true/false, got {rtl_power}")
+                                
+                        except KeyError as e:
+                            raise ValueError(f"Missing required property in {node_label} node {node_id}: {e}")
+                        except (ValueError, TypeError) as e:
+                            raise ValueError(f"Invalid property value in {node_label} node {node_id}: {e}")
+
+                        save_viz = False
+                        logging.debug(f'{node_label} properties: rtl_sim={rtl_sim}, rtl_power={rtl_power}, clk={clk}')
+
+                        # Create specific PE types with detailed error handling
+                        if node_label == "TKEO":
+                            try:
+                                n_channels = int(properties["Number of Channels"]["value"])
+                                if n_channels <= 0:
+                                    raise ValueError(f"Number of channels must be positive, got {n_channels}")
+                                logging.debug(f'TKEO properties: {n_channels}, {clk}, {rtl_sim}, {rtl_power}, {save_viz}')
+                                processing_elements[node_id] = TKEO(
+                                    n_channels=n_channels,
+                                    clk=clk,
+                                    rtl_sim=rtl_sim,
+                                    rtl_power_estimation=rtl_power,
+                                    save_visualization=save_viz)
+                            except Exception as e:
+                                raise RuntimeError(f"Failed to create TKEO module: {e}")
+
+                        elif node_label == "AVG":
+                            try:
+                                n_channels = int(properties["Number of Channels"]["value"])
+                                if n_channels <= 0:
+                                    raise ValueError(f"Number of channels must be positive, got {n_channels}")
+                                processing_elements[node_id] = AVG(
+                                    n_channels=n_channels,
+                                    clk=clk,
+                                    rtl_sim=rtl_sim,
+                                    rtl_power_estimation=rtl_power,
+                                    save_visualization=save_viz)
+                            except Exception as e:
+                                raise RuntimeError(f"Failed to create AVG module: {e}")
+
+                        elif node_label == "SVM":
+                            try:
+                                weights_value = properties["Weights"]["value"]
+                                
+                                # Parse weights if it's a string representation of an array
+                                if isinstance(weights_value, str):
+                                    try:
+                                        import json
+                                        weights_list = json.loads(weights_value)
+                                        weights = np.array(weights_list)
+                                    except (json.JSONDecodeError, ValueError) as e:
+                                        raise ValueError(f"Invalid weights format. Expected JSON array or comma-separated numbers: {e}")
+                                else:
+                                    weights = np.array(weights_value)
+                                    
+                                if weights.size == 0:
+                                    raise ValueError("Weights array cannot be empty")
+                                    
+                                processing_elements[node_id] = SVM(
+                                    weights=weights,
+                                    clk=clk,
+                                    rtl_sim=rtl_sim,
+                                    rtl_power_estimation=rtl_power,
+                                    save_visualization=save_viz)
+                            except Exception as e:
+                                raise RuntimeError(f"Failed to create SVM module: {e}")
+
+                        elif node_label == "THR":
+                            try:
+                                lower_bound = float(properties["Lower Bound"]["value"])
+                                upper_bound = float(properties["Upper Bound"]["value"])
+                                
+                                if lower_bound >= upper_bound:
+                                    raise ValueError(f"Lower bound ({lower_bound}) must be less than upper bound ({upper_bound})")
+                                    
+                                processing_elements[node_id] = THR(
+                                    lower_bound=lower_bound,
+                                    upper_bound=upper_bound,
+                                    clk=clk,
+                                    rtl_sim=rtl_sim,
+                                    rtl_power_estimation=rtl_power,
+                                    save_visualization=save_viz)
+                            except Exception as e:
+                                raise RuntimeError(f"Failed to create THR module: {e}")
+
+                        elif node_label == "FFT":
+                            try:
+                                berger_bands_raw = properties["Berger Bands"]["value"]
+                                berger_bands = parse_berger_bands(berger_bands_raw)
+                                logging.debug(f'berger_bands: {berger_bands}, type: {type(berger_bands)}')
+                                
+                                n_samples = int(properties["Number of Samples"]["value"])
+                                if n_samples <= 0:
+                                    raise ValueError(f"Number of samples must be positive, got {n_samples}")
+                                    
+                                logging.debug(f'FFT n_samples: {n_samples}, type: {type(n_samples)}')
+                                
+                                fs = float(properties["Sampling Frequency"]["value"])
+                                if fs <= 0:
+                                    raise ValueError(f"Sampling frequency must be positive, got {fs}")
+                                    
+                                logging.debug(f'FFT fs: {fs}, type: {type(fs)}')
+                                
+                                processing_elements[node_id] = FFT(berger_bands=berger_bands,
+                                                                 n_samples=n_samples,
+                                                                 fs=fs,
+                                                                 clk=clk,
+                                                                 rtl_sim=rtl_sim,
+                                                                 save_visualization=save_viz)
+                            except Exception as e:
+                                raise RuntimeError(f"Failed to create FFT module: {e}")
+
+                        elif node_label == "BBF":
+                            try:
+                                fs = float(properties["Sampling Frequency"]["value"])
+                                if fs <= 0:
+                                    raise ValueError(f"Sampling frequency must be positive, got {fs}")
+                                    
+                                berger_bands_raw = properties["Berger Bands"]["value"]
+                                berger_bands = parse_berger_bands(berger_bands_raw)
+                                logging.debug(f'BBF berger_bands: {berger_bands}, type: {type(berger_bands)}')
+                                
+                                processing_elements[node_id] = BBF(
+                                    fs=fs,
+                                    berger_bands=berger_bands,
+                                    clk=clk,
+                                    rtl_sim=rtl_sim,
+                                    rtl_power_estimation=rtl_power,
+                                    save_visualization=save_viz)
+                            except Exception as e:
+                                raise RuntimeError(f"Failed to create BBF module: {e}")
+
+                        elif node_label == "PWXC":
+                            try:
+                                n_channels = int(properties["Number of Channels"]["value"])
+                                if n_channels <= 0:
+                                    raise ValueError(f"Number of channels must be positive, got {n_channels}")
+                                    
+                                processing_elements[node_id] = PWXC(
+                                    n_channels=n_channels,
+                                    clk=clk,
+                                    save_visualization=save_viz,
+                                    rtl_sim=rtl_sim,
+                                    rtl_power_estimation=rtl_power)
+                            except Exception as e:
+                                raise RuntimeError(f"Failed to create PWXC module: {e}")
+
+                        else:
+                            raise ValueError(f"Unknown module type '{node_label}' in node {node_id}")
+                            
+                    except Exception as e:
+                        raise RuntimeError(f"Error creating module node {node_id} ({node_label}): {e}")
+
                 else:
-                    weights = np.array(weights_value)
+                    raise ValueError(f"Unknown node type '{node_type}' in node {node_id}")
                     
-                processing_elements[node_id] = SVM(
-                    weights=weights,
-                    clk=clk,
-                    rtl_sim=rtl_sim,
-                    rtl_power_estimation=rtl_power,
-                    save_visualization=save_viz)
+            except Exception as e:
+                logging.error(f"Failed to create node {node_id}: {e}")
+                raise
 
-            elif node["label"] == "THR":
-                lower_bound = properties["Lower Bound"]["value"]
-                upper_bound = properties["Upper Bound"]["value"]
-                processing_elements[node_id] = THR(
-                    lower_bound=lower_bound,
-                    upper_bound=upper_bound,
-                    clk=clk,
-                    rtl_sim=rtl_sim,
-                    rtl_power_estimation=rtl_power,
-                    save_visualization=save_viz)
+        # Make the connections with error handling
+        try:
+            for edge in pipeline_data["edges"]:
+                try:
+                    source_id = edge["source"]
+                    target_id = edge["target"]
 
-            elif node["label"] == "FFT":
-                berger_bands = properties["Berger Bands"]["value"]
-                n_samples = properties["Number of Samples"]["value"]
-                fs = properties["Sampling Frequency"]["value"]
-                processing_elements[node_id] = FFT(berger_bands=berger_bands,
-                                                   n_samples=n_samples,
-                                                   fs=fs,
-                                                   clk=clk,
-                                                   rtl_sim=rtl_sim,
-                                                   save_visualization=save_viz)
+                    if source_id not in processing_elements:
+                        raise ValueError(f"Source node {source_id} not found in processing elements")
+                    if target_id not in processing_elements:
+                        raise ValueError(f"Target node {target_id} not found in processing elements")
 
-            elif node["label"] == "BBF":
-                fs = properties["Sampling Frequency"]["value"]
-                berger_bands = properties["Berger Bands"]["value"]
-                processing_elements[node_id] = BBF(
-                    fs=fs,
-                    berger_bands=berger_bands,
-                    clk=clk,
-                    rtl_sim=rtl_sim,
-                    rtl_power_estimation=rtl_power,
-                    save_visualization=save_viz)
+                    source_pe = processing_elements[source_id]
+                    target_pe = processing_elements[target_id]
 
-            elif node["label"] == "PWXC":
-                n_channels = properties["Number of Channels"]["value"]
-                processing_elements[node_id] = PWXC(
-                    n_channels=n_channels,
-                    clk=clk,
-                    save_visualization=save_viz,
-                    rtl_sim=rtl_sim,
-                    rtl_power_estimation=rtl_power)
+                    source_pe.add_output(target_pe)
+                    target_pe.add_input(source_pe)
+                    
+                    logging.debug(f"Connected {source_id} -> {target_id}")
+                    
+                except Exception as e:
+                    raise RuntimeError(f"Failed to connect {source_id} -> {target_id}: {e}")
+                    
+        except Exception as e:
+            raise RuntimeError(f"Error creating pipeline connections: {e}")
 
-    #make the connections
-    for edge in pipeline_data["edges"]:
-        source_id = edge["source"]
-        target_id = edge["target"]
-
-        if source_id in processing_elements and target_id in processing_elements:
-            source_pe = processing_elements[source_id]
-            target_pe = processing_elements[target_id]
-
-            source_pe.add_output(target_pe)
-            target_pe.add_input(source_pe)
+    except Exception as e:
+        logging.error(f"Pipeline generation failed: {e}")
+        raise
 
     return processing_elements
 
 
 def run_pipeline(pipeline_data):
-    """Main pipeline execution function that orchestrates the three stages."""
-    # parse json
-    pipeline_data, error = parse_pipeline_config(pipeline_data)
-    if error:
-        print("❌ Pipeline parse error:", error)
-        return {"error": error}, 400
-    print(f'Parsed pipeline data: {pipeline_data}')
+    """Main pipeline execution function with comprehensive error handling."""
+    try:
+        # Parse and validate JSON
+        try:
+            pipeline_data, error = parse_pipeline_config(pipeline_data)
+            if error:
+                logging.error(f"Pipeline parse error: {error}")
+                return {"error": f"Pipeline configuration error: {error}"}
+            logging.debug(f'Parsed pipeline data: {pipeline_data}')
+        except Exception as e:
+            logging.error(f"Failed to parse pipeline data: {e}")
+            return {"error": f"Failed to parse pipeline configuration: {e}"}
 
-    # instantiate python PEs
-    processing_elements = generate_pipeline(pipeline_data)
+        # Instantiate processing elements
+        try:
+            processing_elements = generate_pipeline(pipeline_data)
+            logging.debug(f"Created {len(processing_elements)} processing elements")
+        except Exception as e:
+            logging.error(f"Failed to generate pipeline: {e}")
+            return {"error": f"Failed to create pipeline modules: {e}"}
 
-    # run the PEs
-    for pe in processing_elements.values():
-        pe.run()
-        print(f'RAN {pe}')
+        # Run the processing elements
+        try:
+            for pe_id, pe in processing_elements.items():
+                try:
+                    logging.debug(f"Running PE {pe_id}: {pe}")
+                    pe.run()
+                    logging.debug(f"Successfully ran PE {pe_id}")
+                except Exception as e:
+                    logging.error(f"Failed to run PE {pe_id}: {e}")
+                    raise RuntimeError(f"Processing element '{pe}' (ID: {pe_id}) failed to execute: {e}")
+        except Exception as e:
+            logging.error(f"Pipeline execution failed: {e}")
+            return {"error": f"Pipeline execution failed: {e}"}
 
-    # Get results
-    results = {
-        "message": "Pipeline run successfully",
-        "node_properties": {
-            node["id"]: {
-                "label": node["label"],
-                "name": node.get("name", ""),
-                "nodeType": node["nodeType"],
-                "properties": node.get("properties", {})
+        # Generate results
+        try:
+            results = {
+                "message": "Pipeline run successfully",
+                "node_properties": {
+                    node["id"]: {
+                        "label": node["label"],
+                        "name": node.get("name", ""),
+                        "nodeType": node["nodeType"],
+                        "properties": node.get("properties", {})
+                    }
+                    for node in pipeline_data["nodes"]
+                },
+                "connections": {
+                    edge["source"]: edge["target"]
+                    for edge in pipeline_data["edges"]
+                },
+                "metrics": [],
+                "output_data": {}
             }
-            for node in pipeline_data["nodes"]
-        },
-        "connections": {
-            edge["source"]: edge["target"]
-            for edge in pipeline_data["edges"]
-        },
-        "metrics": [],
-        "output_data": {}
-    }
 
-    # store sim data
-    for node_id, pe in processing_elements.items():
-        results["output_data"][node_id] = convert_numpy_to_list(
-            pe.simulation_data)
+            # Store simulation data with error handling
+            for node_id, pe in processing_elements.items():
+                try:
+                    results["output_data"][node_id] = convert_numpy_to_list(pe.simulation_data)
+                except Exception as e:
+                    logging.error(f"Failed to convert simulation data for PE {node_id}: {e}")
+                    return {"error": f"Failed to process results from module '{pe}' (ID: {node_id}): {e}"}
 
-    return results
+            logging.info("Pipeline executed successfully")
+            return results
+            
+        except Exception as e:
+            logging.error(f"Failed to generate results: {e}")
+            return {"error": f"Failed to generate pipeline results: {e}"}
+
+    except Exception as e:
+        logging.error(f"Unexpected error in run_pipeline: {e}")
+        return {"error": f"Unexpected error during pipeline execution: {e}"}
 
 
 def test_pipeline():
@@ -265,7 +458,7 @@ def test_pipeline():
                                    text=True).stdout.strip()
 
     # load pipeline file
-    pipeline_file = f"{top_level_dir}/backend/dev_tests/neo_pipeline_hardware.json"
+    pipeline_file = f"{top_level_dir}/backend/dev_tests/simple_fft_pipeline.json"
     try:
         with open(pipeline_file, 'r') as f:
             pipeline_data = json.load(f)

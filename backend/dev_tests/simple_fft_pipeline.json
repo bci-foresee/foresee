@@ -1,0 +1,71 @@
+{
+    "nodes": [
+        {
+            "id": "1",
+            "label": "Input",
+            "name": "Signal Generator",
+            "nodeType": "input",
+            "properties": {
+                "Frequencies": {
+                    "value": [10, 20, 40],
+                    "unit": "Hz"
+                },
+                "Amplitudes": {
+                    "value": [20, 15, 10],
+                    "unit": "V"
+                },
+                "Sampling Frequency": {
+                    "value": 400,
+                    "unit": "Hz"
+                },
+                "Number of Channels": {
+                    "value": 16,
+                    "unit": "int"
+                },
+                "Number of Samples": {
+                    "value": 8192,
+                    "unit": "int"
+                }
+            }
+        },
+        {
+            "id": "2",
+            "label": "FFT",
+            "name": "Fast Fourier Transform",
+            "nodeType": "module",
+            "properties": {
+                "Berger Bands": {
+                    "value": [[0.1, 4], [4, 8], [8, 12], [12, 30], [30, 80], [80, 180]],
+                    "unit": "Hz"
+                },
+                "Number of Samples": {
+                    "value": 8192,
+                    "unit": "int"
+                },
+                "Sampling Frequency": {
+                    "value": 400,
+                    "unit": "Hz"
+                },
+                "Clock Frequency": {
+                    "value": 1,
+                    "unit": "MHz"
+                },
+                "Enable RTL Simulation": {
+                    "value": true,
+                    "unit": "boolean"
+                },
+                "Enable RTL Power Estimation": {
+                    "value": true,
+                    "unit": "boolean"
+                },
+                "Save Visualization": {
+                    "value": false,
+                    "unit": "boolean"
+                }
+            }
+        }
+    ],
+    "edges": [
+        {"source": "1", "target": "2"}
+    ]
+} 

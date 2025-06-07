@@ -6,20 +6,20 @@ export const PROPERTY_VALIDATIONS = {
   // ✅ Custom Signal properties
   Frequencies: {
     type: "text",
-    regex: /^(\d+(\.\d+)?)(,\s*\d+(\.\d+)?)*$/,
-    errorMessage: "Must be comma-separated numbers (e.g., 1, 2, 3)",
+    regex: /^\s*\d+(\.\d+)?(\s*,\s*\d+(\.\d+)?)*\s*$/,
+    errorMessage: "Must be comma-separated numbers (e.g., 10, 20, 40)",
   },
   Amplitudes: {
     type: "text",
-    regex: /^(\d+(\.\d+)?)(,\s*\d+(\.\d+)?)*$/,
-    errorMessage: "Must be comma-separated numbers (e.g., 1, 2, 3)",
+    regex: /^\s*\d+(\.\d+)?(\s*,\s*\d+(\.\d+)?)*\s*$/,
+    errorMessage: "Must be comma-separated numbers (e.g., 20, 15, 10)",
   },
 
   // ✅ Range inputs (e.g., "0.1-4, 4-8")
   "Berger Bands": {
     type: "text", // Changed to text to accept string format
-    regex: /^(\d+(\.\d+)?-\d+(\.\d+)?)(,\s*\d+(\.\d+)?-\d+(\.\d+)?)*$/,
-    errorMessage: "Must be in format 'min-max, min-max' (e.g., '0.1-4, 4-8')",
+    regex: /^\s*\d+(\.\d+)?\s*-\s*\d+(\.\d+)?(\s*,\s*\d+(\.\d+)?\s*-\s*\d+(\.\d+)?)*\s*$/,
+    errorMessage: "Must be in format 'min-max, min-max' (e.g., '0.1-4, 4-8, 8-12')",
   },
 
   // ✅ Numeric values (float)

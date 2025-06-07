@@ -35,12 +35,9 @@ const MODULES = {
       properties: {
         "Sampling Frequency": { type: "number", unit: "Hz" },
         "Berger Bands": {
-          type: "range",
+          type: "text",
           unit: "Hz",
-          value: [
-            { min: 0, max: 0 },
-            { min: 0, max: 0 },
-          ],
+          value: "",
         },
         "Clock Frequency": { value: 0, unit: "MHz" },
         "Enable RTL Simulation": { type: "boolean" },

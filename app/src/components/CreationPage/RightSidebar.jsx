@@ -181,33 +181,6 @@ export function RightSidebar({ node, updateNodeProperty, onClose, saveData }) {
                   );
                 }
 
-                /** ✅ Special Handling for Berger Bands **/
-                if (key === "Berger Bands") {
-                  return (
-                    <div key={key} className="flex flex-col gap-2">
-                      <label className="font-semibold text-xs text-gray-700">
-                        {key}:
-                      </label>
-                      <input
-                        type="text"
-                        value={prop.value || ""}
-                        onChange={(e) => {
-                          const newVal = e.target.value;
-                          setLocalProperties((prev) => ({
-                            ...prev,
-                            [key]: {
-                              ...prev[key],
-                              value: newVal,
-                            },
-                          }));
-                        }}
-                        placeholder="e.g., 0.1-4, 4-8, 8-12"
-                        className="border border-gray-300 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
-                      />
-                    </div>
-                  );
-                }
-
                 const newValue = isBoolean
                   ? prop.value
                   : validationRule?.type === "number" ||
@@ -248,13 +221,10 @@ export function RightSidebar({ node, updateNodeProperty, onClose, saveData }) {
                           type="text"
                           value={newValue ?? ""}
                           onChange={(e) => {
-                            const val =
-                              validationRule?.type === "number" ||
-                              validationRule?.type === "integer"
-                                ? Number(e.target.value)
-                                : e.target.value;
-
-                            if (validateProperty(key, val) || val === "") {
+                            const val = e.target.value;
+                            
+                            // For text inputs, allow free typing and validate later
+                            if (validationRule?.type === "text") {
                               setLocalProperties((prev) => ({
                                 ...prev,
                                 [key]: {
@@ -262,6 +232,23 @@ export function RightSidebar({ node, updateNodeProperty, onClose, saveData }) {
                                   value: val,
                                 },
                               }));
+                            } else {
+                              // For number/integer inputs, validate on keystroke
+                              const numVal =
+                                validationRule?.type === "number" ||
+                                validationRule?.type === "integer"
+                                  ? Number(val)
+                                  : val;
+
+                              if (validateProperty(key, numVal) || val === "") {
+                                setLocalProperties((prev) => ({
+                                  ...prev,
+                                  [key]: {
+                                    ...prev[key],
+                                    value: numVal,
+                                  },
+                                }));
+                              }
                             }
                           }}
                           onClick={(e) => e.stopPropagation()}

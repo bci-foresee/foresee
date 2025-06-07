@@ -198,62 +198,121 @@ function getPipelineOutputs() {
 // Default pipeline
 const pipelines = [
   {
-    name: "Epileptic Seizure Prediction",
-    description: "Predict epileptic seizures from EEG.",
+    name: "Simple Pipeline",
+    description: "Basic pipeline with input signal and TKEO processing.",
     graph_structure: JSON.stringify({
       nodes: [
         {
           id: 1,
-          label: "Input", // ✅ Abbreviation
-          name: "Custom Signal", // ✅ Full Name
+          label: "Input",
+          name: "Custom Signal",
           nodeType: "input",
           position: { x: 100, y: 100 },
           properties: {
             Frequencies: { value: "10, 20, 40", type: "text" },
             Amplitudes: { value: "20, 15, 10", type: "text" },
             "Sampling Frequency": { value: 400, unit: "Hz" },
-            "Number of Channels": { value: 16, unit: "count" },
-            "Number of Samples": { value: 10240, unit: "count" },
+            "Number of Channels": { value: 2, unit: "count" },
+            "Number of Samples": { value: 8192, unit: "count" },
           },
         },
         {
           id: 2,
-          label: "FFT", // ✅ Abbreviation
-          name: "Fast Fourier Transform", // ✅ Full Name
+          label: "TKEO",
+          name: "Teager-Kaiser Energy Operator",
+          nodeType: "module",
+          position: { x: 400, y: 100 },
+          properties: {
+            "Number of Channels": { value: 2, unit: "count" },
+            "Clock Frequency": { value: 1000000, unit: "Hz" },
+            "Enable RTL Simulation": { value: true, type: "boolean" },
+            "Enable RTL Power Estimation": { value: true, type: "boolean" },
+          },
+        },
+      ],
+      edges: [
+        { source: 1, target: 2 },
+      ],
+    }),
+  },
+  {
+    name: "Epileptic Seizure Prediction",
+    description: "Predict epileptic seizures from EEG using TKEO, AVG, SVM, and THR modules.",
+    graph_structure: JSON.stringify({
+      nodes: [
+        {
+          id: 1,
+          label: "Input",
+          name: "Custom Signal",
+          nodeType: "input",
+          position: { x: 100, y: 100 },
+          properties: {
+            Frequencies: { value: "10, 20, 40", type: "text" },
+            Amplitudes: { value: "20, 15, 10", type: "text" },
+            "Sampling Frequency": { value: 400, unit: "Hz" },
+            "Number of Channels": { value: 2, unit: "count" },
+            "Number of Samples": { value: 8192, unit: "count" },
+          },
+        },
+        {
+          id: 2,
+          label: "TKEO",
+          name: "Teager-Kaiser Energy Operator",
           nodeType: "module",
           position: { x: 300, y: 100 },
           properties: {
-            "Clock Frequency": { value: 100, unit: "Hz" },
-            "Number of Samples": { value: 10240, unit: "count" },
-            "Sampling Frequency": { value: 400, unit: "Hz" },
-            "Berger Bands": {
-              value: [
-                [0.1, 4],
-                [4, 8],
-                [8, 12],
-                [12, 30],
-                [30, 80],
-                [80, 180],
-              ],
-              unit: "Hz",
-            },
-            "Enable RTL Simulation": { value: true, unit: "boolean" },
-            "Enable RTL Power Estimation": { value: true, unit: "boolean" },
+            "Number of Channels": { value: 2, unit: "count" },
+            "Clock Frequency": { value: 1000000, unit: "Hz" },
+            "Enable RTL Simulation": { value: true, type: "boolean" },
+            "Enable RTL Power Estimation": { value: true, type: "boolean" },
           },
         },
         {
           id: 3,
-          label: "Storage",
-          nodeType: "storage",
+          label: "AVG",
+          name: "Signal Average",
+          nodeType: "module",
+          position: { x: 500, y: 100 },
+          properties: {
+            "Number of Channels": { value: 2, unit: "count" },
+            "Clock Frequency": { value: 1000000, unit: "Hz" },
+            "Enable RTL Simulation": { value: true, type: "boolean" },
+            "Enable RTL Power Estimation": { value: true, type: "boolean" },
+          },
+        },
+        {
+          id: 4,
+          label: "SVM",
+          name: "Support Vector Machine",
+          nodeType: "module",
+          position: { x: 700, y: 100 },
+          properties: {
+            Weights: { value: "[1, 1]", type: "text" },
+            "Clock Frequency": { value: 1000000, unit: "Hz" },
+            "Enable RTL Simulation": { value: true, type: "boolean" },
+            "Enable RTL Power Estimation": { value: true, type: "boolean" },
+          },
+        },
+        {
+          id: 5,
+          label: "THR",
+          name: "Threshold Detection",
+          nodeType: "module",
           position: { x: 900, y: 100 },
           properties: {
-            "Storage Type": { value: "Spin-Transfer Torque" },
+            "Lower Bound": { value: 0, type: "number" },
+            "Upper Bound": { value: 9999999, type: "number" },
+            "Clock Frequency": { value: 1000000, unit: "Hz" },
+            "Enable RTL Simulation": { value: true, type: "boolean" },
+            "Enable RTL Power Estimation": { value: true, type: "boolean" },
           },
         },
       ],
       edges: [
         { source: 1, target: 2 },
         { source: 2, target: 3 },
+        { source: 3, target: 4 },
+        { source: 4, target: 5 },
       ],
     }),
   },

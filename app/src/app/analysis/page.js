@@ -75,51 +75,57 @@ function AnalysisContent() {
     });
   }, [comparisonPipeline]);
 
+  // Helper function to transform module names for display
+  const getDisplayName = (name) => {
+    if (name === "Input PE") return "Input";
+    return name;
+  };
+
   // If backend has responded, transform results into chart-friendly arrays
   const powerData = analysisResults
-    ? Object.entries(analysisResults.output_data).map(([id, data]) => ({
-        name: data.name,
-        "Total Power": data.power_dict?.["Total Power"] ?? 0,
-        "Internal Power": data.power_dict?.["Internal Power"] ?? 0,
-        "Switching Power": data.power_dict?.["Switching Power"] ?? 0,
-        "Leakage Power": data.power_dict?.["Leakage Power"] ?? 0,
-      }))
+    ? Object.entries(analysisResults.output_data)
+        .filter(([id, data]) => id !== 'simulation_time' && data && typeof data === 'object' && data.name)
+        .map(([id, data]) => ({
+          name: getDisplayName(data.name),
+          "Total Power": data.power_dict?.["Total Power"] ?? 0,
+          "Internal Power": data.power_dict?.["Internal Power"] ?? 0,
+          "Switching Power": data.power_dict?.["Switching Power"] ?? 0,
+          "Leakage Power": data.power_dict?.["Leakage Power"] ?? 0,
+        }))
     : [];
 
   const latencyData = analysisResults
-    ? Object.entries(analysisResults.output_data).map(([id, data]) => ({
-        name: data.name,
-        latency: data.latency ?? 0,
-      }))
+    ? Object.entries(analysisResults.output_data)
+        .filter(([id, data]) => id !== 'simulation_time' && data && typeof data === 'object' && data.name)
+        .map(([id, data]) => ({
+          name: getDisplayName(data.name),
+          latency: data.latency ?? 0,
+        }))
     : [];
 
   // Compute overall metrics for current and comparison pipelines
   const totalPowerCurrent = analysisResults
-    ? Object.values(analysisResults.output_data).reduce(
-        (sum, m) => sum + (m.power_dict?.["Total Power"] ?? 0),
-        0
-      )
+    ? Object.entries(analysisResults.output_data)
+        .filter(([id, data]) => id !== 'simulation_time' && data && typeof data === 'object')
+        .reduce((sum, [id, data]) => sum + (data.power_dict?.["Total Power"] ?? 0), 0)
     : 0;
 
   const totalLatencyCurrent = analysisResults
-    ? Object.values(analysisResults.output_data).reduce(
-        (sum, m) => sum + (m.latency ?? 0),
-        0
-      )
+    ? Object.entries(analysisResults.output_data)
+        .filter(([id, data]) => id !== 'simulation_time' && data && typeof data === 'object')
+        .reduce((sum, [id, data]) => sum + (data.latency ?? 0), 0)
     : 0;
 
   const totalPowerComparison = comparisonResults
-    ? Object.values(comparisonResults.output_data).reduce(
-        (sum, m) => sum + (m.power_dict?.["Total Power"] ?? 0),
-        0
-      )
+    ? Object.entries(comparisonResults.output_data)
+        .filter(([id, data]) => id !== 'simulation_time' && data && typeof data === 'object')
+        .reduce((sum, [id, data]) => sum + (data.power_dict?.["Total Power"] ?? 0), 0)
     : 0;
 
   const totalLatencyComparison = comparisonResults
-    ? Object.values(comparisonResults.output_data).reduce(
-        (sum, m) => sum + (m.latency ?? 0),
-        0
-      )
+    ? Object.entries(comparisonResults.output_data)
+        .filter(([id, data]) => id !== 'simulation_time' && data && typeof data === 'object')
+        .reduce((sum, [id, data]) => sum + (data.latency ?? 0), 0)
     : 0;
 
   // Metrics to display in the summary cards
@@ -127,7 +133,9 @@ function AnalysisContent() {
     Power: analysisResults ? `${totalPowerCurrent.toFixed(6)} mW` : "--",
     Latency: analysisResults ? `${totalLatencyCurrent.toFixed(2)} ns` : "--",
     Accuracy: "-- %", // TODO: wire up when available
-    "Simulation Time": "-- s", // TODO
+    "Simulation Time": analysisResults && analysisResults.output_data.simulation_time 
+      ? `${analysisResults.output_data.simulation_time.toFixed(3)} s` 
+      : "-- s",
   };
 
   // Data for comparison charts (current vs selected comparison pipeline)
