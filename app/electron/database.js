@@ -179,6 +179,22 @@ function getPipelineOutput(id) {
   }
 }
 
+// Function to get all pipeline outputs
+function getPipelineOutputs() {
+  console.log("💾 Database: Getting all pipeline outputs...");
+  try {
+    const outputs = db.prepare("SELECT id as pipeline_id, output FROM pipeline_output").all();
+    console.log("💾 Database: Found pipeline outputs:", outputs.length);
+    return outputs.map(row => ({
+      pipeline_id: row.pipeline_id,
+      output: row.output ? JSON.parse(row.output) : null
+    }));
+  } catch (error) {
+    console.error("💾 Database: Error getting all pipeline outputs:", error);
+    throw error;
+  }
+}
+
 // Default pipeline
 const pipelines = [
   {
@@ -287,4 +303,5 @@ export {
   deletePipeline,
   savePipelineOutput,
   getPipelineOutput,
+  getPipelineOutputs,
 };

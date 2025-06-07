@@ -11,6 +11,7 @@ import {
   deletePipeline,
   savePipelineOutput,
   getPipelineOutput,
+  getPipelineOutputs,
 } from "./database.js";
 import { spawn } from "child_process";
 
@@ -122,6 +123,7 @@ app.whenReady().then(() => {
   ipcMain.handle("deletePipeline", async (event, id) => deletePipeline(id));
   ipcMain.handle("savePipelineOutput", async (event, id, outputObject) => savePipelineOutput(id, outputObject));
   ipcMain.handle("getPipelineOutput", async (event, id) => getPipelineOutput(id));
+  ipcMain.handle("getPipelineOutputs", async () => getPipelineOutputs());
 });
 
 app.on("window-all-closed", () => {

@@ -10,7 +10,7 @@ export default function SimulationSettings({ selectedPipelineId }) {
     power: true,
   });
   const [runs, setRuns] = useState(1);
-  const [progress, setProgress] = useState(100);
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleOption = (option) => {
     setSelectedOptions((prev) => ({
@@ -46,6 +46,8 @@ export default function SimulationSettings({ selectedPipelineId }) {
       console.log("No pipeline selected");
       return;
     }
+
+    setIsLoading(true);
 
     try {
       const pipeline = await window.electronAPI.getPipelineById(
@@ -113,6 +115,8 @@ export default function SimulationSettings({ selectedPipelineId }) {
       
     } catch (error) {
       console.error("❌ Error analyzing pipeline:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -210,14 +214,15 @@ export default function SimulationSettings({ selectedPipelineId }) {
       <div className="mt-auto pt-6">
         <button
           onClick={handleAnalyze}
-          className="w-full bg-red-600 text-white py-3 rounded-md shadow-md font-semibold hover:bg-red-700 transition-colors"
+          disabled={isLoading}
+          className="w-full bg-red-600 text-white py-3 rounded-md shadow-md font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
         >
-          Analyze
+          {isLoading ? (
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+          ) : (
+            "Analyze"
+          )}
         </button>
-        <div className="flex items-center mt-3 space-x-2">
-          <div className="bg-red-600 h-2 w-full rounded-full"></div>
-          <span className="text-sm font-medium">{progress}%</span>
-        </div>
       </div>
     </div>
   );

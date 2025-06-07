@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
   deletePipeline: (id) => ipcRenderer.invoke("deletePipeline", id),
   savePipelineOutput: (id, outputObject) => ipcRenderer.invoke("savePipelineOutput", id, outputObject),
   getPipelineOutput: (id) => ipcRenderer.invoke("getPipelineOutput", id),
+  getPipelineOutputs: () => ipcRenderer.invoke("getPipelineOutputs"),
 }); 

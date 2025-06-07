@@ -12,6 +12,7 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
   const [pipelines, setPipelines] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPipelines, setFilteredPipelines] = useState([]);
+  const [pipelinesWithData, setPipelinesWithData] = useState(new Set());
 
   // Fetch pipelines from SQLite via Electron's IPC – guard for non-Electron environments
   useEffect(() => {
@@ -27,6 +28,21 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
           }));
           setPipelines(formattedPipelines);
           setFilteredPipelines(formattedPipelines);
+
+          // Check which pipelines have output data
+          if (window?.electronAPI?.getPipelineOutputs) {
+            try {
+              const outputs = await window.electronAPI.getPipelineOutputs();
+              const pipelineIdsWithData = new Set(outputs.map(output => output.pipeline_id));
+              setPipelinesWithData(pipelineIdsWithData);
+            } catch (err) {
+              console.error("Failed to load pipeline outputs:", err);
+              setPipelinesWithData(new Set());
+            }
+          } else {
+            console.warn("getPipelineOutputs API unavailable");
+            setPipelinesWithData(new Set());
+          }
         } catch (err) {
           console.error("Failed to load pipelines via Electron IPC:", err);
         }
@@ -35,6 +51,7 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
         console.warn("Electron API unavailable – skipping pipeline fetch.");
         setPipelines([]);
         setFilteredPipelines([]);
+        setPipelinesWithData(new Set());
       }
     };
 
@@ -122,9 +139,13 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
                 <div className="flex justify-end text-xs text-gray-500 mt-2">
                   <div
                     className="mr-4"
-                    onClick={() => handleChartClick(pipeline.id)}
+                    onClick={() => {
+                      if (pipelinesWithData.has(pipeline.id)) {
+                        handleChartClick(pipeline.id);
+                      }
+                    }}
                   >
-                    <ChartIcon />
+                    <ChartIcon disabled={!pipelinesWithData.has(pipeline.id)} />
                   </div>
                   <button onClick={() => handleEditClick(pipeline.id)}>
                     <EditIcon />
