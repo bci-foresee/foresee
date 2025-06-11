@@ -20,8 +20,7 @@ const MODULES = {
         "Number of Samples": { value: 0, unit: "count" },
         "Sampling Frequency": { value: 0, unit: "Hz" },
         "Berger Bands": { value: "", unit: "Hz" },
-        "Enable RTL Simulation": { value: false, type: "boolean" },
-        "Enable RTL Power Estimation": { value: false, type: "boolean" },
+        "Enable RTL Simulation": { value: true, type: "boolean" },
       },
     },
     {
@@ -40,7 +39,7 @@ const MODULES = {
           value: "",
         },
         "Clock Frequency": { value: 0, unit: "MHz" },
-        "Enable RTL Simulation": { type: "boolean" },
+        "Enable RTL Simulation": { value: true, type: "boolean" },
       },
     },
     {
@@ -54,8 +53,7 @@ const MODULES = {
       properties: {
         "Number of Channels": { value: 0, unit: "count" },
         "Clock Frequency": { value: 0, unit: "Hz" },
-        "Enable RTL Simulation": { value: false, type: "boolean" },
-        "Enable RTL Power Estimation": { value: false, type: "boolean" },
+        "Enable RTL Simulation": { value: true, type: "boolean" },
       },
     },
     {
@@ -69,8 +67,7 @@ const MODULES = {
       properties: {
         Weights: { value: "", type: "text" },
         "Clock Frequency": { value: 0, unit: "Hz" },
-        "Enable RTL Simulation": { value: false, type: "boolean" },
-        "Enable RTL Power Estimation": { value: false, type: "boolean" },
+        "Enable RTL Simulation": { value: true, type: "boolean" },
       },
     },
     {
@@ -85,8 +82,7 @@ const MODULES = {
         "Lower Bound": { value: 0, type: "number" },
         "Upper Bound": { value: 0, type: "number" },
         "Clock Frequency": { value: 0, unit: "Hz" },
-        "Enable RTL Simulation": { value: false, type: "boolean" },
-        "Enable RTL Power Estimation": { value: false, type: "boolean" },
+        "Enable RTL Simulation": { value: true, type: "boolean" },
       },
     },
     {
@@ -100,8 +96,7 @@ const MODULES = {
       properties: {
         "Number of Channels": { value: 0, unit: "count" },
         "Clock Frequency": { value: 0, unit: "Hz" },
-        "Enable RTL Simulation": { value: false, type: "boolean" },
-        "Enable RTL Power Estimation": { value: false, type: "boolean" },
+        "Enable RTL Simulation": { value: true, type: "boolean" },
       },
     },
     {
@@ -115,8 +110,7 @@ const MODULES = {
       properties: {
         "Number of Channels": { value: 0, unit: "count" },
         "Clock Frequency": { value: 0, unit: "Hz" },
-        "Enable RTL Simulation": { value: false, type: "boolean" },
-        "Enable RTL Power Estimation": { value: false, type: "boolean" },
+        "Enable RTL Simulation": { value: true, type: "boolean" },
       },
     },
   ],
@@ -169,15 +163,36 @@ const MODULES = {
       },
     },
     {
-      id: "dataset",
-      label: "Input",
-      name: "Dataset",
+      id: "eeg_dataset",
+      label: "EEG Dataset",
+      name: "EEG Dataset",
       inputs: 0,
       outputs: 1,
       icon: "Input",
       nodeType: "input",
       properties: {
-        "File Path": { value: "", type: "text" },
+        "Dataset Path": {
+          value: "",
+          type: "text",
+        },
+        "Info File Path": {
+          value: "",
+          type: "text",
+        },
+        "Window Duration": {
+          value: 4.0,
+          type: "number",
+          unit: "s",
+          min: 0.1,
+          max: 60.0,
+        },
+        "Window Offset": {
+          value: 2.0,
+          type: "number",
+          unit: "s",
+          min: 0.0,
+          max: 30.0,
+        },
       },
     },
   ],
@@ -317,9 +332,6 @@ export function Menu({ label, className, onClick }) {
             {/* Module Details */}
             <div className="flex flex-col flex-1">
               <p className="font-semibold text-sm">{module.name}</p>
-              <p className="text-xs text-gray-600">
-                {module.inputs} inputs / {module.outputs} output
-              </p>
             </div>
           </li>
         ))}

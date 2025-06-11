@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from pipeline_api import run_pipeline
+from run_pipeline import run_pipeline
 import json
 import logging
 
@@ -19,10 +19,22 @@ def run_pipeline_api():
     if request.method == 'OPTIONS':
         return '', 200
     try:
-        pipeline_json = request.get_json(force=True)
+        request_data = request.get_json(force=True)
+        
+        # Extract analysis settings (with defaults)
+        analysis_settings = request_data.pop('analysis_settings', {})
+        run_power_latency = analysis_settings.get('run_power_latency', True)
+        run_accuracy = analysis_settings.get('run_accuracy', True)
+        
+        # The remaining data is the pipeline configuration
+        pipeline_json = request_data
+        
         logging.debug("🧩 Pipeline received: %s", pipeline_json)
+        logging.debug("⚙️ Analysis settings: power_latency=%s, accuracy=%s", run_power_latency, run_accuracy)
 
-        result = run_pipeline(pipeline_json)
+        result = run_pipeline(pipeline_json, 
+                            run_power_latency=run_power_latency,
+                            run_accuracy=run_accuracy)
 
         if isinstance(result, tuple):
             return jsonify(result[0]), result[1]

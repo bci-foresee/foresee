@@ -203,7 +203,7 @@ const pipelines = [
     graph_structure: JSON.stringify({
       nodes: [
         {
-          id: 1,
+          id: "1",
           label: "Input",
           name: "Custom Signal",
           nodeType: "input",
@@ -217,7 +217,7 @@ const pipelines = [
           },
         },
         {
-          id: 2,
+          id: "2",
           label: "TKEO",
           name: "Teager-Kaiser Energy Operator",
           nodeType: "module",
@@ -226,12 +226,11 @@ const pipelines = [
             "Number of Channels": { value: 2, unit: "count" },
             "Clock Frequency": { value: 1000000, unit: "Hz" },
             "Enable RTL Simulation": { value: true, type: "boolean" },
-            "Enable RTL Power Estimation": { value: true, type: "boolean" },
           },
         },
       ],
       edges: [
-        { source: 1, target: 2 },
+        { source: "1", target: "2" },
       ],
     }),
   },
@@ -241,7 +240,7 @@ const pipelines = [
     graph_structure: JSON.stringify({
       nodes: [
         {
-          id: 1,
+          id: "1",
           label: "Input",
           name: "Custom Signal",
           nodeType: "input",
@@ -255,7 +254,7 @@ const pipelines = [
           },
         },
         {
-          id: 2,
+          id: "2",
           label: "TKEO",
           name: "Teager-Kaiser Energy Operator",
           nodeType: "module",
@@ -264,11 +263,10 @@ const pipelines = [
             "Number of Channels": { value: 2, unit: "count" },
             "Clock Frequency": { value: 1000000, unit: "Hz" },
             "Enable RTL Simulation": { value: true, type: "boolean" },
-            "Enable RTL Power Estimation": { value: true, type: "boolean" },
           },
         },
         {
-          id: 3,
+          id: "3",
           label: "AVG",
           name: "Signal Average",
           nodeType: "module",
@@ -277,11 +275,10 @@ const pipelines = [
             "Number of Channels": { value: 2, unit: "count" },
             "Clock Frequency": { value: 1000000, unit: "Hz" },
             "Enable RTL Simulation": { value: true, type: "boolean" },
-            "Enable RTL Power Estimation": { value: true, type: "boolean" },
           },
         },
         {
-          id: 4,
+          id: "4",
           label: "SVM",
           name: "Support Vector Machine",
           nodeType: "module",
@@ -290,11 +287,10 @@ const pipelines = [
             Weights: { value: "[1, 1]", type: "text" },
             "Clock Frequency": { value: 1000000, unit: "Hz" },
             "Enable RTL Simulation": { value: true, type: "boolean" },
-            "Enable RTL Power Estimation": { value: true, type: "boolean" },
           },
         },
         {
-          id: 5,
+          id: "5",
           label: "THR",
           name: "Threshold Detection",
           nodeType: "module",
@@ -304,15 +300,102 @@ const pipelines = [
             "Upper Bound": { value: 9999999, type: "number" },
             "Clock Frequency": { value: 1000000, unit: "Hz" },
             "Enable RTL Simulation": { value: true, type: "boolean" },
-            "Enable RTL Power Estimation": { value: true, type: "boolean" },
           },
         },
       ],
       edges: [
-        { source: 1, target: 2 },
-        { source: 2, target: 3 },
-        { source: 3, target: 4 },
-        { source: 4, target: 5 },
+        { source: "1", target: "2" },
+        { source: "2", target: "3" },
+        { source: "3", target: "4" },
+        { source: "4", target: "5" },
+      ],
+    }),
+  },
+  {
+    name: "Custom Patient Pipeline",
+    description: "EEG seizure detection pipeline using mock patient dataset with TKEO, AVG, SVM, and THR processing.",
+    graph_structure: JSON.stringify({
+      nodes: [
+        {
+          id: "eeg_input_1",
+          label: "EEG Dataset",
+          name: "Patient EEG Data",
+          nodeType: "input",
+          position: { x: 100, y: 100 },
+          properties: {
+            "Dataset Path": { 
+              value: "/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat", 
+              type: "text" 
+            },
+            "Info File Path": { 
+              value: "/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat", 
+              type: "text" 
+            },
+            "Window Duration": { 
+              value: 16.0, 
+              type: "number" 
+            },
+            "Window Offset": { 
+              value: 8.0, 
+              type: "number" 
+            },
+          },
+        },
+        {
+          id: "tkeo_1",
+          label: "TKEO",
+          name: "Teager-Kaiser Energy Operator",
+          nodeType: "module",
+          position: { x: 400, y: 100 },
+          properties: {
+            "Number of Channels": { value: 2, unit: "count" },
+            "Clock Frequency": { value: 100, unit: "Hz" },
+            "Enable RTL Simulation": { value: false, type: "boolean" },
+          },
+        },
+        {
+          id: "avg_1",
+          label: "AVG",
+          name: "Signal Average",
+          nodeType: "module",
+          position: { x: 700, y: 100 },
+          properties: {
+            "Number of Channels": { value: 2, unit: "count" },
+            "Clock Frequency": { value: 100, unit: "Hz" },
+            "Enable RTL Simulation": { value: false, type: "boolean" },
+          },
+        },
+        {
+          id: "svm_1",
+          label: "SVM",
+          name: "Support Vector Machine",
+          nodeType: "module",
+          position: { x: 1000, y: 100 },
+          properties: {
+            Weights: { value: "[1.0, 1.0]", type: "text" },
+            "Clock Frequency": { value: 100, unit: "Hz" },
+            "Enable RTL Simulation": { value: false, type: "boolean" },
+          },
+        },
+        {
+          id: "thr_1",
+          label: "THR",
+          name: "Threshold Detection",
+          nodeType: "module",
+          position: { x: 1300, y: 100 },
+          properties: {
+            "Lower Bound": { value: 0, type: "number" },
+            "Upper Bound": { value: 10, type: "number" },
+            "Clock Frequency": { value: 100, unit: "Hz" },
+            "Enable RTL Simulation": { value: false, type: "boolean" },
+          },
+        },
+      ],
+      edges: [
+        { source: "eeg_input_1", target: "tkeo_1" },
+        { source: "tkeo_1", target: "avg_1" },
+        { source: "avg_1", target: "svm_1" },
+        { source: "svm_1", target: "thr_1" },
       ],
     }),
   },

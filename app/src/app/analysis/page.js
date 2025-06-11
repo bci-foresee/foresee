@@ -42,7 +42,7 @@ function AnalysisContent() {
       // Get stored output data from database instead of running backend
       const outputData = await window.electronAPI.getPipelineOutput(pipelineId);
       if (outputData) {
-        setAnalysisResults({ output_data: outputData });
+        setAnalysisResults(outputData);
         console.log("✅ Loaded pipeline output from database:", outputData);
       } else {
         console.log("⚠️ No stored output data found for pipeline:", pipelineId);
@@ -67,7 +67,7 @@ function AnalysisContent() {
     // Get stored output data for comparison pipeline
     window.electronAPI.getPipelineOutput(comparisonPipeline.id).then((outputData) => {
       if (outputData) {
-        setComparisonResults({ output_data: outputData });
+        setComparisonResults(outputData);
         console.log("✅ Loaded comparison pipeline output from database:", outputData);
       } else {
         console.log("⚠️ No stored output data found for comparison pipeline:", comparisonPipeline.id);
@@ -132,9 +132,11 @@ function AnalysisContent() {
   const pipelineMetrics = {
     Power: analysisResults ? `${totalPowerCurrent.toFixed(6)} mW` : "--",
     Latency: analysisResults ? `${totalLatencyCurrent.toFixed(2)} ns` : "--",
-    Accuracy: "-- %", // TODO: wire up when available
-    "Simulation Time": analysisResults && analysisResults.output_data.simulation_time 
-      ? `${analysisResults.output_data.simulation_time.toFixed(3)} s` 
+    Accuracy: analysisResults && analysisResults.accuracy
+      ? `${(analysisResults.accuracy.accuracy * 100).toFixed(2)} %`
+      : "-- %",
+    "Simulation Time": analysisResults && analysisResults.simulation_time 
+      ? `${analysisResults.simulation_time.toFixed(3)} s` 
       : "-- s",
   };
 
@@ -163,11 +165,15 @@ function AnalysisContent() {
     accuracy: [
       {
         name: pipeline?.name || "Current Pipeline",
-        Accuracy: 95,
+        Accuracy: analysisResults && analysisResults.accuracy
+          ? (analysisResults.accuracy.accuracy * 100)
+          : 0,
       },
       {
         name: comparisonPipeline?.name || "Comparison Pipeline",
-        Accuracy: 92,
+        Accuracy: comparisonResults && comparisonResults.accuracy
+          ? (comparisonResults.accuracy.accuracy * 100)
+          : 0,
       },
     ],
   };

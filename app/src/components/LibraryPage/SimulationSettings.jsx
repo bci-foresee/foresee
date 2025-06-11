@@ -4,12 +4,9 @@ import { SettingsIcon } from "../Icons/icons";
 
 export default function SimulationSettings({ selectedPipelineId, onAnalysisComplete }) {
   const [selectedOptions, setSelectedOptions] = useState({
-    mainAccuracy: true,
-    hardwareAccuracy: true,
-    latency: true,
-    power: true,
+    accuracy: true,
+    hardwareAnalysis: true,
   });
-  const [runs, setRuns] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [errorModal, setErrorModal] = useState({ show: false, message: "" });
   const abortControllerRef = useRef(null);
@@ -19,28 +16,6 @@ export default function SimulationSettings({ selectedPipelineId, onAnalysisCompl
       ...prev,
       [option]: !prev[option],
     }));
-  };
-
-  const toggleHardwareAnalysis = () => {
-    const currentState = Object.values({
-      hardwareAccuracy: selectedOptions.hardwareAccuracy,
-      latency: selectedOptions.latency,
-      power: selectedOptions.power,
-    }).some((value) => value);
-    setSelectedOptions((prev) => ({
-      ...prev,
-      hardwareAccuracy: !currentState,
-      latency: !currentState,
-      power: !currentState,
-    }));
-  };
-
-  const isHardwareAnalysisEnabled = () => {
-    return (
-      selectedOptions.hardwareAccuracy ||
-      selectedOptions.latency ||
-      selectedOptions.power
-    );
   };
 
   const handleAnalyze = async () => {
@@ -100,7 +75,16 @@ export default function SimulationSettings({ selectedPipelineId, onAnalysisCompl
       // Record start time for API response timing
       const startTime = performance.now();
 
-      // console.log("📦 Sending to backend:", parsedGraphData);
+      // Prepare the request payload with analysis settings
+      const requestPayload = {
+        ...parsedGraphData,
+        analysis_settings: {
+          run_accuracy: selectedOptions.accuracy,
+          run_power_latency: selectedOptions.hardwareAnalysis,
+        }
+      };
+
+      // console.log("📦 Sending to backend:", requestPayload);
       const response = await fetch("http://localhost:5001/run-pipeline", {
         method: "POST",
         headers: {
@@ -109,7 +93,7 @@ export default function SimulationSettings({ selectedPipelineId, onAnalysisCompl
         },
         mode: "cors",
         credentials: "same-origin",
-        body: JSON.stringify(parsedGraphData),
+        body: JSON.stringify(requestPayload),
         signal: abortController.signal, // Add abort signal to fetch
       });
 
@@ -131,16 +115,16 @@ export default function SimulationSettings({ selectedPipelineId, onAnalysisCompl
       console.log("🧠 Flask pipeline result:", result);
       console.log(`⏱️ API response time: ${simulationTime.toFixed(3)} seconds`);
 
-      // Save the output data to the pipeline_output table
-      if (result.output_data) {
+      // Save the complete result to the pipeline_output table
+      if (result) {
         // Add timing information to the result
-        const outputWithTiming = {
-          ...result.output_data,
+        const completeResult = {
+          ...result,
           simulation_time: simulationTime
         };
         
-        await window.electronAPI.savePipelineOutput(selectedPipelineId, outputWithTiming);
-        console.log("✅ Pipeline output saved to database");
+        await window.electronAPI.savePipelineOutput(selectedPipelineId, completeResult);
+        console.log("✅ Complete pipeline result saved to database");
         
         // Notify parent that analysis completed successfully
         if (onAnalysisComplete) {
@@ -189,79 +173,38 @@ export default function SimulationSettings({ selectedPipelineId, onAnalysisCompl
 
         {/* Options */}
         <div className="flex flex-col space-y-6">
-          {/* Main Accuracy */}
+          {/* Accuracy */}
           <div className="flex items-center justify-between w-full bg-gray-50 p-3 rounded-lg border border-gray-200">
             <div
               className="flex-1 px-3 py-1 mr-4 text-left border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => toggleOption("mainAccuracy")}
+              onClick={() => toggleOption("accuracy")}
             >
               Accuracy
             </div>
             <div className="w-12 flex justify-center">
               <input
                 type="checkbox"
-                checked={selectedOptions.mainAccuracy}
-                onChange={() => toggleOption("mainAccuracy")}
+                checked={selectedOptions.accuracy}
+                onChange={() => toggleOption("accuracy")}
                 className="h-5 w-5 border-gray-400 rounded-md focus:ring-0 checked:bg-red-600 checked:border-red-600 accent-red-500"
               />
             </div>
           </div>
 
-          {/* Hardware Analysis Parent */}
+          {/* Hardware Analysis */}
           <div className="flex items-center justify-between w-full bg-gray-50 p-3 rounded-lg border border-gray-200">
             <div
               className="flex-1 px-3 py-1 mr-4 text-left border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={toggleHardwareAnalysis}
+              onClick={() => toggleOption("hardwareAnalysis")}
             >
               Hardware Analysis
             </div>
             <div className="w-12 flex justify-center">
               <input
                 type="checkbox"
-                checked={isHardwareAnalysisEnabled()}
-                onChange={toggleHardwareAnalysis}
+                checked={selectedOptions.hardwareAnalysis}
+                onChange={() => toggleOption("hardwareAnalysis")}
                 className="h-5 w-5 border-gray-400 rounded-md focus:ring-0 checked:bg-red-600 checked:border-red-600 accent-red-500"
-              />
-            </div>
-          </div>
-
-          {/* Nested Hardware Options */}
-          <div className="ml-6 flex flex-col space-y-3 border-l-2 border-gray-200 pl-6">
-            {[
-              { label: "Accuracy", key: "hardwareAccuracy" },
-              { label: "Latency", key: "latency" },
-              { label: "Power", key: "power" },
-            ].map(({ label, key }) => (
-              <div key={key} className="flex items-center justify-between w-full">
-                <div
-                  className="flex-1 px-3 py-1 mr-4 text-left border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium cursor-pointer hover:bg-gray-50 transition-colors"
-                  onClick={() => toggleOption(key)}
-                >
-                  {label}
-                </div>
-                <div className="w-18 flex justify-center">
-                  <input
-                    type="checkbox"
-                    checked={selectedOptions[key]}
-                    onChange={() => toggleOption(key)}
-                    className="h-5 w-5 border-gray-400 rounded-md focus:ring-0 checked:bg-red-600 checked:border-red-600 accent-red-500"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Runs Input */}
-          <div className="flex items-center justify-between w-full bg-gray-50 p-3 rounded-lg border border-gray-200">
-            <div className="flex-1 px-3 py-1 mr-4 text-left border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium">
-              Runs
-            </div>
-            <div className="w-12 flex justify-center">
-              <input
-                type="number"
-                value={runs}
-                onChange={(e) => setRuns(parseInt(e.target.value, 10))}
-                className="h-8 w-12 text-center border border-gray-300 rounded-md p-1 text-sm focus:ring-1 focus:ring-red-500 focus:border-red-500"
               />
             </div>
           </div>

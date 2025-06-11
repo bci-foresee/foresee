@@ -49,19 +49,6 @@ export function RightSidebar({ node, updateNodeProperty, onClose, saveData }) {
     }
   };
 
-  // Handle RTL simulation/power estimation dependency
-  useEffect(() => {
-    if (localProperties["Enable RTL Simulation"]?.value === false) {
-      setLocalProperties((prev) => ({
-        ...prev,
-        "Enable RTL Power Estimation": {
-          ...prev["Enable RTL Power Estimation"],
-          value: false,
-        },
-      }));
-    }
-  }, [localProperties["Enable RTL Simulation"]?.value]);
-
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isResizing.current) {

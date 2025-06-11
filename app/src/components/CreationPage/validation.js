@@ -79,9 +79,7 @@ export const PROPERTY_VALIDATIONS = {
   // ✅ Boolean values
   "Enable RTL Simulation": {
     type: "boolean",
-  },
-  "Enable RTL Power Estimation": {
-    type: "boolean",
+    errorMessage: "Must be true or false",
   },
 
   // ✅ Text-based values
@@ -90,6 +88,33 @@ export const PROPERTY_VALIDATIONS = {
     regex: /^(\/?[\w\-. ]+)+\.\w{2,4}$/,
     errorMessage: "Must be a valid file path (e.g., /data/file.txt)",
   },
+  
+  // ✅ EEG Dataset properties
+  "Dataset Path": {
+    type: "text",
+    regex: /^(\/?[\w\-. ]+)+\.mat$/,
+    errorMessage: "Must be a valid .mat file path (e.g., /data/eeg_data.mat)",
+  },
+  "Info File Path": {
+    type: "text", 
+    regex: /^(\/?[\w\-. ]+)+\.mat$/,
+    errorMessage: "Must be a valid .mat file path (e.g., /data/eeg_info.mat)",
+  },
+  "Window Duration": {
+    type: "number",
+    min: 0.1,
+    max: 60.0,
+    unit: "s",
+    errorMessage: "Must be between 0.1 and 60.0 seconds",
+  },
+  "Window Offset": {
+    type: "number",
+    min: 0.0,
+    max: 30.0,
+    unit: "s",
+    errorMessage: "Must be between 0.0 and window duration seconds (up to 30.0s max)",
+  },
+  
   "Storage Type": {
     type: "dropdown",
     allowedValues: [

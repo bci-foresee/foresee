@@ -54,10 +54,6 @@
                     "value": true,
                     "unit": "boolean"
                 },
-                "Enable RTL Power Estimation": {
-                    "value": true,
-                    "unit": "boolean"
-                },
                 "Save Visualization": {
                     "value": false,
                     "unit": "boolean"

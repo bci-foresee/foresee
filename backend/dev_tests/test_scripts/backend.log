@@ -1,0 +1,918 @@
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 2.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+ERROR:root:Failed to create node eeg_input_1: Error creating EEG dataset input node eeg_input_1: Window offset must be between 0 and window duration (2.0), got 2.0
+ERROR:root:Pipeline generation failed: Error creating EEG dataset input node eeg_input_1: Window offset must be between 0 and window duration (2.0), got 2.0
+ERROR:root:Failed to generate pipeline: Error creating EEG dataset input node eeg_input_1: Window offset must be between 0 and window duration (2.0), got 2.0
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 4.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=4.0s, overlap=0.5
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 29 windows of 4.0s each
+DEBUG:root:Window labels: 4 seizure windows out of 29 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 0.9310
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.9310344827586207), 'individual_accuracies': {'svm_1': 0.9310344827586207}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 29, 'window_duration': 4.0, 'overlap_ratio': 0.5, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 29 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 6.0}, 'Window Offset': {'value': 1.5}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=6.0s, overlap=0.75
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 37 windows of 6.0s each
+DEBUG:root:Window labels: 6 seizure windows out of 37 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 0.8919
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.8918918918918919), 'individual_accuracies': {'svm_1': 0.8918918918918919}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 37, 'window_duration': 6.0, 'overlap_ratio': 0.75, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 37 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 1.0}, 'Window Offset': {'value': 0.75}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=1.0s, overlap=0.25
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 79 windows of 1.0s each
+DEBUG:root:Window labels: 13 seizure windows out of 79 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 0.9873
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.9873417721518988), 'individual_accuracies': {'svm_1': 0.9873417721518988}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 79, 'window_duration': 1.0, 'overlap_ratio': 0.25, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 79 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 2.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=2.0s, overlap=0.0
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 30 windows of 2.0s each
+DEBUG:root:Window labels: 5 seizure windows out of 30 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 1.0000
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(1.0), 'individual_accuracies': {'svm_1': 1.0}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 30, 'window_duration': 2.0, 'overlap_ratio': 0.0, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 30 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 4.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=4.0s, overlap=0.5
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 29 windows of 4.0s each
+DEBUG:root:Window labels: 4 seizure windows out of 29 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 0.9310
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.9310344827586207), 'individual_accuracies': {'svm_1': 0.9310344827586207}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 29, 'window_duration': 4.0, 'overlap_ratio': 0.5, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 29 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 6.0}, 'Window Offset': {'value': 1.5}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=6.0s, overlap=0.75
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 37 windows of 6.0s each
+DEBUG:root:Window labels: 6 seizure windows out of 37 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 0.8919
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.8918918918918919), 'individual_accuracies': {'svm_1': 0.8918918918918919}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 37, 'window_duration': 6.0, 'overlap_ratio': 0.75, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 37 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 1.0}, 'Window Offset': {'value': 0.75}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=1.0s, overlap=0.25
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 79 windows of 1.0s each
+DEBUG:root:Window labels: 13 seizure windows out of 79 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 0.9873
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.9873417721518988), 'individual_accuracies': {'svm_1': 0.9873417721518988}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 79, 'window_duration': 1.0, 'overlap_ratio': 0.25, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 79 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 2.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=2.0s, overlap=0.0
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 30 windows of 2.0s each
+DEBUG:root:Window labels: 5 seizure windows out of 30 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 1.0000
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(1.0), 'individual_accuracies': {'svm_1': 1.0}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 30, 'window_duration': 2.0, 'overlap_ratio': 0.0, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 30 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 4.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=4.0s, overlap=0.5
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 29 windows of 4.0s each
+DEBUG:root:Window labels: 4 seizure windows out of 29 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 0.9310
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.9310344827586207), 'individual_accuracies': {'svm_1': 0.9310344827586207}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 29, 'window_duration': 4.0, 'overlap_ratio': 0.5, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 29 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 6.0}, 'Window Offset': {'value': 1.5}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=6.0s, overlap=0.75
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 37 windows of 6.0s each
+DEBUG:root:Window labels: 6 seizure windows out of 37 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 0.8919
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.8918918918918919), 'individual_accuracies': {'svm_1': 0.8918918918918919}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 37, 'window_duration': 6.0, 'overlap_ratio': 0.75, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 37 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 1.0}, 'Window Offset': {'value': 0.75}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=1.0s, overlap=0.25
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 79 windows of 1.0s each
+DEBUG:root:Window labels: 13 seizure windows out of 79 total
+DEBUG:root:SVM node svm_1 window-wise accuracy: 0.9873
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.9873417721518988), 'individual_accuracies': {'svm_1': 0.9873417721518988}, 'predictions': {'svm_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 79, 'window_duration': 1.0, 'overlap_ratio': 0.25, 'message': 'Computed windowed accuracy from 1 terminal SVM node(s) using 79 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 4.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'thr_1', 'nodeType': 'module', 'label': 'THR', 'properties': {'Lower Bound': {'value': 0}, 'Upper Bound': {'value': 10}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}, {'source': 'svm_1', 'target': 'thr_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=4.0s, overlap=0.5
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node thr_1: THR (module)
+DEBUG:root:THR properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Connected svm_1 -> thr_1
+DEBUG:root:Created 6 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Running PE thr_1: THR
+DEBUG:root:Successfully ran PE thr_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 29 windows of 4.0s each
+DEBUG:root:Window labels: 4 seizure windows out of 29 total
+WARNING:root:Failed to process window 0: 'thr_1'
+WARNING:root:Failed to process window 1: 'thr_1'
+WARNING:root:Failed to process window 2: 'thr_1'
+WARNING:root:Failed to process window 3: 'thr_1'
+WARNING:root:Failed to process window 4: 'thr_1'
+WARNING:root:Failed to process window 5: 'thr_1'
+WARNING:root:Failed to process window 6: 'thr_1'
+WARNING:root:Failed to process window 7: 'thr_1'
+WARNING:root:Failed to process window 8: 'thr_1'
+WARNING:root:Failed to process window 9: 'thr_1'
+WARNING:root:Failed to process window 10: 'thr_1'
+WARNING:root:Failed to process window 11: 'thr_1'
+WARNING:root:Failed to process window 12: 'thr_1'
+WARNING:root:Failed to process window 13: 'thr_1'
+WARNING:root:Failed to process window 14: 'thr_1'
+WARNING:root:Failed to process window 15: 'thr_1'
+WARNING:root:Failed to process window 16: 'thr_1'
+WARNING:root:Failed to process window 17: 'thr_1'
+WARNING:root:Failed to process window 18: 'thr_1'
+WARNING:root:Failed to process window 19: 'thr_1'
+WARNING:root:Failed to process window 20: 'thr_1'
+WARNING:root:Failed to process window 21: 'thr_1'
+WARNING:root:Failed to process window 22: 'thr_1'
+WARNING:root:Failed to process window 23: 'thr_1'
+WARNING:root:Failed to process window 24: 'thr_1'
+WARNING:root:Failed to process window 25: 'thr_1'
+WARNING:root:Failed to process window 26: 'thr_1'
+WARNING:root:Failed to process window 27: 'thr_1'
+WARNING:root:Failed to process window 28: 'thr_1'
+DEBUG:root:THR node thr_1 window-wise accuracy: 0.8621
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.8620689655172413), 'individual_accuracies': {'thr_1': 0.8620689655172413}, 'predictions': {'thr_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 29, 'window_duration': 4.0, 'overlap_ratio': 0.5, 'message': 'Computed windowed accuracy from 1 terminal THR node(s) using 29 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'input_1', 'nodeType': 'input', 'label': 'Input', 'properties': {'Frequencies': {'value': '10, 20'}, 'Amplitudes': {'value': '5, 3'}, 'Sampling Frequency': {'value': 400}, 'Number of Channels': {'value': 1}, 'Number of Samples': {'value': 100}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 1}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [0.5]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'thr_1', 'nodeType': 'module', 'label': 'THR', 'properties': {'Lower Bound': {'value': 0}, 'Upper Bound': {'value': 10}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}], 'edges': [{'source': 'input_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}, {'source': 'svm_1', 'target': 'thr_1'}]}
+DEBUG:root:Processing node input_1: Input (input)
+DEBUG:root:Frequencies: 10, 20, type: <class 'str'>
+DEBUG:root:Amplitudes: 5, 3, type: <class 'str'>
+DEBUG:root:input_signal: [10, 20], [5, 3], 400, 1, 100
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node thr_1: THR (module)
+DEBUG:root:THR properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Connected input_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Connected svm_1 -> thr_1
+DEBUG:root:Created 4 processing elements
+DEBUG:root:Running PE input_1: Input PE
+DEBUG:root:Successfully ran PE input_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Running PE thr_1: THR
+DEBUG:root:Successfully ran PE thr_1
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 2.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=2.0s, overlap=0.0
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:No terminal THR nodes found, returning default accuracy
+DEBUG:root:Accuracy computation result: {'accuracy': 1.0, 'message': 'No terminal THR found, defaulting to 100% accuracy'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 4.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=4.0s, overlap=0.5
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:No terminal THR nodes found, returning default accuracy
+DEBUG:root:Accuracy computation result: {'accuracy': 1.0, 'message': 'No terminal THR found, defaulting to 100% accuracy'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 6.0}, 'Window Offset': {'value': 1.5}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=6.0s, overlap=0.75
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:No terminal THR nodes found, returning default accuracy
+DEBUG:root:Accuracy computation result: {'accuracy': 1.0, 'message': 'No terminal THR found, defaulting to 100% accuracy'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 1.0}, 'Window Offset': {'value': 0.75}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}, 'Enable RTL Power Estimation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=1.0s, overlap=0.25
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Created 5 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:No terminal THR nodes found, returning default accuracy
+DEBUG:root:Accuracy computation result: {'accuracy': 1.0, 'message': 'No terminal THR found, defaulting to 100% accuracy'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 2.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'thr_1', 'nodeType': 'module', 'label': 'THR', 'properties': {'Lower Bound': {'value': 0}, 'Upper Bound': {'value': 10}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}, {'source': 'svm_1', 'target': 'thr_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=2.0s, overlap=0.0
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node thr_1: THR (module)
+DEBUG:root:THR properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Connected svm_1 -> thr_1
+DEBUG:root:Created 6 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Running PE thr_1: THR
+DEBUG:root:Successfully ran PE thr_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 30 windows of 2.0s each
+DEBUG:root:Window labels: 5 seizure windows out of 30 total
+WARNING:root:Failed to process window 0: 'thr_1'
+WARNING:root:Failed to process window 1: 'thr_1'
+WARNING:root:Failed to process window 2: 'thr_1'
+WARNING:root:Failed to process window 3: 'thr_1'
+WARNING:root:Failed to process window 4: 'thr_1'
+WARNING:root:Failed to process window 5: 'thr_1'
+WARNING:root:Failed to process window 6: 'thr_1'
+WARNING:root:Failed to process window 7: 'thr_1'
+WARNING:root:Failed to process window 8: 'thr_1'
+WARNING:root:Failed to process window 9: 'thr_1'
+WARNING:root:Failed to process window 10: 'thr_1'
+WARNING:root:Failed to process window 11: 'thr_1'
+WARNING:root:Failed to process window 12: 'thr_1'
+WARNING:root:Failed to process window 13: 'thr_1'
+WARNING:root:Failed to process window 14: 'thr_1'
+WARNING:root:Failed to process window 15: 'thr_1'
+WARNING:root:Failed to process window 16: 'thr_1'
+WARNING:root:Failed to process window 17: 'thr_1'
+WARNING:root:Failed to process window 18: 'thr_1'
+WARNING:root:Failed to process window 19: 'thr_1'
+WARNING:root:Failed to process window 20: 'thr_1'
+WARNING:root:Failed to process window 21: 'thr_1'
+WARNING:root:Failed to process window 22: 'thr_1'
+WARNING:root:Failed to process window 23: 'thr_1'
+WARNING:root:Failed to process window 24: 'thr_1'
+WARNING:root:Failed to process window 25: 'thr_1'
+WARNING:root:Failed to process window 26: 'thr_1'
+WARNING:root:Failed to process window 27: 'thr_1'
+WARNING:root:Failed to process window 28: 'thr_1'
+WARNING:root:Failed to process window 29: 'thr_1'
+DEBUG:root:THR node thr_1 window-wise accuracy: 0.8333
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.8333333333333334), 'individual_accuracies': {'thr_1': 0.8333333333333334}, 'predictions': {'thr_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 30, 'window_duration': 2.0, 'overlap_ratio': 0.0, 'message': 'Computed windowed accuracy from 1 terminal THR node(s) using 30 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 4.0}, 'Window Offset': {'value': 2.0}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'thr_1', 'nodeType': 'module', 'label': 'THR', 'properties': {'Lower Bound': {'value': 0}, 'Upper Bound': {'value': 10}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}, {'source': 'svm_1', 'target': 'thr_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=4.0s, overlap=0.5
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node thr_1: THR (module)
+DEBUG:root:THR properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Connected svm_1 -> thr_1
+DEBUG:root:Created 6 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Running PE thr_1: THR
+DEBUG:root:Successfully ran PE thr_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 29 windows of 4.0s each
+DEBUG:root:Window labels: 4 seizure windows out of 29 total
+WARNING:root:Failed to process window 0: 'thr_1'
+WARNING:root:Failed to process window 1: 'thr_1'
+WARNING:root:Failed to process window 2: 'thr_1'
+WARNING:root:Failed to process window 3: 'thr_1'
+WARNING:root:Failed to process window 4: 'thr_1'
+WARNING:root:Failed to process window 5: 'thr_1'
+WARNING:root:Failed to process window 6: 'thr_1'
+WARNING:root:Failed to process window 7: 'thr_1'
+WARNING:root:Failed to process window 8: 'thr_1'
+WARNING:root:Failed to process window 9: 'thr_1'
+WARNING:root:Failed to process window 10: 'thr_1'
+WARNING:root:Failed to process window 11: 'thr_1'
+WARNING:root:Failed to process window 12: 'thr_1'
+WARNING:root:Failed to process window 13: 'thr_1'
+WARNING:root:Failed to process window 14: 'thr_1'
+WARNING:root:Failed to process window 15: 'thr_1'
+WARNING:root:Failed to process window 16: 'thr_1'
+WARNING:root:Failed to process window 17: 'thr_1'
+WARNING:root:Failed to process window 18: 'thr_1'
+WARNING:root:Failed to process window 19: 'thr_1'
+WARNING:root:Failed to process window 20: 'thr_1'
+WARNING:root:Failed to process window 21: 'thr_1'
+WARNING:root:Failed to process window 22: 'thr_1'
+WARNING:root:Failed to process window 23: 'thr_1'
+WARNING:root:Failed to process window 24: 'thr_1'
+WARNING:root:Failed to process window 25: 'thr_1'
+WARNING:root:Failed to process window 26: 'thr_1'
+WARNING:root:Failed to process window 27: 'thr_1'
+WARNING:root:Failed to process window 28: 'thr_1'
+DEBUG:root:THR node thr_1 window-wise accuracy: 0.8621
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.8620689655172413), 'individual_accuracies': {'thr_1': 0.8620689655172413}, 'predictions': {'thr_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 29, 'window_duration': 4.0, 'overlap_ratio': 0.5, 'message': 'Computed windowed accuracy from 1 terminal THR node(s) using 29 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 6.0}, 'Window Offset': {'value': 1.5}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'thr_1', 'nodeType': 'module', 'label': 'THR', 'properties': {'Lower Bound': {'value': 0}, 'Upper Bound': {'value': 10}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}, {'source': 'svm_1', 'target': 'thr_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=6.0s, overlap=0.75
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node thr_1: THR (module)
+DEBUG:root:THR properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Connected svm_1 -> thr_1
+DEBUG:root:Created 6 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Running PE thr_1: THR
+DEBUG:root:Successfully ran PE thr_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 37 windows of 6.0s each
+DEBUG:root:Window labels: 6 seizure windows out of 37 total
+WARNING:root:Failed to process window 0: 'thr_1'
+WARNING:root:Failed to process window 1: 'thr_1'
+WARNING:root:Failed to process window 2: 'thr_1'
+WARNING:root:Failed to process window 3: 'thr_1'
+WARNING:root:Failed to process window 4: 'thr_1'
+WARNING:root:Failed to process window 5: 'thr_1'
+WARNING:root:Failed to process window 6: 'thr_1'
+WARNING:root:Failed to process window 7: 'thr_1'
+WARNING:root:Failed to process window 8: 'thr_1'
+WARNING:root:Failed to process window 9: 'thr_1'
+WARNING:root:Failed to process window 10: 'thr_1'
+WARNING:root:Failed to process window 11: 'thr_1'
+WARNING:root:Failed to process window 12: 'thr_1'
+WARNING:root:Failed to process window 13: 'thr_1'
+WARNING:root:Failed to process window 14: 'thr_1'
+WARNING:root:Failed to process window 15: 'thr_1'
+WARNING:root:Failed to process window 16: 'thr_1'
+WARNING:root:Failed to process window 17: 'thr_1'
+WARNING:root:Failed to process window 18: 'thr_1'
+WARNING:root:Failed to process window 19: 'thr_1'
+WARNING:root:Failed to process window 20: 'thr_1'
+WARNING:root:Failed to process window 21: 'thr_1'
+WARNING:root:Failed to process window 22: 'thr_1'
+WARNING:root:Failed to process window 23: 'thr_1'
+WARNING:root:Failed to process window 24: 'thr_1'
+WARNING:root:Failed to process window 25: 'thr_1'
+WARNING:root:Failed to process window 26: 'thr_1'
+WARNING:root:Failed to process window 27: 'thr_1'
+WARNING:root:Failed to process window 28: 'thr_1'
+WARNING:root:Failed to process window 29: 'thr_1'
+WARNING:root:Failed to process window 30: 'thr_1'
+WARNING:root:Failed to process window 31: 'thr_1'
+WARNING:root:Failed to process window 32: 'thr_1'
+WARNING:root:Failed to process window 33: 'thr_1'
+WARNING:root:Failed to process window 34: 'thr_1'
+WARNING:root:Failed to process window 35: 'thr_1'
+WARNING:root:Failed to process window 36: 'thr_1'
+DEBUG:root:THR node thr_1 window-wise accuracy: 0.8378
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.8378378378378378), 'individual_accuracies': {'thr_1': 0.8378378378378378}, 'predictions': {'thr_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 37, 'window_duration': 6.0, 'overlap_ratio': 0.75, 'message': 'Computed windowed accuracy from 1 terminal THR node(s) using 37 windows'}
+INFO:root:Pipeline executed successfully
+DEBUG:root:Parsed pipeline data: {'nodes': [{'id': 'eeg_input_1', 'nodeType': 'input', 'label': 'EEG Dataset', 'properties': {'Dataset Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat'}, 'Info File Path': {'value': '/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat'}, 'Window Duration': {'value': 1.0}, 'Window Offset': {'value': 0.75}}}, {'id': 'tkeo_1', 'nodeType': 'module', 'label': 'TKEO', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'avg_1', 'nodeType': 'module', 'label': 'AVG', 'properties': {'Number of Channels': {'value': 2}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'svm_1', 'nodeType': 'module', 'label': 'SVM', 'properties': {'Weights': {'value': [1.0, 1.0]}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}, {'id': 'thr_1', 'nodeType': 'module', 'label': 'THR', 'properties': {'Lower Bound': {'value': 0}, 'Upper Bound': {'value': 10}, 'Clock Frequency': {'value': 100}, 'Enable RTL Simulation': {'value': False}}}], 'edges': [{'source': 'eeg_input_1', 'target': 'tkeo_1'}, {'source': 'tkeo_1', 'target': 'avg_1'}, {'source': 'avg_1', 'target': 'svm_1'}, {'source': 'svm_1', 'target': 'thr_1'}]}
+DEBUG:root:Processing node eeg_input_1: EEG Dataset (input)
+DEBUG:root:Loaded info: fs=512, seizures=1
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:EEG dataset loaded: shape=(2, 30720), fs=512
+DEBUG:root:Windowing params: duration=1.0s, overlap=0.25
+DEBUG:root:Processing node tkeo_1: TKEO (module)
+DEBUG:root:TKEO properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:TKEO properties: 2, 100, False, False, False
+DEBUG:root:Processing node avg_1: AVG (module)
+DEBUG:root:AVG properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node svm_1: SVM (module)
+DEBUG:root:SVM properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Processing node thr_1: THR (module)
+DEBUG:root:THR properties: rtl_sim=False, rtl_power=False, clk=100 (user_rtl_sim=False, run_power_latency=True)
+DEBUG:root:Connected eeg_input_1 -> tkeo_1
+DEBUG:root:Connected tkeo_1 -> avg_1
+DEBUG:root:Connected avg_1 -> svm_1
+DEBUG:root:Connected svm_1 -> thr_1
+DEBUG:root:Created 6 processing elements
+DEBUG:root:Running PE eeg_input_1: Input PE
+DEBUG:root:Successfully ran PE eeg_input_1
+DEBUG:root:Running PE tkeo_1: TKEO
+DEBUG:root:Successfully ran PE tkeo_1
+DEBUG:root:Running PE avg_1: AVG
+DEBUG:root:Successfully ran PE avg_1
+DEBUG:root:Running PE svm_1: SVM
+DEBUG:root:Successfully ran PE svm_1
+DEBUG:root:Running PE thr_1: THR
+DEBUG:root:Successfully ran PE thr_1
+DEBUG:root:Found 1 dataset loader(s), computing accuracy
+DEBUG:root:Loaded dataset shape: (2, 30720)
+DEBUG:root:Generated 79 windows of 1.0s each
+DEBUG:root:Window labels: 13 seizure windows out of 79 total
+WARNING:root:Failed to process window 0: 'thr_1'
+WARNING:root:Failed to process window 1: 'thr_1'
+WARNING:root:Failed to process window 2: 'thr_1'
+WARNING:root:Failed to process window 3: 'thr_1'
+WARNING:root:Failed to process window 4: 'thr_1'
+WARNING:root:Failed to process window 5: 'thr_1'
+WARNING:root:Failed to process window 6: 'thr_1'
+WARNING:root:Failed to process window 7: 'thr_1'
+WARNING:root:Failed to process window 8: 'thr_1'
+WARNING:root:Failed to process window 9: 'thr_1'
+WARNING:root:Failed to process window 10: 'thr_1'
+WARNING:root:Failed to process window 11: 'thr_1'
+WARNING:root:Failed to process window 12: 'thr_1'
+WARNING:root:Failed to process window 13: 'thr_1'
+WARNING:root:Failed to process window 14: 'thr_1'
+WARNING:root:Failed to process window 15: 'thr_1'
+WARNING:root:Failed to process window 16: 'thr_1'
+WARNING:root:Failed to process window 17: 'thr_1'
+WARNING:root:Failed to process window 18: 'thr_1'
+WARNING:root:Failed to process window 19: 'thr_1'
+WARNING:root:Failed to process window 20: 'thr_1'
+WARNING:root:Failed to process window 21: 'thr_1'
+WARNING:root:Failed to process window 22: 'thr_1'
+WARNING:root:Failed to process window 23: 'thr_1'
+WARNING:root:Failed to process window 24: 'thr_1'
+WARNING:root:Failed to process window 25: 'thr_1'
+WARNING:root:Failed to process window 26: 'thr_1'
+WARNING:root:Failed to process window 27: 'thr_1'
+WARNING:root:Failed to process window 28: 'thr_1'
+WARNING:root:Failed to process window 29: 'thr_1'
+WARNING:root:Failed to process window 30: 'thr_1'
+WARNING:root:Failed to process window 31: 'thr_1'
+WARNING:root:Failed to process window 32: 'thr_1'
+WARNING:root:Failed to process window 33: 'thr_1'
+WARNING:root:Failed to process window 34: 'thr_1'
+WARNING:root:Failed to process window 35: 'thr_1'
+WARNING:root:Failed to process window 36: 'thr_1'
+WARNING:root:Failed to process window 37: 'thr_1'
+WARNING:root:Failed to process window 38: 'thr_1'
+WARNING:root:Failed to process window 39: 'thr_1'
+WARNING:root:Failed to process window 40: 'thr_1'
+WARNING:root:Failed to process window 41: 'thr_1'
+WARNING:root:Failed to process window 42: 'thr_1'
+WARNING:root:Failed to process window 43: 'thr_1'
+WARNING:root:Failed to process window 44: 'thr_1'
+WARNING:root:Failed to process window 45: 'thr_1'
+WARNING:root:Failed to process window 46: 'thr_1'
+WARNING:root:Failed to process window 47: 'thr_1'
+WARNING:root:Failed to process window 48: 'thr_1'
+WARNING:root:Failed to process window 49: 'thr_1'
+WARNING:root:Failed to process window 50: 'thr_1'
+WARNING:root:Failed to process window 51: 'thr_1'
+WARNING:root:Failed to process window 52: 'thr_1'
+WARNING:root:Failed to process window 53: 'thr_1'
+WARNING:root:Failed to process window 54: 'thr_1'
+WARNING:root:Failed to process window 55: 'thr_1'
+WARNING:root:Failed to process window 56: 'thr_1'
+WARNING:root:Failed to process window 57: 'thr_1'
+WARNING:root:Failed to process window 58: 'thr_1'
+WARNING:root:Failed to process window 59: 'thr_1'
+WARNING:root:Failed to process window 60: 'thr_1'
+WARNING:root:Failed to process window 61: 'thr_1'
+WARNING:root:Failed to process window 62: 'thr_1'
+WARNING:root:Failed to process window 63: 'thr_1'
+WARNING:root:Failed to process window 64: 'thr_1'
+WARNING:root:Failed to process window 65: 'thr_1'
+WARNING:root:Failed to process window 66: 'thr_1'
+WARNING:root:Failed to process window 67: 'thr_1'
+WARNING:root:Failed to process window 68: 'thr_1'
+WARNING:root:Failed to process window 69: 'thr_1'
+WARNING:root:Failed to process window 70: 'thr_1'
+WARNING:root:Failed to process window 71: 'thr_1'
+WARNING:root:Failed to process window 72: 'thr_1'
+WARNING:root:Failed to process window 73: 'thr_1'
+WARNING:root:Failed to process window 74: 'thr_1'
+WARNING:root:Failed to process window 75: 'thr_1'
+WARNING:root:Failed to process window 76: 'thr_1'
+WARNING:root:Failed to process window 77: 'thr_1'
+WARNING:root:Failed to process window 78: 'thr_1'
+DEBUG:root:THR node thr_1 window-wise accuracy: 0.8354
+DEBUG:root:Predictions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:True labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]... (showing first 10)
+DEBUG:root:Accuracy computation result: {'accuracy': np.float64(0.8354430379746836), 'individual_accuracies': {'thr_1': 0.8354430379746836}, 'predictions': {'thr_1': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, 'true_labels': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'n_windows': 79, 'window_duration': 1.0, 'overlap_ratio': 0.25, 'message': 'Computed windowed accuracy from 1 terminal THR node(s) using 79 windows'}
+INFO:root:Pipeline executed successfully

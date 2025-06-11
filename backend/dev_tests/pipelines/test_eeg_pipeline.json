@@ -1,0 +1,108 @@
+{
+  "nodes": [
+    {
+      "id": "eeg_input_1",
+      "nodeType": "input",
+      "label": "EEG Dataset",
+      "properties": {
+        "Dataset Path": {
+          "value": "/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat"
+        },
+        "Info File Path": {
+          "value": "/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_info.mat"
+        },
+        "Window Duration": {
+          "value": 16.0
+        },
+        "Window Offset": {
+          "value": 8.0
+        }
+      }
+    },
+    {
+      "id": "tkeo_1", 
+      "nodeType": "module",
+      "label": "TKEO",
+      "properties": {
+        "Number of Channels": {
+          "value": 2
+        },
+        "Clock Frequency": {
+          "value": 100
+        },
+        "Enable RTL Simulation": {
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "avg_1",
+      "nodeType": "module", 
+      "label": "AVG",
+      "properties": {
+        "Number of Channels": {
+          "value": 2
+        },
+        "Clock Frequency": {
+          "value": 100
+        },
+        "Enable RTL Simulation": {
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "svm_1",
+      "nodeType": "module",
+      "label": "SVM", 
+      "properties": {
+        "Weights": {
+          "value": [1.0, 1.0]
+        },
+        "Clock Frequency": {
+          "value": 100
+        },
+        "Enable RTL Simulation": {
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "thr_1",
+      "nodeType": "module",
+      "label": "THR",
+      "properties": {
+        "Lower Bound": {
+          "value": 0
+        },
+        "Upper Bound": {
+          "value": 10
+        },
+        "Clock Frequency": {
+          "value": 100
+        },
+        "Enable RTL Simulation": {
+          "value": true
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "eeg_input_1",
+      "target": "tkeo_1"
+    },
+    {
+      "source": "tkeo_1", 
+      "target": "avg_1"
+    },
+    {
+      "source": "avg_1",
+      "target": "svm_1"
+    },
+    {
+      "source": "svm_1",
+      "target": "thr_1"
+    }
+  ]
+} 
