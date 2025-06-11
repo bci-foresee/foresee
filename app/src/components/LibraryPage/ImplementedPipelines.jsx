@@ -311,6 +311,7 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
                   <div className="flex justify-end text-xs text-gray-500 mt-2">
                     <div
                       className="mr-4"
+                      title="Results"
                       onClick={() => {
                         if (pipelinesWithData.has(pipeline.id)) {
                           handleChartClick(pipeline.id);
@@ -319,7 +320,7 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
                     >
                       <ChartIcon disabled={!pipelinesWithData.has(pipeline.id)} />
                     </div>
-                    <button onClick={() => handleEditClick(pipeline.id)}>
+                    <button title="Edit" onClick={() => handleEditClick(pipeline.id)}>
                       <EditIcon />
                     </button>
                   </div>
