@@ -46,15 +46,15 @@ export const PROPERTY_VALIDATIONS = {
   },
   "Lower Bound": {
     type: "number",
-    min: -1000,
-    max: 1000,
-    errorMessage: "Must be between -1000 and 1000",
+    min: -9999999,
+    max: 9999999,
+    errorMessage: "Must be between -9999999 and 9999999",
   },
   "Upper Bound": {
     type: "number",
-    min: -1000,
-    max: 1000,
-    errorMessage: "Must be between -1000 and 1000",
+    min: -9999999,
+    max: 9999999,
+    errorMessage: "Must be between -9999999 and 9999999",
   },
   Weights: {
     type: "text",
