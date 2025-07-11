@@ -236,7 +236,7 @@ const pipelines = [
   },
   {
     name: "Epileptic Seizure Prediction",
-    description: "Predict epileptic seizures from EEG using TKEO, AVG, SVM, and THR modules.",
+    description: "Predict epileptic seizures from iEEG using TKEO, AVG, SVM, and THR modules.",
     graph_structure: JSON.stringify({
       nodes: [
         {
@@ -313,13 +313,13 @@ const pipelines = [
   },
   {
     name: "Custom Patient Pipeline",
-    description: "EEG seizure detection pipeline using mock patient dataset with TKEO, AVG, SVM, and THR processing.",
+    description: "iEEG seizure detection pipeline using mock patient dataset with TKEO, AVG, SVM, and THR processing.",
     graph_structure: JSON.stringify({
       nodes: [
         {
           id: "eeg_input_1",
-          label: "EEG Dataset",
-          name: "Patient EEG Data",
+          label: "iEEG Dataset",
+          name: "Patient iEEG Data",
           nodeType: "input",
           position: { x: 100, y: 100 },
           properties: {

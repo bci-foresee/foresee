@@ -16,7 +16,7 @@ from run_pipeline import run_pipeline
 def test_eeg_dataset_functionality():
     """Comprehensive test of EEG dataset processing functionality"""
     
-    print("=== Testing EEG Dataset Pipeline Functionality ===\n")
+    print("=== Testing iEEG Dataset Pipeline Functionality ===\n")
     
     # 1. Create test data
     print("1. Creating test EEG data...")

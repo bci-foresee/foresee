@@ -406,7 +406,7 @@ def generate_pipeline(pipeline_data, run_power_latency=True):
                 # Handle input nodes
                 if node_type == "input":
                     # Check if this is an EEG dataset input or synthetic signal input
-                    if node_label == "EEG Dataset" or "Dataset Path" in properties:
+                    if node_label == "iEEG Dataset" or "Dataset Path" in properties:
                         # EEG Dataset Input Node
                         try:
                             dataset_path = properties.get("Dataset Path", {}).get("value", "")
@@ -517,7 +517,7 @@ def generate_pipeline(pipeline_data, run_power_latency=True):
                     try:
                         # Validate common properties
                         try:
-                            clk = properties["Clock Frequency"]["value"]
+                            clk = int(properties["Clock Frequency"]["value"])
                             rtl_sim = properties["Enable RTL Simulation"]["value"]
                             
                             # Power estimation is enabled only if BOTH RTL simulation is enabled AND run_power_latency is True
@@ -525,7 +525,7 @@ def generate_pipeline(pipeline_data, run_power_latency=True):
                             
                             if not isinstance(rtl_sim, bool):
                                 raise ValueError(f"RTL Simulation setting must be true/false, got {rtl_sim}")
-                            if not isinstance(clk, (int, float)) or clk < 0:
+                            if clk < 0:
                                 raise ValueError(f"Clock frequency must be a non-negative number, got {clk}")
                                 
                         except KeyError as e:
@@ -595,8 +595,8 @@ def generate_pipeline(pipeline_data, run_power_latency=True):
 
                         elif node_label == "THR":
                             try:
-                                lower_bound = float(properties["Lower Bound"]["value"])
-                                upper_bound = float(properties["Upper Bound"]["value"])
+                                lower_bound = int(properties["Lower Bound"]["value"])
+                                upper_bound = int(properties["Upper Bound"]["value"])
                                 
                                 if lower_bound >= upper_bound:
                                     raise ValueError(f"Lower bound ({lower_bound}) must be less than upper bound ({upper_bound})")

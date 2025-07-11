@@ -79,8 +79,8 @@ const MODULES = {
       icon: "THR",
       nodeType: "module",
       properties: {
-        "Lower Bound": { value: 0, type: "number" },
-        "Upper Bound": { value: 0, type: "number" },
+        "Lower Bound": { value: 0, type: "integer" },
+        "Upper Bound": { value: 0, type: "integer" },
         "Clock Frequency": { value: 0, unit: "Hz" },
         "Enable RTL Simulation": { value: true, type: "boolean" },
       },
@@ -164,8 +164,8 @@ const MODULES = {
     },
     {
       id: "eeg_dataset",
-      label: "EEG Dataset",
-      name: "EEG Dataset",
+      label: "iEEG Dataset",
+      name: "iEEG Dataset",
       inputs: 0,
       outputs: 1,
       icon: "Input",

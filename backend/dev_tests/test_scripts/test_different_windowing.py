@@ -24,7 +24,7 @@ def test_windowing_parameters():
             {
                 "id": "eeg_input_1",
                 "nodeType": "input",
-                "label": "EEG Dataset",
+                "label": "iEEG Dataset",
                 "properties": {
                     "Dataset Path": {
                         "value": "/Users/alejo/GitHub/foresee/backend/dev_tests/test_data/test_eeg_data.mat"
