@@ -96,21 +96,59 @@ class ProcessingElement:
         if node not in self.outputs:
             self.outputs.append(node)
 
+
+
     # to run the PE's verilog implementation
     def run_verilog_simulation(self, PE_name, verilog_file, output_file):
         # Run the Verilog simulation using Icarus Verilog or another Verilog simulator
-        # Get the top-level directory of the Git repo
-        # top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
-        #                                capture_output=True,
-        #                                text=True).stdout.strip()
-
-        # # Change the directory in Python
-        # os.chdir(f"{top_level_dir}/asa/{PE_name.lower()}")
-        subprocess.run([
-            "iverilog", "-o", f"./rtl/{verilog_file}_sim.vvp",
-            f"./rtl/{verilog_file}_tb.v", f"./rtl/{verilog_file}.v"
-        ])
-        subprocess.run(["vvp", f"./rtl/{verilog_file}_sim.vvp"])
+        
+        # Debug environment info
+        import shutil
+        logging.info(f"🔧 Verilog simulation debug for {PE_name}:")
+        logging.info(f"  Current working directory: {os.getcwd()}")
+        logging.info(f"  iverilog location: {shutil.which('iverilog') or 'NOT FOUND'}")
+        logging.info(f"  vvp location: {shutil.which('vvp') or 'NOT FOUND'}")
+        logging.info(f"  PATH: {os.environ.get('PATH', 'NOT SET')}")
+        logging.info(f"  CONDA_DEFAULT_ENV: {os.environ.get('CONDA_DEFAULT_ENV', 'NOT SET')}")
+        logging.info(f"  CONDA_PREFIX: {os.environ.get('CONDA_PREFIX', 'NOT SET')}")
+        
+        try:
+            # Compile verilog
+            iverilog_cmd = [
+                "iverilog", "-o", f"./rtl/{verilog_file}_sim.vvp",
+                f"./rtl/{verilog_file}_tb.v", f"./rtl/{verilog_file}.v"
+            ]
+            logging.info(f"Running iverilog: {' '.join(iverilog_cmd)}")
+            
+            compile_result = subprocess.run(iverilog_cmd, 
+                                          capture_output=True, text=True, check=True)
+            logging.info("✅ iverilog compilation successful")
+            
+            # Check if vvp file was created
+            vvp_file = f"./rtl/{verilog_file}_sim.vvp"
+            if not os.path.exists(vvp_file):
+                raise RuntimeError(f"iverilog did not create expected file: {vvp_file}")
+            
+            # Run simulation
+            vvp_cmd = ["vvp", f"./rtl/{verilog_file}_sim.vvp"]
+            logging.info(f"Running vvp: {' '.join(vvp_cmd)}")
+            
+            sim_result = subprocess.run(vvp_cmd, 
+                                       capture_output=True, text=True, check=True)
+            logging.info("✅ vvp simulation successful")
+            
+        except subprocess.CalledProcessError as e:
+            error_msg = f"Verilog simulation failed: {e}"
+            if e.stdout:
+                error_msg += f"\nSTDOUT: {e.stdout}"
+            if e.stderr:
+                error_msg += f"\nSTDERR: {e.stderr}"
+            logging.error(error_msg)
+            raise RuntimeError(error_msg + ". This usually means 'iverilog' is not installed or not available in PATH.")
+        except Exception as e:
+            error_msg = f"Verilog simulation error: {e}"
+            logging.error(error_msg)
+            raise RuntimeError(error_msg)
 
         # # tests
         # if self.rtl_power_estimation:
@@ -221,13 +259,17 @@ class ProcessingElement:
 
     # necessary method to run the processing element
     def run(self) -> NDArray[np.float32]:
-        # Get the top-level directory of the Git repo
-        top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
-                                       capture_output=True,
-                                       text=True).stdout.strip()
+        # Get the project root directory - works both in development and packaged app
+        from asa.utils import get_project_root
+        
+        top_level_dir = get_project_root()
 
         # Change the directory in Python
-        os.chdir(f"{top_level_dir}/backend/asa/{self.name.lower()}")
+        target_dir = os.path.join(top_level_dir, "backend", "asa", self.name.lower())
+        if not os.path.exists(target_dir):
+            raise RuntimeError(f"Processing element directory not found: {target_dir}")
+        
+        os.chdir(target_dir)
 
         # load input data
         input_data = self.load_inputs()
@@ -236,13 +278,11 @@ class ProcessingElement:
         self.simulation_data["input_dimensions"] = np.array(input_data).shape
 
         # loading inputs changes directory, so reset
-        # Get the top-level directory of the Git repo
-        top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
-                                       capture_output=True,
-                                       text=True).stdout.strip()
+        top_level_dir = get_project_root()
 
         # Change the directory in Python
-        os.chdir(f"{top_level_dir}/backend/asa/{self.name.lower()}")
+        target_dir = os.path.join(top_level_dir, "backend", "asa", self.name.lower())
+        os.chdir(target_dir)
 
         # validate dimensions
         self.dimension_validate(input=input_data)

@@ -1,10 +1,66 @@
 import numpy as np
+import os
+import subprocess
 from numpy.typing import NDArray
 
 from asa.processing_element import ProcessingElement
 
 from signals.parent import Window
 from pipelines.pipeline import Pipeline
+
+
+def get_project_root():
+    """
+    Get the project root directory - works both in development and packaged app
+    """
+    try:
+        # Try git first (development environment)
+        result = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                               capture_output=True, text=True)
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+    
+    # Fallback for packaged app - find backend directory relative to current file
+    current_file = os.path.abspath(__file__)
+    
+    # Walk up from current file location to find backend directory
+    path = os.path.dirname(current_file)
+    while path != os.path.dirname(path):  # Not at root
+        if os.path.basename(path) == 'backend':
+            return os.path.dirname(path)  # Return parent of backend
+        path = os.path.dirname(path)
+    
+    # If we can't find it via file path, try relative to cwd
+    cwd = os.getcwd()
+    if os.path.exists(os.path.join(cwd, 'backend')):
+        return cwd
+    
+    # For packaged app, check for process.resourcesPath equivalent locations
+    possible_paths = [
+        # Electron packaged app locations
+        os.path.join(os.path.dirname(current_file), '..', '..'),  # backend/asa -> project root
+        os.path.join(cwd, '..'),  # If cwd is in backend, go up one level
+        # macOS app bundle locations
+        '/Contents/Resources/app',
+        '/Contents/Resources',
+        # Try to find backend in common packaged locations relative to working directory
+        os.path.dirname(os.path.dirname(cwd)) if 'backend' in cwd else cwd,
+    ]
+    
+    for path in possible_paths:
+        abs_path = os.path.abspath(path)
+        if os.path.exists(os.path.join(abs_path, 'backend', 'asa')):
+            return abs_path
+    
+    # Last resort - check if we're already in the right structure
+    # This handles case where backend is the project root in packaged apps
+    if os.path.exists(os.path.join(os.path.dirname(current_file), '..', 'asa')):
+        # We're in backend/asa/utils.py, so backend is the project root
+        return os.path.dirname(os.path.dirname(current_file))
+    
+    raise RuntimeError(f"Could not find project root. Current file: {current_file}, CWD: {cwd}, Checked paths: {possible_paths}")
 
 
 def create_testing_pipeline(test_pe: ProcessingElement,

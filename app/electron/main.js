@@ -76,7 +76,8 @@ function startBackend() {
     backendScript = path.resolve(__dirname, "../../backend/app.py");
   }
 
-  console.log("🚀 Starting backend with conda environment:", condaEnvName, backendScript);
+  console.log(`🚀 Starting backend with conda environment: ${condaEnvName} (${app.isPackaged ? 'packaged' : 'development'} mode)`);
+  console.log(`📁 Backend script: ${backendScript}`);
 
   // Set working directory to backend directory
   const backendDir = path.dirname(backendScript);
@@ -85,83 +86,95 @@ function startBackend() {
   const isWindows = process.platform === 'win32';
   let command, args;
   
-  if (app.isPackaged) {
-    // In packaged mode, try to find system Python with fallback
-    console.log("📦 Packaged mode: Trying to find suitable Python installation");
-    
-    const possiblePythonPaths = [
-      "python3",                      // Standard Python 3
-      "python",                       // Generic Python
-      "/usr/bin/python3",            // System Python 3
-      "/usr/local/bin/python3",      // Homebrew Python 3
-      "/opt/homebrew/bin/python3",   // Apple Silicon Homebrew
-    ];
-
-    let pythonExecutable = "python3"; // Default fallback
-    for (const pythonPath of possiblePythonPaths) {
-      try {
-        // Synchronous check using spawnSync
-        const { execSync } = require('child_process');
-        execSync(`${pythonPath} --version`, { stdio: 'pipe' });
-        pythonExecutable = pythonPath;
-        console.log(`✅ Found Python: ${pythonPath}`);
-        break;
-      } catch (e) {
-        console.log(`❌ Python not found: ${pythonPath}`);
-      }
-    }
-    
-    console.log(`🐍 Using Python executable for packaged app: ${pythonExecutable}`);
-    
-    if (isWindows) {
-      command = 'cmd';
-      args = ['/c', `${pythonExecutable} ${path.basename(backendScript)}`];
-    } else {
-      command = pythonExecutable;
-      args = [path.basename(backendScript)];
-    }
+  // Use the same robust conda activation for both development and packaged modes
+  if (isWindows) {
+    // Windows conda activation
+    command = 'cmd';
+    args = ['/c', `conda activate ${condaEnvName} && python ${path.basename(backendScript)}`];
   } else {
-    // Development mode: Use conda environment
-    if (isWindows) {
-      // Windows conda activation
-      command = 'cmd';
-      args = ['/c', `conda activate ${condaEnvName} && python ${path.basename(backendScript)}`];
-    } else {
-      // Unix conda activation (macOS/Linux)
-      // Use bash to source conda and activate environment
-      command = 'bash';
-      args = ['-c', `
-        source ~/.bash_profile 2>/dev/null || true
-        source ~/.bashrc 2>/dev/null || true
-        
-        # Try multiple conda initialization paths
-        if [ -f "$HOME/anaconda3/bin/conda" ]; then
-          eval "$($HOME/anaconda3/bin/conda shell.bash hook)"
-        elif [ -f "$HOME/miniconda3/bin/conda" ]; then
-          eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
-        elif [ -f "/opt/anaconda3/bin/conda" ]; then
-          eval "$(/opt/anaconda3/bin/conda shell.bash hook)"
-        elif [ -f "/opt/miniconda3/bin/conda" ]; then
-          eval "$(/opt/miniconda3/bin/conda shell.bash hook)"
-        elif command -v conda > /dev/null 2>&1; then
-          eval "$(conda shell.bash hook)"
-        else
-          echo "❌ Conda not found, falling back to system Python"
-          python3 ${path.basename(backendScript)}
-          exit $?
-        fi
-        
+    // Unix conda activation (macOS/Linux) - same logic for both dev and packaged
+    command = 'bash';
+    const isPackagedFlag = app.isPackaged ? "true" : "false";
+    const resourcesPath = app.isPackaged ? process.resourcesPath : "";
+    args = ['-c', `
+      source ~/.bash_profile 2>/dev/null || true
+      source ~/.bashrc 2>/dev/null || true
+      
+      # Try multiple conda initialization paths (same as development mode)
+      CONDA_INIT_SUCCESS=false
+      if [ -f "$HOME/anaconda3/bin/conda" ]; then
+        echo "🔧 Found conda at: $HOME/anaconda3/bin/conda"
+        eval "$($HOME/anaconda3/bin/conda shell.bash hook)"
+        export PATH="$HOME/anaconda3/bin:$PATH"
+        CONDA_INIT_SUCCESS=true
+      elif [ -f "$HOME/miniconda3/bin/conda" ]; then
+        echo "🔧 Found conda at: $HOME/miniconda3/bin/conda"
+        eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
+        export PATH="$HOME/miniconda3/bin:$PATH"
+        CONDA_INIT_SUCCESS=true
+      elif [ -f "/opt/anaconda3/bin/conda" ]; then
+        echo "🔧 Found conda at: /opt/anaconda3/bin/conda"
+        eval "$(/opt/anaconda3/bin/conda shell.bash hook)"
+        export PATH="/opt/anaconda3/bin:$PATH"
+        CONDA_INIT_SUCCESS=true
+      elif [ -f "/opt/miniconda3/bin/conda" ]; then
+        echo "🔧 Found conda at: /opt/miniconda3/bin/conda"
+        eval "$(/opt/miniconda3/bin/conda shell.bash hook)"
+        export PATH="/opt/miniconda3/bin:$PATH"
+        CONDA_INIT_SUCCESS=true
+      elif command -v conda > /dev/null 2>&1; then
+        echo "🔧 Found conda in PATH: $(which conda)"
+        eval "$(conda shell.bash hook)"
+        CONDA_INIT_SUCCESS=true
+      else
+        echo "❌ Conda not found - only conda environments are supported"
+        echo "Please ensure conda is installed and ${condaEnvName} environment exists"
+        exit 1
+      fi
+      
+      if [ "$CONDA_INIT_SUCCESS" = "true" ]; then
         echo "🔄 Activating conda environment: ${condaEnvName}"
+        # Ensure conda is properly initialized before activation
+        conda info --envs
         if conda activate ${condaEnvName}; then
-          echo "🐍 Using Python: $(which python)"
-          echo "🚀 Starting Flask server..."
-          python ${path.basename(backendScript)}
-        else
-          echo "❌ Failed to activate conda environment, falling back to system Python"
-          python3 ${path.basename(backendScript)}
+        echo "🐍 Using Python: $(which python)"
+        echo "🔧 Environment check for packaged mode:"
+        echo "  PATH: $PATH"
+        echo "  CONDA_DEFAULT_ENV: $CONDA_DEFAULT_ENV"
+        echo "  CONDA_PREFIX: $CONDA_PREFIX"
+        echo "  Python location: $(which python)"
+        echo "  iverilog available: $(which iverilog || echo 'NOT FOUND')"
+        echo "  vvp available: $(which vvp || echo 'NOT FOUND')"
+        echo "  yosys available: $(which yosys || echo 'NOT FOUND')"
+        
+        # Add packaged iverilog binaries to PATH if in packaged mode
+        if [ "${isPackagedFlag}" = "true" ]; then
+          echo "📦 Packaged mode detected - adding iverilog binaries to PATH"
+          PACKAGED_BIN_PATH="${resourcesPath}/app/bin"
+          if [ -d "$PACKAGED_BIN_PATH" ]; then
+            export PATH="$PACKAGED_BIN_PATH:$PATH"
+            echo "✅ Added $PACKAGED_BIN_PATH to PATH"
+            echo "  Updated PATH: $PATH"
+            echo "  iverilog available: $(which iverilog || echo 'NOT FOUND')"
+            echo "  vvp available: $(which vvp || echo 'NOT FOUND')"
+          else
+            echo "⚠️  Warning: Could not find packaged binaries at $PACKAGED_BIN_PATH"
+          fi
         fi
-      `];
-    }
+        
+        echo "🚀 Starting Flask server with full conda environment..."
+        python ${path.basename(backendScript)}
+              else
+          echo "❌ Failed to activate conda environment: ${condaEnvName}"
+          echo "Only conda environments are supported. Please ensure ${condaEnvName} exists and is properly configured."
+          exit 1
+        fi
+      else
+        echo "❌ Conda initialization failed"
+        echo "Please ensure conda is properly installed and accessible"
+        exit 1
+      fi
+    `];
   }
   
   backendProcess = spawn(command, args, {

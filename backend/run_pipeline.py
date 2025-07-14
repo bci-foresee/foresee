@@ -876,12 +876,12 @@ def load_pipeline_config(pipeline_file):
 
 def test_pipeline():
     """Test pipeline execution with default configuration"""
-    top_level_dir = subprocess.run(["git", "rev-parse", "--show-toplevel"],
-                                   capture_output=True,
-                                   text=True).stdout.strip()
+    from asa.utils import get_project_root
+    
+    top_level_dir = get_project_root()
 
     # Load pipeline file
-    pipeline_file = f"{top_level_dir}/backend/dev_tests/simple_fft_pipeline.json"
+    pipeline_file = os.path.join(top_level_dir, "backend", "dev_tests", "simple_fft_pipeline.json")
     pipeline_data = load_pipeline_config(pipeline_file)
     
     if pipeline_data is None:
@@ -891,7 +891,7 @@ def test_pipeline():
     result = run_pipeline(pipeline_data, run_power_latency=True, run_accuracy=True)
 
     # Save results
-    os.chdir(f"{top_level_dir}/backend/dev_tests/")
+    os.chdir(os.path.join(top_level_dir, "backend", "dev_tests"))
     save_pipeline_results(result)
 
     return result
