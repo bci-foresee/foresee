@@ -84,6 +84,9 @@ The main interface allows you to:
 4. **Iterate!**  
    Apply the learnings you've got to your pipelines' design and re-run through the production cycle.
 
+## Demo
+
+[![FORESEE Demo](https://img.youtube.com/vi/yY-t5psEGOY/0.jpg)](https://www.youtube.com/watch?v=yY-t5psEGOY)
 
 ## End-User Installation
 
