@@ -1,8 +1,25 @@
 "use client";
 import React, { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { SettingsIcon } from "../Icons/icons";
 
 export default function SimulationSettings({ selectedPipelineId, onAnalysisComplete }) {
+  const router = useRouter();
+  
+  // Robust navigation function that works in both dev and production
+  const navigateToAnalysis = (pipelineId) => {
+    const analysisUrl = `/analysis?id=${pipelineId}`;
+    
+    try {
+      // Try Next.js router first (works in dev mode)
+      router.push(analysisUrl);
+    } catch (error) {
+      // Fallback to window.location for static exports (production mode)
+      console.log("Router.push failed, using window.location fallback:", error);
+      window.location.href = analysisUrl;
+    }
+  };
+  
   const [selectedOptions, setSelectedOptions] = useState({
     accuracy: true,
     hardwareAnalysis: true,
@@ -130,6 +147,9 @@ export default function SimulationSettings({ selectedPipelineId, onAnalysisCompl
         if (onAnalysisComplete) {
           onAnalysisComplete();
         }
+        
+        // Automatically redirect to analysis page to view results
+        navigateToAnalysis(selectedPipelineId);
       }
 
       

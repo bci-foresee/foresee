@@ -219,6 +219,9 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
         if (onAnalysisComplete) {
           onAnalysisComplete();
         }
+        
+        // Automatically redirect to analysis page to view results
+        navigateToAnalysis(selectedPipelineId);
       }
 
       
@@ -251,12 +254,33 @@ export default function ImplementedPipelines({ selectedPipelineId, setSelectPipe
 
   const router = useRouter();
 
+  // Robust navigation function that works in both dev and production
+  const navigateToAnalysis = (pipelineId) => {
+    const analysisUrl = `/analysis?id=${pipelineId}`;
+    
+    try {
+      // Try Next.js router first (works in dev mode)
+      router.push(analysisUrl);
+    } catch (error) {
+      // Fallback to window.location for static exports (production mode)
+      console.log("Router.push failed, using window.location fallback:", error);
+      window.location.href = analysisUrl;
+    }
+  };
+
   const handleEditClick = (pipelineId) => {
-    router.push(`/creation?id=${pipelineId}`);
+    const creationUrl = `/creation?id=${pipelineId}`;
+    
+    try {
+      router.push(creationUrl);
+    } catch (error) {
+      console.log("Router.push failed, using window.location fallback:", error);
+      window.location.href = creationUrl;
+    }
   };
 
   const handleChartClick = (pipelineId) => {
-    router.push(`/analysis?id=${pipelineId}`);
+    navigateToAnalysis(pipelineId);
   };
 
   return (
