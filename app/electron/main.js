@@ -180,7 +180,8 @@ function startBackend() {
   backendProcess = spawn(command, args, {
     cwd: backendDir,
     stdio: ['pipe', 'pipe', 'pipe'],
-    shell: false  // We're handling the shell ourselves
+    shell: false,  // We're handling the shell ourselves
+    detached: true  // Create a new process group so we can kill all child processes
   });
 
   backendProcess.stdout.on("data", (data) => {
@@ -214,7 +215,42 @@ function startBackend() {
 function stopBackend() {
   if (backendProcess && !backendProcess.killed) {
     console.log("🛑 Stopping backend...");
-    backendProcess.kill();
+    
+    try {
+      // Kill the entire process group to ensure Python subprocess is also killed
+      if (process.platform === 'win32') {
+        // Windows - use taskkill to kill process tree
+        spawn('taskkill', ['/pid', backendProcess.pid, '/t', '/f'], { stdio: 'ignore' });
+      } else {
+        // Unix-like systems (macOS, Linux) - kill the entire process group
+        process.kill(-backendProcess.pid, 'SIGTERM');
+        
+        // Give it a moment to gracefully terminate, then force kill if needed
+        setTimeout(() => {
+          if (backendProcess && !backendProcess.killed) {
+            console.log("🛑 Force killing backend...");
+            try {
+              process.kill(-backendProcess.pid, 'SIGKILL');
+            } catch (err) {
+              console.log("🛑 Backend already terminated");
+            }
+          }
+        }, 2000);
+      }
+    } catch (err) {
+      console.log("🛑 Error stopping backend:", err.message);
+      // Fallback to normal kill
+      try {
+        backendProcess.kill('SIGTERM');
+        setTimeout(() => {
+          if (backendProcess && !backendProcess.killed) {
+            backendProcess.kill('SIGKILL');
+          }
+        }, 2000);
+      } catch (fallbackErr) {
+        console.log("🛑 Fallback kill also failed:", fallbackErr.message);
+      }
+    }
   } else {
     console.log("🛑 Backend not running, nothing to stop");
   }
@@ -352,9 +388,42 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
+  if (process.platform !== "darwin") {
+    stopBackend();
+    app.quit();
+  }
 });
 
-app.on("will-quit", () => {
+app.on("will-quit", (event) => {
   stopBackend();
+});
+
+app.on("before-quit", () => {
+  stopBackend();
+});
+
+// Handle process termination signals
+process.on('SIGINT', () => {
+  console.log('🛑 Received SIGINT, stopping backend...');
+  stopBackend();
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('🛑 Received SIGTERM, stopping backend...');
+  stopBackend();
+  process.exit(0);
+});
+
+// Handle uncaught exceptions and unhandled rejections
+process.on('uncaughtException', (err) => {
+  console.error('🛑 Uncaught exception, stopping backend...', err);
+  stopBackend();
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('🛑 Unhandled rejection, stopping backend...', reason);
+  stopBackend();
+  process.exit(1);
 });

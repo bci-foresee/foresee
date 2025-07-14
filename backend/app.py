@@ -3,6 +3,9 @@ from flask_cors import CORS
 from run_pipeline import run_pipeline
 import json
 import logging
+import signal
+import sys
+import atexit
 
 app = Flask(__name__)
 # Accept any http://localhost:<port> origin, keep credentials support
@@ -49,6 +52,28 @@ def health():
     return jsonify(status="ok"), 200
 
 
+def cleanup_and_exit():
+    """Cleanup function called on exit"""
+    logging.info("🛑 Flask server shutting down...")
+    print("🛑 Flask server shutting down...")
+    sys.exit(0)
+
+def signal_handler(signum, frame):
+    """Handle termination signals"""
+    logging.info(f"🛑 Received signal {signum}, shutting down gracefully...")
+    print(f"🛑 Received signal {signum}, shutting down gracefully...")
+    cleanup_and_exit()
+
 if __name__ == '__main__':
+    # Register signal handlers for graceful shutdown
+    signal.signal(signal.SIGTERM, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)
+    
+    # Register cleanup function to be called on normal exit
+    atexit.register(cleanup_and_exit)
+    
+    logging.info("🚀 Starting Flask server...")
+    print("🚀 Starting Flask server...")
+    
     # Disable auto-reloader to prevent spawning multiple processes when launched from Electron
     app.run(host='127.0.0.1', port=5001, debug=True, use_reloader=False)
