@@ -197,7 +197,7 @@ class ProcessingElement:
         subprocess.run(yosys_cmd, shell=True, check=True, timeout=None)
 
         # Run OpenSTA (optional – skip if tool not available)
-        opensta_cmd = "../../external/OpenSTA/build/sta power_analysis.tcl"
+        opensta_cmd = "../../external/OpenSTA/app/sta power_analysis.tcl"
         try:
             result = subprocess.run(opensta_cmd,
                                     shell=True,
