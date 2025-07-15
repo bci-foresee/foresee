@@ -321,6 +321,3 @@ Pipelines that replicate existing research papers are particularly valuable. To 
 4. Add tests that verify the pipeline functions correctly
 5. Submit a pull request with your implementation
 
-## License
-
-?
